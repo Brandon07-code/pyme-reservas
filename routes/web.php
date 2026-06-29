@@ -17,6 +17,4 @@ Route::get('/clientes', [ClientController::class, 'index']);
 Route::get('/servicios', [ServiceController::class, 'index']);
 Route::get('/productos', [ProductController::class, 'index']);
 Route::get('/reservas', [ReservationController::class, 'index']);
-Route::get('/', function () {
-    return view('welcome');
-});
+
