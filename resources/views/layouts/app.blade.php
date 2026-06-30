@@ -12,7 +12,7 @@
         <div class="container mx-auto flex flex-wrap items-center justify-between">
             <div class="flex justify-center md:justify-start font-extrabold text-white">
                 <a class="text-white no-underline hover:text-gray-300 hover:no-underline" href="/">
-                    <span class="text-xl pl-2">💈 PYME Reservas</span>
+                    <span class="text-xl pl-2">PYME Reservas</span>
                 </a>
             </div>
             <div class="flex w-full pt-2 content-center justify-between md:w-auto md:justify-end">
