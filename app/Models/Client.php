@@ -23,4 +23,16 @@ class Client extends Model
     {
         return $this->hasMany(Reservation::class);
     }
+
+     public function scopeSearch($query, $term)
+    {
+        if ($term) {
+            return $query->where('primer_nombre', 'like', "%{$term}%")
+                         ->orWhere('primer_apellido', 'like', "%{$term}%")
+                         ->orWhere('telefono', 'like', "%{$term}%")
+                         ->orWhere('email', 'like', "%{$term}%");
+        }
+        return $query;
+    }
+
 }

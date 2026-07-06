@@ -7,10 +7,19 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $clients = Client::latest()->paginate(10);
-        return view('clients.index', compact('clients'));
+        $search = $request->get('search');
+        
+        // Scope de búsqueda
+        $clients = Client::search($search)->latest()->paginate(10);
+
+        // Tarjetas de Estadísticas
+        $totalClients = Client::count();
+        $activeClients = Client::where('estado', 1)->count();
+        $inactiveClients = Client::where('estado', 0)->count();
+
+        return view('clients.index', compact('clients', 'search', 'totalClients', 'activeClients', 'inactiveClients'));
     }
 
     public function create()
@@ -57,7 +66,11 @@ class ClientController extends Controller
 
     public function destroy(Client $cliente)
     {
-        $cliente->update(['estado' => false]); // Eliminación lógica (desactivar)
-        return redirect()->route('clientes.index')->with('success', 'Cliente desactivado correctamente.');
+        // Toggle inteligente de estado
+        $nuevoEstado = !$cliente->estado;
+        $cliente->update(['estado' => $nuevoEstado]);
+
+        $mensaje = $nuevoEstado ? 'Cliente activado correctamente.' : 'Cliente desactivado correctamente.';
+        return redirect()->route('clientes.index')->with('success', $mensaje);
     }
 }
