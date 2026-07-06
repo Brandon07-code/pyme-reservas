@@ -3,23 +3,18 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
-class UserFactory extends Factory
+class ClientFactory extends Factory
 {
-    protected static ?string $password;
-
     public function definition(): array
     {
         return [
-            'role_id' => 2, // Por defecto serán empleados
             'primer_nombre' => fake()->firstName(),
             'segundo_nombre' => fake()->optional()->firstName(),
             'primer_apellido' => fake()->lastName(),
             'segundo_apellido' => fake()->optional()->lastName(),
+            'telefono' => fake()->numerify('3#########'), // Formato celular colombiano
             'email' => fake()->unique()->safeEmail(),
-            'password' => static::$password ??= Hash::make('password'),
             'estado' => true,
         ];
     }
