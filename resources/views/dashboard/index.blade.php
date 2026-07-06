@@ -154,53 +154,59 @@
     </div>
 
     {{-- SCRIPT PARA LA GRÁFICA DE CHART.JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
-            
-            // Recibimos los datos de PHP a Javascript de forma segura con @json
-            const labels = @json($labelsGrafica);
-            const data = @json($datosGrafica);
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-            new Chart(ctx, {
-                type: 'bar', // Puede ser 'line' o 'bar'
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Ingresos Mensuales (COP)',
-                        data: data,
-                        backgroundColor: 'rgba(59, 130, 246, 0.7)', // Azul Tailwind
-                        borderColor: 'rgba(37, 99, 235, 1)',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '$' + value.toLocaleString('es-CO');
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return '$' + context.raw.toLocaleString('es-CO');
-                                }
-                            }
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const ctx = document.getElementById('revenueChart');
+
+    if (!ctx) return;
+
+    const labels = {{ Illuminate\Support\Js::from($labelsGrafica) }};
+    const data = {{ Illuminate\Support\Js::from($datosGrafica) }};
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Ingresos Mensuales (COP)',
+                data: data,
+                backgroundColor: 'rgba(59,130,246,.7)',
+                borderColor: 'rgba(37,99,235,1)',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback(value) {
+                            return '$' + value.toLocaleString('es-CO');
                         }
                     }
                 }
-            });
-        });
-    </script>
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label(context) {
+                            return '$' + context.raw.toLocaleString('es-CO');
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+});
+</script>
 @endsection
