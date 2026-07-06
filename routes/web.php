@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -11,10 +10,11 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReservationController;
 
 Route::get('/', DashboardController::class);
-Route::get('/usuarios', [UserController::class, 'index']);
-Route::get('/empleados', [EmployeeController::class, 'index']);
-Route::get('/clientes', [ClientController::class, 'index']);
-Route::get('/servicios', [ServiceController::class, 'index']);
-Route::get('/productos', [ProductController::class, 'index']);
-Route::get('/reservas', [ReservationController::class, 'index']);
 
+// Route::resource crea automáticamente las rutas para index, create, store, show, edit, update, destroy
+Route::resource('usuarios', UserController::class);
+Route::resource('empleados', EmployeeController::class);
+Route::resource('clientes', ClientController::class);
+Route::resource('servicios', ServiceController::class);
+Route::resource('productos', ProductController::class);
+Route::resource('reservas', ReservationController::class);
