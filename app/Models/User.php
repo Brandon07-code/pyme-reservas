@@ -46,4 +46,17 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class);
     }
+
+
+  
+
+    public function scopeSearch($query, $term)
+    {
+        if ($term) {
+            return $query->where('primer_nombre', 'like', "%{$term}%")
+                         ->orWhere('primer_apellido', 'like', "%{$term}%")
+                         ->orWhere('email', 'like', "%{$term}%");
+        }
+        return $query;
+    }
 }
