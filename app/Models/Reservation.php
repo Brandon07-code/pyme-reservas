@@ -34,4 +34,17 @@ class Reservation extends Model
                     ->withPivot('precio_historico', 'duracion_historica', 'observaciones')
                     ->withTimestamps();
     }
+      public function scopeSearch($query, $term)
+    {
+        if ($term) {
+            return $query->whereHas('client', function ($q) use ($term) {
+                $q->where('primer_nombre', 'like', "%{$term}%")
+                  ->orWhere('primer_apellido', 'like', "%{$term}%");
+            })->orWhereHas('employee.user', function ($q) use ($term) {
+                $q->where('primer_nombre', 'like', "%{$term}%")
+                  ->orWhere('primer_apellido', 'like', "%{$term}%");
+            });
+        }
+        return $query;
+    }
 }

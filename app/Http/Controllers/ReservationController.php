@@ -11,10 +11,23 @@ use Carbon\Carbon;
 
 class ReservationController extends Controller
 {
-    public function index()
+public function index(Request $request)
     {
-        $reservations = Reservation::with(['client', 'employee.user'])->latest('fecha')->latest('hora_inicio')->paginate(10);
-        return view('reservations.index', compact('reservations'));
+        $search = $request->get('search');
+        
+        // Aplicando el Scope y Eager Loading
+        $reservations = Reservation::with(['client', 'employee.user'])
+                            ->search($search)
+                            ->latest('fecha')
+                            ->latest('hora_inicio')
+                            ->paginate(10);
+
+        // Tarjetas de Estadísticas (Adaptadas para Reservas)
+        $total = Reservation::count();
+        $pendientes = Reservation::where('estado', 'pendiente')->count();
+        $completadas = Reservation::where('estado', 'completada')->count();
+
+        return view('reservations.index', compact('reservations', 'search', 'total', 'pendientes', 'completadas'));
     }
 
     public function create()
@@ -85,9 +98,13 @@ class ReservationController extends Controller
         return redirect()->route('reservas.index')->with('success', 'Estado de la reserva actualizado.');
     }
 
+   
+    
     public function destroy(Reservation $reserva)
     {
-        $reserva->update(['estado' => 'cancelada']);
-        return redirect()->route('reservas.index')->with('success', 'Reserva cancelada correctamente.');
+        // Eliminación física real (Borra de BD). Borrará en cascada los servicios asociados en la tabla pivote.
+        $reserva->delete(); 
+        
+        return redirect()->route('reservas.index')->with('success', 'Reserva eliminada permanentemente del sistema.');
     }
 }
