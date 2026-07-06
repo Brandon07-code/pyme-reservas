@@ -52,7 +52,7 @@
                         <td class="px-6 py-4 text-sm text-gray-500">{{ $user->email }}</td>
                         <td class="px-6 py-4 text-sm text-gray-500"><span class="bg-gray-200 text-gray-800 py-1 px-2 rounded-full text-xs">{{ $user->role->nombre }}</span></td>
                         <td class="px-6 py-4 text-sm"><x-status-badge :estado="$user->estado" /></td>
-                        <td class="px-6 py-4 text-right text-sm font-medium"><x-action-buttons editRoute="{{ route('usuarios.edit', $user) }}" destroyRoute="{{ route('usuarios.destroy', $user) }}" /></td>
+                        <td class="px-6 py-4 text-right text-sm font-medium"><x-action-buttons editRoute="{{ route('usuarios.edit', $user) }}" destroyRoute="{{ route('usuarios.destroy', $user) }}" :estado="$user->estado" /> </td>   
                     </tr>
                 @empty
                     <tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No se encontraron usuarios.</td></tr>

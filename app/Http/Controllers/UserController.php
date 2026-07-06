@@ -79,9 +79,16 @@ class UserController extends Controller
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
     }
 
-    public function destroy(User $usuario)
+ public function destroy(User $usuario)
     {
-        $usuario->update(['estado' => false]);
-        return redirect()->route('usuarios.index')->with('success', 'Usuario desactivado correctamente.');
+        // Invierte el estado actual (Si es 1 pasa a 0, si es 0 pasa a 1)
+        $nuevoEstado = !$usuario->estado;
+        
+        $usuario->update(['estado' => $nuevoEstado]);
+
+        // Mensaje dinámico
+        $mensaje = $nuevoEstado ? 'Usuario activado correctamente.' : 'Usuario desactivado correctamente.';
+        
+        return redirect()->route('usuarios.index')->with('success', $mensaje);
     }
 }
