@@ -47,4 +47,19 @@ class Reservation extends Model
         }
         return $query;
     }
+    public function scopeCompletadas($query)
+    {
+        return $query->where('estado', 'completada');
+    }
+
+    public function scopeDelMes($query, $mes, $anio)
+    {
+        return $query->whereMonth('fecha', $mes)
+                     ->whereYear('fecha', $anio);
+    }
+
+    public function scopeActivas($query)
+    {
+        return $query->whereIn('estado', ['pendiente', 'confirmada']);
+    }
 }
