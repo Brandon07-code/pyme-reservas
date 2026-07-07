@@ -5,42 +5,43 @@
 @section('content')
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Resumen General</h1>
 
-    {{-- FILA 1: TARJETAS KPI --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {{-- KPI 1: Citas Hoy --}}
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500 flex items-center justify-between">
-            <div>
-                <h3 class="text-gray-500 text-xs font-semibold uppercase tracking-wider">Citas de Hoy</h3>
-                <p class="text-3xl font-bold text-gray-800">{{ $citasHoy }}</p>
-            </div>
-            <div class="bg-blue-100 p-3 rounded-full text-blue-500 text-xl">📅</div>
+   {{-- FILA 1: TARJETAS KPI (Ampliadas) --}}
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+        
+        {{-- KPI: Citas Pendientes Hoy --}}
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Citas Restantes Hoy</h3>
+            <p class="text-2xl font-bold text-gray-800">{{ $citasHoy }}</p>
         </div>
 
-        {{-- KPI 2: Ingresos Mes --}}
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500 flex items-center justify-between">
-            <div>
-                <h3 class="text-gray-500 text-xs font-semibold uppercase tracking-wider">Ingresos (Mes)</h3>
-                <p class="text-3xl font-bold text-green-600">${{ number_format($ingresosMes, 0, ',', '.') }}</p>
-            </div>
-            <div class="bg-green-100 p-3 rounded-full text-green-500 text-xl">💵</div>
+        {{-- KPI: Completadas Hoy --}}
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Completadas Hoy</h3>
+            <p class="text-2xl font-bold text-green-600">{{ $citasCompletadasHoy }}</p>
         </div>
 
-        {{-- KPI 3: Nuevos Clientes --}}
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-purple-500 flex items-center justify-between">
-            <div>
-                <h3 class="text-gray-500 text-xs font-semibold uppercase tracking-wider">Nuevos Clientes (Mes)</h3>
-                <p class="text-3xl font-bold text-purple-600">{{ $clientesNuevos }}</p>
-            </div>
-            <div class="bg-purple-100 p-3 rounded-full text-purple-500 text-xl">👥</div>
+        {{-- KPI: Canceladas Hoy --}}
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
+            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Canceladas Hoy</h3>
+            <p class="text-2xl font-bold text-red-600">{{ $citasCanceladasHoy }}</p>
         </div>
 
-        {{-- KPI 4: Reservas Pendientes --}}
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500 flex items-center justify-between">
-            <div>
-                <h3 class="text-gray-500 text-xs font-semibold uppercase tracking-wider">Citas Pendientes</h3>
-                <p class="text-3xl font-bold text-yellow-600">{{ $reservasPendientes }}</p>
-            </div>
-            <div class="bg-yellow-100 p-3 rounded-full text-yellow-500 text-xl">⏳</div>
+        {{-- KPI: Citas Mañana --}}
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
+            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Agenda Mañana</h3>
+            <p class="text-2xl font-bold text-yellow-600">{{ $citasManana }}</p>
+        </div>
+
+        {{-- KPI: Ingresos Mes --}}
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-emerald-600">
+            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Ingresos (Mes)</h3>
+            <p class="text-xl font-bold text-emerald-600">${{ number_format($ingresosMes, 0, ',', '.') }}</p>
+        </div>
+
+        {{-- KPI: Nuevos Clientes --}}
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
+            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Nuevos Clientes (Mes)</h3>
+            <p class="text-2xl font-bold text-purple-600">{{ $clientesNuevos }}</p>
         </div>
     </div>
 

@@ -12,19 +12,22 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    // Evitamos "Números Mágicos"
     const STOCK_MINIMO = 5;
 
     public function __invoke(Request $request)
     {
         // 1. Contexto Temporal
         $hoy = Carbon::today();
+        $manana = Carbon::tomorrow();
         $mesActual = Carbon::now()->month;
         $anioActual = Carbon::now()->year;
 
-        // 2. Tarjetas KPI
+        // 2. Tarjetas KPI (Ampliadas)
         $citasHoy = Reservation::activas()->whereDate('fecha', $hoy)->count();
-        
+        $citasCompletadasHoy = Reservation::completadas()->whereDate('fecha', $hoy)->count();
+        $citasCanceladasHoy = Reservation::where('estado', 'cancelada')->whereDate('fecha', $hoy)->count();
+        $citasManana = Reservation::activas()->whereDate('fecha', $manana)->count();
+
         $ingresosMes = Reservation::completadas()
             ->delMes($mesActual, $anioActual)
             ->sum('total');
@@ -32,8 +35,6 @@ class DashboardController extends Controller
         $clientesNuevos = Client::whereMonth('created_at', $mesActual)
             ->whereYear('created_at', $anioActual)
             ->count();
-            
-        $reservasPendientes = Reservation::where('estado', 'pendiente')->count();
 
         // 3. Panel Operativo
         $proximasCitas = Reservation::with(['client', 'employee.user'])
@@ -65,7 +66,7 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        // 5. Datos para la Gráfica (Últimos 6 meses de ingresos)
+        // 5. Datos para la Gráfica
         $labelsGrafica = [];
         $datosGrafica = [];
 
@@ -76,15 +77,14 @@ class DashboardController extends Controller
                 ->delMes($mes->month, $mes->year)
                 ->sum('total');
 
-            $labelsGrafica[] = ucfirst($mes->translatedFormat('F')); // Ej: Julio
+            $labelsGrafica[] = ucfirst($mes->translatedFormat('F'));
             $datosGrafica[] = $ingresoMes;
         }
 
-        // 6. Retornar Vista
         return view('dashboard.index', compact(
-            'citasHoy', 'ingresosMes', 'clientesNuevos', 'reservasPendientes',
-            'proximasCitas', 'inventarioCritico', 'topBarberos', 'topServicios',
-            'labelsGrafica', 'datosGrafica'
+            'citasHoy', 'citasCompletadasHoy', 'citasCanceladasHoy', 'citasManana',
+            'ingresosMes', 'clientesNuevos', 'proximasCitas', 'inventarioCritico', 
+            'topBarberos', 'topServicios', 'labelsGrafica', 'datosGrafica'
         ));
     }
 }
