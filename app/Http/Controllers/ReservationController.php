@@ -91,23 +91,16 @@ class ReservationController extends Controller
 
     public function store(StoreReservationRequest $request)
     {
-        $existeChoque = Reservation::where('employee_id', $request->employee_id)
-            ->where('fecha', $request->fecha)
-            ->where('hora_inicio', $request->hora_inicio)
-            ->whereIn('estado', ['pendiente', 'confirmada'])
-            ->exists();
-
-        if ($existeChoque) {
-            throw ValidationException::withMessages([
-                'hora_inicio' => 'El barbero seleccionado ya tiene una cita programada en esa hora.'
-            ]);
-        }
-
+        // Cálculos automáticos
         $serviciosSeleccionados = Service::whereIn('id', $request->servicios)->get();
         $precioTotal = $serviciosSeleccionados->sum('precio');
-        $duracionTotalMinutos = $serviciosSeleccionados->sum('duracion_minutos');
+        
+        // CASTING A INTEGER
+        $duracionTotalMinutos = (int) $serviciosSeleccionados->sum('duracion_minutos');
+        
         $horaFin = Carbon::parse($request->hora_inicio)->addMinutes($duracionTotalMinutos)->format('H:i');
 
+        // Crear Reserva
         $reserva = Reservation::create([
             'client_id' => $request->client_id,
             'employee_id' => $request->employee_id,
@@ -118,6 +111,7 @@ class ReservationController extends Controller
             'total' => $precioTotal
         ]);
 
+        // Llenar tabla pivote
         foreach ($serviciosSeleccionados as $servicio) {
             $reserva->services()->attach($servicio->id, [
                 'precio_historico' => $servicio->precio,
