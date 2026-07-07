@@ -12,8 +12,11 @@ class UserFactory extends Factory
 
     public function definition(): array
     {
+        // Fecha de creación distribuida aleatoriamente en los últimos 6 meses
+        $fechaCreacion = fake()->dateTimeBetween('-6 months', 'now');
+
         return [
-            'role_id' => 2, // Por defecto serán empleados
+            'role_id' => 2, // Por defecto empleado
             'primer_nombre' => fake()->firstName(),
             'segundo_nombre' => fake()->optional()->firstName(),
             'primer_apellido' => fake()->lastName(),
@@ -21,6 +24,8 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
             'estado' => true,
+            'created_at' => $fechaCreacion,
+            'updated_at' => $fechaCreacion,
         ];
     }
 }
