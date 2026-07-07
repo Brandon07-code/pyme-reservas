@@ -9,38 +9,42 @@
 <body class="bg-gray-100 font-sans leading-normal tracking-normal text-gray-800">
     
     <nav class="bg-gray-900 p-4 w-full shadow">
-       <div class="flex justify-center md:justify-start">
-    <a href="/" class="flex items-center gap-3 group">
-
-        <div class="w-11 h-11 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-            <span class="text-xl">💈</span>
-        </div>
-
-        <div class="leading-tight">
-            <h1 class="text-2xl font-black tracking-wide text-white">
-                PYME
-                <span class="text-blue-400">Reservas</span>
-            </h1>
-            <p class="text-[11px] text-gray-400 uppercase tracking-[0.25em]">
-                Sistema de Gestion de Citas y Reservas
-            </p>
-        </div>
-
-    </a>
-</div>
+        <div class="container mx-auto flex flex-wrap items-center justify-between">
+            <div class="flex justify-center md:justify-start font-extrabold text-white">
+                <a class="text-white no-underline hover:text-gray-300 hover:no-underline" href="/">
+                    <span class="text-xl pl-2">💈 PYME Reservas</span>
+                </a>
+            </div>
             <div class="flex w-full pt-2 content-center justify-between md:w-auto md:justify-end">
-               <ul class="list-reset flex justify-between flex-1 md:flex-none items-center text-sm">
-                    <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/">Inicio</a></li>
+                <ul class="list-reset flex justify-between flex-1 md:flex-none items-center text-sm">
                     
-                    @if(Auth::user()->role_id == 1)
-                        <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/usuarios">Usuarios</a></li>
-                        <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/empleados">Empleados</a></li>
-                        <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/clientes">Clientes</a></li>
-                        <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/servicios">Servicios</a></li>
-                        <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/productos">Productos</a></li>
+                    {{-- Usamos request()->routeIs() para saber en qué pestaña estamos y aplicar clases dinámicas --}}
+                    
+                    <li class="mr-3">
+                        <a class="inline-block py-2 px-2 {{ request()->routeIs('dashboard') ? 'text-white font-bold border-b-2 border-white' : 'text-gray-400 no-underline hover:text-gray-200 hover:no-underline' }}" href="{{ route('dashboard') }}">Inicio</a>
+                    </li>
+                    
+                    @if(Auth::check() && Auth::user()->role_id == 1)
+                        <li class="mr-3">
+                            <a class="inline-block py-2 px-2 {{ request()->routeIs('usuarios.*') ? 'text-white font-bold border-b-2 border-white' : 'text-gray-400 no-underline hover:text-gray-200 hover:no-underline' }}" href="{{ route('usuarios.index') }}">Usuarios</a>
+                        </li>
+                        <li class="mr-3">
+                            <a class="inline-block py-2 px-2 {{ request()->routeIs('empleados.*') ? 'text-white font-bold border-b-2 border-white' : 'text-gray-400 no-underline hover:text-gray-200 hover:no-underline' }}" href="{{ route('empleados.index') }}">Empleados</a>
+                        </li>
+                        <li class="mr-3">
+                            <a class="inline-block py-2 px-2 {{ request()->routeIs('clientes.*') ? 'text-white font-bold border-b-2 border-white' : 'text-gray-400 no-underline hover:text-gray-200 hover:no-underline' }}" href="{{ route('clientes.index') }}">Clientes</a>
+                        </li>
+                        <li class="mr-3">
+                            <a class="inline-block py-2 px-2 {{ request()->routeIs('servicios.*') ? 'text-white font-bold border-b-2 border-white' : 'text-gray-400 no-underline hover:text-gray-200 hover:no-underline' }}" href="{{ route('servicios.index') }}">Servicios</a>
+                        </li>
+                        <li class="mr-3">
+                            <a class="inline-block py-2 px-2 {{ request()->routeIs('productos.*') ? 'text-white font-bold border-b-2 border-white' : 'text-gray-400 no-underline hover:text-gray-200 hover:no-underline' }}" href="{{ route('productos.index') }}">Productos</a>
+                        </li>
                     @endif
                     
-                    <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/reservas">Reservas</a></li>
+                    <li class="mr-3">
+                        <a class="inline-block py-2 px-2 {{ request()->routeIs('reservas.*') ? 'text-white font-bold border-b-2 border-white' : 'text-gray-400 no-underline hover:text-gray-200 hover:no-underline' }}" href="{{ route('reservas.index') }}">Reservas</a>
+                    </li>
                     
                     @auth
                         <li class="ml-4 pl-4 border-l border-gray-600 flex items-center">
