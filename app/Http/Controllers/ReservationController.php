@@ -14,23 +14,32 @@ use Illuminate\Validation\ValidationException;
 
 class ReservationController extends Controller
 {
-    public function index(Request $request)
+  public function index(Request $request)
     {
         $search = $request->get('search');
+        $usuario = auth()->user();
         
-        $reservations = Reservation::with(['client', 'employee.user'])
-                            ->search($search)
-                            ->latest('fecha')
-                            ->latest('hora_inicio')
-                            ->paginate(10);
+        $query = Reservation::with(['client', 'employee.user'])->search($search);
 
-        $total = Reservation::count();
-        $pendientes = Reservation::where('estado', 'pendiente')->count();
-        $completadas = Reservation::where('estado', 'completada')->count();
+        if ($usuario->role_id == 2 && $usuario->employee) {
+            $query->where('employee_id', $usuario->employee->id);
+        }
 
-        return view('reservations.index', compact('reservations', 'search', 'total', 'pendientes', 'completadas'));
+        $reservations = $query->latest('fecha')->latest('hora_inicio')->paginate(10);
+
+        $statQuery = Reservation::query();
+        if ($usuario->role_id == 2 && $usuario->employee) {
+            $statQuery->where('employee_id', $usuario->employee->id);
+        }
+
+        $total = (clone $statQuery)->count();
+        $pendientes = (clone $statQuery)->where('estado', 'pendiente')->count();
+        $confirmadas = (clone $statQuery)->where('estado', 'confirmada')->count();
+        $completadas = (clone $statQuery)->where('estado', 'completada')->count();
+        $canceladas = (clone $statQuery)->where('estado', 'cancelada')->count(); // NUEVO KPI
+
+        return view('reservations.index', compact('reservations', 'search', 'total', 'pendientes', 'confirmadas', 'completadas', 'canceladas'));
     }
-
     public function create()
     {
         $clients = Client::where('estado', true)->get();

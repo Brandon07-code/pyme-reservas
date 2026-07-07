@@ -18,6 +18,7 @@
                 <option value="confirmada" {{ $reserva->estado == 'confirmada' ? 'selected' : '' }}>Confirmada</option>
                 <option value="completada" {{ $reserva->estado == 'completada' ? 'selected' : '' }}>Completada</option>
                 <option value="cancelada" {{ $reserva->estado == 'cancelada' ? 'selected' : '' }}>Cancelada</option>
+          <option value="no_asistio" {{ $reserva->estado == 'no_asistio' ? 'selected' : '' }}>No Asistió</option>
             </select>
             <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 rounded">Actualizar Estado</button>
         </form>
