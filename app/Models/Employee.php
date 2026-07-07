@@ -34,4 +34,14 @@ class Employee extends Model
     {
         return $this->belongsToMany(Service::class)->withTimestamps();
     }
+    public function scopeSearch($query, $term)
+    {
+        if ($term) {
+            return $query->whereHas('user', function ($q) use ($term) {
+                $q->where('primer_nombre', 'like', "%{$term}%")
+                  ->orWhere('primer_apellido', 'like', "%{$term}%");
+            })->orWhere('especialidad', 'like', "%{$term}%");
+        }
+        return $query;
+    }
 }

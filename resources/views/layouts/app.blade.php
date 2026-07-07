@@ -29,13 +29,17 @@
     </a>
 </div>
             <div class="flex w-full pt-2 content-center justify-between md:w-auto md:justify-end">
-                <ul class="list-reset flex justify-between flex-1 md:flex-none items-center text-sm">
+               <ul class="list-reset flex justify-between flex-1 md:flex-none items-center text-sm">
                     <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/">Inicio</a></li>
-                    <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/usuarios">Usuarios</a></li>
-                    <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/empleados">Empleados</a></li>
-                    <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/clientes">Clientes</a></li>
-                    <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/servicios">Servicios</a></li>
-                    <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/productos">Productos</a></li>
+                    
+                    @if(Auth::user()->role_id == 1)
+                        <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/usuarios">Usuarios</a></li>
+                        <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/empleados">Empleados</a></li>
+                        <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/clientes">Clientes</a></li>
+                        <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/servicios">Servicios</a></li>
+                        <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/productos">Productos</a></li>
+                    @endif
+                    
                     <li class="mr-3"><a class="inline-block text-white no-underline hover:text-gray-400 py-2 px-2" href="/reservas">Reservas</a></li>
                     
                     @auth
@@ -43,9 +47,7 @@
                             <span class="text-gray-300 font-semibold mr-4">Hola, {{ Auth::user()->primer_nombre }}</span>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded shadow text-xs transition">
-                                    Salir
-                                </button>
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded shadow text-xs transition">Salir</button>
                             </form>
                         </li>
                     @endauth

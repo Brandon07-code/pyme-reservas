@@ -34,4 +34,14 @@ class Service extends Model
                     ->withPivot('precio_historico', 'duracion_historica', 'observaciones')
                     ->withTimestamps();
     }
+    public function scopeSearch($query, $term)
+    {
+        if ($term) {
+            return $query->where('nombre', 'like', "%{$term}%")
+                         ->orWhereHas('category', function ($q) use ($term) {
+                             $q->where('nombre', 'like', "%{$term}%");
+                         });
+        }
+        return $query;
+    }
 }

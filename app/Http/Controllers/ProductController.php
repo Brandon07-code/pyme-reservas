@@ -8,10 +8,16 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')->latest()->paginate(10);
-        return view('products.index', compact('products'));
+        $search = $request->get('search');
+        $products = Product::with('category')->search($search)->latest()->paginate(10);
+
+        $total = Product::count();
+        $activos = Product::where('estado', 1)->count();
+        $inactivos = Product::where('estado', 0)->count();
+
+        return view('products.index', compact('products', 'search', 'total', 'activos', 'inactivos'));
     }
 
     public function create()
@@ -56,9 +62,13 @@ class ProductController extends Controller
         return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
     }
 
+
+
     public function destroy(Product $producto)
     {
-        $producto->update(['estado' => false]);
-        return redirect()->route('productos.index')->with('success', 'Producto desactivado correctamente.');
+        $nuevoEstado = !$producto->estado;
+        $producto->update(['estado' => $nuevoEstado]);
+        $mensaje = $nuevoEstado ? 'Producto activado correctamente.' : 'Producto desactivado correctamente.';
+        return redirect()->route('productos.index')->with('success', $mensaje);
     }
 }

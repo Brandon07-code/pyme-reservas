@@ -8,10 +8,16 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    public function index()
+  public function index(Request $request)
     {
-        $employees = Employee::with('user')->latest()->paginate(10);
-        return view('employees.index', compact('employees'));
+        $search = $request->get('search');
+        $employees = Employee::with('user')->search($search)->latest()->paginate(10);
+
+        $total = Employee::count();
+        $activos = Employee::where('estado', 1)->count();
+        $inactivos = Employee::where('estado', 0)->count();
+
+        return view('employees.index', compact('employees', 'search', 'total', 'activos', 'inactivos'));
     }
 
     public function create()
@@ -53,9 +59,14 @@ class EmployeeController extends Controller
         return redirect()->route('empleados.index')->with('success', 'Empleado actualizado correctamente.');
     }
 
+
+
+
     public function destroy(Employee $empleado)
     {
-        $empleado->update(['estado' => false]);
-        return redirect()->route('empleados.index')->with('success', 'Empleado desactivado.');
+        $nuevoEstado = !$empleado->estado;
+        $empleado->update(['estado' => $nuevoEstado]);
+        $mensaje = $nuevoEstado ? 'Empleado activado correctamente.' : 'Empleado desactivado correctamente.';
+        return redirect()->route('empleados.index')->with('success', $mensaje);
     }
 }

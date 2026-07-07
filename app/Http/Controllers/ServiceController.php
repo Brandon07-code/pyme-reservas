@@ -8,11 +8,19 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::with('category')->latest()->paginate(10);
-        return view('services.index', compact('services'));
+        $search = $request->get('search');
+        $services = Service::with('category')->search($search)->latest()->paginate(10);
+
+        $total = Service::count();
+        $activos = Service::where('estado', 1)->count();
+        $inactivos = Service::where('estado', 0)->count();
+
+        return view('services.index', compact('services', 'search', 'total', 'activos', 'inactivos'));
     }
+
+  
 
     public function create()
     {

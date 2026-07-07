@@ -21,4 +21,14 @@ class Product extends Model
     {
         return $this->belongsTo(ProductCategory::class, 'product_category_id');
     }
+    public function scopeSearch($query, $term)
+    {
+        if ($term) {
+            return $query->where('nombre', 'like', "%{$term}%")
+                         ->orWhereHas('category', function ($q) use ($term) {
+                             $q->where('nombre', 'like', "%{$term}%");
+                         });
+        }
+        return $query;
+    }
 }
