@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 class ClientSeeder extends Seeder
 {
-    public function run(): \Illuminate\Database\Eloquent\Collection
+    public function run()
     {
         $nombresColombianos = [
             ['Juan David', 'Osorio'], ['Carlos Andrés', 'Jaramillo'], ['Sebastián', 'Londoño'],
