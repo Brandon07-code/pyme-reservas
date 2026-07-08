@@ -8,14 +8,21 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ProfileController;
 
 Route::middleware(['auth'])->group(function () {
     
-    // Todos los logueados (Admin y Empleados) pueden ver esto
     Route::get('/', DashboardController::class)->name('dashboard');
+    
+    // PERFIL: Todos los logueados pueden editar sus propios datos
+    Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/perfil', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/perfil', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    Route::patch('/reservas/{reserva}/completar', [ReservationController::class, 'markAsCompleted'])->name('reservas.completar');
     Route::resource('reservas', ReservationController::class);
 
-    // SOLO Administradores pueden entrar aquí
+    // SOLO Administradores
     Route::middleware(['admin'])->group(function () {
         Route::resource('usuarios', UserController::class);
         Route::resource('empleados', EmployeeController::class);

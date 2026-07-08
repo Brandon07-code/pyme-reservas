@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         // 2. ORQUESTACIÓN DE SEEDERS SECUNDARIOS
         $catCortes = ServiceCategory::create(['nombre' => 'Cortes de Cabello', 'estado' => true]);
         $catRostro = ServiceCategory::create(['nombre' => 'Cuidado Facial', 'estado' => true]);
-        $catPerfumes = ProductCategory::create(['nombre' => 'Perfumería Original', 'estado' => true]);
+        $catPerfumes = ProductCategory::create(['nombre' => 'Perfumería (Inspiraciones)', 'estado' => true]);
 
         $this->callWith(ServiceSeeder::class, ['categoriaCortesId' => $catCortes->id, 'categoriaRostroId' => $catRostro->id]);
         $this->callWith(ProductSeeder::class, ['categoriaPerfumesId' => $catPerfumes->id]);
