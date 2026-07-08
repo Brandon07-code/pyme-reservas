@@ -21,7 +21,8 @@ class StoreReservationRequest extends FormRequest
             'client_id' => 'required|exists:clients,id',
             'employee_id' => 'required|exists:employees,id',
             'fecha' => 'required|date|after_or_equal:today',
-            'hora_inicio' => ['required', 'date_format:H:i', 'regex:/^(0[0-9]|1[0-9]|2[0-3]):(00|30)$/'],
+            // REGEX ACTUALIZADO: Permite intervalos de 15 minutos (00, 15, 30, 45)
+            'hora_inicio' => ['required', 'date_format:H:i', 'regex:/^(0[0-9]|1[0-9]|2[0-3]):(00|15|30|45)$/'],
             'servicios' => 'required|array|min:1',
             'servicios.*' => 'exists:services,id'
         ];
@@ -33,7 +34,7 @@ class StoreReservationRequest extends FormRequest
             'client_id.required' => 'Debes seleccionar un cliente.',
             'employee_id.required' => 'Debes seleccionar un barbero.',
             'fecha.after_or_equal' => 'La fecha de la cita no puede estar en el pasado.',
-            'hora_inicio.regex' => 'Las citas solo pueden iniciar en intervalos de 30 minutos (Ej: 08:00, 08:30).',
+            'hora_inicio.regex' => 'Las citas solo pueden iniciar en intervalos de 15 minutos (Ej: 08:00, 08:15, 08:30).',
             'servicios.required' => 'Debes seleccionar al menos un servicio.',
         ];
     }
@@ -48,13 +49,11 @@ class StoreReservationRequest extends FormRequest
                 $horaSolicitada = Carbon::parse($this->hora_inicio)->format('H:i:s');
                 $fechaHoraCita = Carbon::parse($fecha . ' ' . $horaSolicitada);
 
-                // CAPA 1: CONCIENCIA TEMPORAL
                 if ($fechaHoraCita->isPast()) {
                     $validator->errors()->add('hora_inicio', 'No puedes agendar una cita en una hora que ya pasó.');
                     return;
                 }
 
-                // CAPA 2: HORARIOS LABORALES
                 $diaSemana = $fechaHoraCita->dayOfWeekIso;
                 $turno = Schedule::where('employee_id', $this->employee_id)
                                  ->where('dia_semana', $diaSemana)
@@ -72,8 +71,6 @@ class StoreReservationRequest extends FormRequest
                     return;
                 }
 
-                // CAPA 3: EL TETRIS (Traslapes y Colisiones)
-                // CASTING A INTEGER (La solución al error 500)
                 $duracionTotal = (int) Service::whereIn('id', $this->servicios)->sum('duracion_minutos');
                 $horaFinSolicitada = $fechaHoraCita->copy()->addMinutes($duracionTotal)->format('H:i:s');
 

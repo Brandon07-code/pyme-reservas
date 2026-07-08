@@ -31,9 +31,12 @@ class ProductController extends Controller
         $validated = $request->validate([
             'product_category_id' => 'required|exists:product_categories,id',
             'nombre' => 'required|string|max:150',
+            'marca' => 'nullable|string|max:100', // NUEVO CAMPO
+            'genero' => 'nullable|string|max:50', // NUEVO CAMPO
             'descripcion' => 'nullable|string|max:255',
             'precio' => 'required|numeric|min:0',
             'stock_actual' => 'required|integer|min:0',
+            'imagen_url' => 'nullable|string|max:255', // NUEVO CAMPO
             'estado' => 'boolean'
         ]);
 
@@ -52,17 +55,18 @@ class ProductController extends Controller
         $validated = $request->validate([
             'product_category_id' => 'required|exists:product_categories,id',
             'nombre' => 'required|string|max:150',
+            'marca' => 'nullable|string|max:100', // NUEVO CAMPO
+            'genero' => 'nullable|string|max:50', // NUEVO CAMPO
             'descripcion' => 'nullable|string|max:255',
             'precio' => 'required|numeric|min:0',
             'stock_actual' => 'required|integer|min:0',
+            'imagen_url' => 'nullable|string|max:255', // NUEVO CAMPO
             'estado' => 'boolean'
         ]);
 
         $producto->update($validated);
         return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
     }
-
-
 
     public function destroy(Product $producto)
     {

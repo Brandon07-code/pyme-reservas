@@ -20,8 +20,6 @@ class ServiceController extends Controller
         return view('services.index', compact('services', 'search', 'total', 'activos', 'inactivos'));
     }
 
-  
-
     public function create()
     {
         $categories = ServiceCategory::where('estado', true)->get();
@@ -36,6 +34,7 @@ class ServiceController extends Controller
             'descripcion' => 'nullable|string|max:255',
             'precio' => 'required|numeric|min:0',
             'duracion_minutos' => 'required|integer|min:1',
+            'imagen_url' => 'nullable|string|max:255', // NUEVO CAMPO
             'estado' => 'boolean'
         ]);
 
@@ -57,6 +56,7 @@ class ServiceController extends Controller
             'descripcion' => 'nullable|string|max:255',
             'precio' => 'required|numeric|min:0',
             'duracion_minutos' => 'required|integer|min:1',
+            'imagen_url' => 'nullable|string|max:255', // NUEVO CAMPO
             'estado' => 'boolean'
         ]);
 
@@ -66,7 +66,9 @@ class ServiceController extends Controller
 
     public function destroy(Service $servicio)
     {
-        $servicio->update(['estado' => false]); // Eliminación lógica
-        return redirect()->route('servicios.index')->with('success', 'Servicio desactivado correctamente.');
+        $nuevoEstado = !$servicio->estado;
+        $servicio->update(['estado' => $nuevoEstado]);
+        $mensaje = $nuevoEstado ? 'Servicio activado correctamente.' : 'Servicio desactivado correctamente.';
+        return redirect()->route('servicios.index')->with('success', $mensaje);
     }
 }
