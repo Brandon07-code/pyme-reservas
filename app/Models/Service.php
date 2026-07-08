@@ -10,7 +10,7 @@ class Service extends Model
 {
     protected $fillable = [
         'service_category_id', 'nombre', 'descripcion', 
-        'precio', 'duracion_minutos', 'estado'
+        'precio', 'duracion_minutos', 'imagen_url', 'estado'
     ];
 
     protected $casts = [
@@ -34,6 +34,7 @@ class Service extends Model
                     ->withPivot('precio_historico', 'duracion_historica', 'observaciones')
                     ->withTimestamps();
     }
+
     public function scopeSearch($query, $term)
     {
         if ($term) {

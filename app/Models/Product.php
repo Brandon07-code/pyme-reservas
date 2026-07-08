@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Product extends Model
 {
     protected $fillable = [
-        'product_category_id', 'nombre', 'descripcion', 
-        'precio', 'stock_actual', 'estado'
+        'product_category_id', 'nombre', 'marca', 'genero', 'descripcion', 
+        'precio', 'stock_actual', 'imagen_url', 'estado'
     ];
 
     protected $casts = [
@@ -21,10 +21,12 @@ class Product extends Model
     {
         return $this->belongsTo(ProductCategory::class, 'product_category_id');
     }
+
     public function scopeSearch($query, $term)
     {
         if ($term) {
             return $query->where('nombre', 'like', "%{$term}%")
+                         ->orWhere('marca', 'like', "%{$term}%")
                          ->orWhereHas('category', function ($q) use ($term) {
                              $q->where('nombre', 'like', "%{$term}%");
                          });

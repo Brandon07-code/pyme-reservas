@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory; // <--- DEBE ESTAR AQUÍ
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Client extends Model
 {
-    use HasFactory; // <--- DEBE ESTAR AQUÍ ADENTRO DE LA CLASE
+    use HasFactory;
 
     protected $fillable = [
-        'primer_nombre', 'segundo_nombre', 'primer_apellido', 
+        'user_id', 'primer_nombre', 'segundo_nombre', 'primer_apellido', 
         'segundo_apellido', 'telefono', 'email', 'estado'
     ];
 
@@ -19,12 +20,17 @@ class Client extends Model
         'estado' => 'boolean',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);
     }
 
-     public function scopeSearch($query, $term)
+    public function scopeSearch($query, $term)
     {
         if ($term) {
             return $query->where('primer_nombre', 'like', "%{$term}%")
@@ -34,5 +40,4 @@ class Client extends Model
         }
         return $query;
     }
-
 }
