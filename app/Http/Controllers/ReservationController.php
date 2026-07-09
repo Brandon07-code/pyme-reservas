@@ -14,13 +14,9 @@ use Illuminate\Validation\ValidationException;
 
 class ReservationController extends Controller
 {
-    // ==========================================
-    // METODO PRIVADO DE SEGURIDAD (ANTI-IDOR)
-    // ==========================================
     private function authorizeEmployee(Reservation $reserva)
     {
         $user = auth()->user();
-        // Si es empleado (2) y la cita no es suya, se bloquea el acceso.
         if ($user->role_id == 2) {
             if (!$user->employee || $reserva->employee_id !== $user->employee->id) {
                 abort(403, 'Acceso denegado. Esta reserva pertenece a la agenda de otro empleado.');
@@ -70,8 +66,9 @@ class ReservationController extends Controller
             return redirect()->back()->withErrors('Esta reserva ya está cerrada.');
         }
 
-        // Lógica de tiempo
-        $fechaHoraFin = Carbon::parse($reserva->fecha . ' ' . $reserva->hora_fin);
+        $fechaFmt = Carbon::parse($reserva->fecha)->format('Y-m-d');
+        $fechaHoraFin = Carbon::createFromFormat('Y-m-d H:i:s', $fechaFmt . ' ' . $reserva->hora_fin);
+        
         if (now()->lessThan($fechaHoraFin)) {
             return redirect()->back()->withErrors('No puedes completar una cita antes de que termine su horario programado.');
         }
@@ -91,16 +88,12 @@ class ReservationController extends Controller
 
     public function store(StoreReservationRequest $request)
     {
-        // Cálculos automáticos
         $serviciosSeleccionados = Service::whereIn('id', $request->servicios)->get();
         $precioTotal = $serviciosSeleccionados->sum('precio');
-        
-        // CASTING A INTEGER
         $duracionTotalMinutos = (int) $serviciosSeleccionados->sum('duracion_minutos');
         
         $horaFin = Carbon::parse($request->hora_inicio)->addMinutes($duracionTotalMinutos)->format('H:i');
 
-        // Crear Reserva
         $reserva = Reservation::create([
             'client_id' => $request->client_id,
             'employee_id' => $request->employee_id,
@@ -111,7 +104,6 @@ class ReservationController extends Controller
             'total' => $precioTotal
         ]);
 
-        // Llenar tabla pivote
         foreach ($serviciosSeleccionados as $servicio) {
             $reserva->services()->attach($servicio->id, [
                 'precio_historico' => $servicio->precio,

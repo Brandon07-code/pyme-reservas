@@ -16,19 +16,16 @@ class UpdateReservationRequest extends FormRequest
     {
         $reserva = $this->route('reserva');
 
-        // Candado del pasado: Si ya se cerró, no se toca.
         if (in_array($reserva->estado, ['completada', 'cancelada', 'no_asistio'])) {
             return ['estado' => 'prohibited'];
         }
 
-        // Lógica de línea de tiempo
-        $fechaHoraFin = Carbon::parse($reserva->fecha . ' ' . $reserva->hora_fin);
+        $fechaFmt = Carbon::parse($reserva->fecha)->format('Y-m-d');
+        $fechaHoraFin = Carbon::createFromFormat('Y-m-d H:i:s', $fechaFmt . ' ' . $reserva->hora_fin);
         
         if (now()->lessThan($fechaHoraFin)) {
-            // Futuro: No puede estar completada ni reportar inasistencia
             return ['estado' => 'required|in:pendiente,confirmada,cancelada'];
         } else {
-            // Pasado: Si ya terminó, debe cerrarse definitivamente
             return ['estado' => 'required|in:completada,cancelada,no_asistio'];
         }
     }
