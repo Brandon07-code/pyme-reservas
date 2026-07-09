@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
     public function index(Request $request)
     {
         $search = $request->get('search');
-        $services = Service::with('category')->search($search)->latest()->paginate(10);
+        $services = Service::with('category')->search($search)->latest()->paginate(12);
 
         $total = Service::count();
         $activos = Service::where('estado', 1)->count();
@@ -34,9 +36,16 @@ class ServiceController extends Controller
             'descripcion' => 'nullable|string|max:255',
             'precio' => 'required|numeric|min:0',
             'duracion_minutos' => 'required|integer|min:1',
-            'imagen_url' => 'nullable|string|max:255', // NUEVO CAMPO
+            'imagen_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'estado' => 'boolean'
         ]);
+
+        if ($request->hasFile('imagen_url')) {
+            $file = $request->file('imagen_url');
+            $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('services', $fileName, 'public');
+            $validated['imagen_url'] = 'storage/' . $path;
+        }
 
         Service::create($validated);
         return redirect()->route('servicios.index')->with('success', 'Servicio creado correctamente.');
@@ -56,9 +65,19 @@ class ServiceController extends Controller
             'descripcion' => 'nullable|string|max:255',
             'precio' => 'required|numeric|min:0',
             'duracion_minutos' => 'required|integer|min:1',
-            'imagen_url' => 'nullable|string|max:255', // NUEVO CAMPO
+            'imagen_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'estado' => 'boolean'
         ]);
+
+        if ($request->hasFile('imagen_url')) {
+            if ($servicio->imagen_url && Storage::disk('public')->exists(str_replace('storage/', '', $servicio->imagen_url))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $servicio->imagen_url));
+            }
+            $file = $request->file('imagen_url');
+            $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('services', $fileName, 'public');
+            $validated['imagen_url'] = 'storage/' . $path;
+        }
 
         $servicio->update($validated);
         return redirect()->route('servicios.index')->with('success', 'Servicio actualizado correctamente.');
