@@ -18,8 +18,7 @@ return new class extends Migration
             $table->enum('estado', ['pendiente', 'confirmada', 'completada', 'cancelada'])->default('pendiente');
             $table->decimal('total', 10, 2)->default(0.00);
             $table->timestamps();
-            
-            $table->unique(['employee_id', 'fecha', 'hora_inicio']);
+           
         });
     }
 
