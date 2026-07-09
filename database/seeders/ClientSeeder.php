@@ -23,7 +23,6 @@ class ClientSeeder extends Seeder
             ['Salomé', 'Bedoya'], ['Manuela', 'Zapata'], ['Sofía', 'Ospina']
         ];
 
-        // Mezclar aleatoriamente el array para que cada iteración del seeder sea algo única
         shuffle($nombresColombianos);
 
         $clientesCreados = [];

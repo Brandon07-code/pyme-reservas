@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Reservation;
-use App\Models\Client;
-use App\Models\Employee;
-use App\Models\Service;
+use App\Http\Requests\ProfileUpdateRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
-use App\Http\Requests\StoreReservationRequest;   
-use App\Http\Requests\UpdateReservationRequest;  
-use Illuminate\Validation\ValidationException;   
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View; // IMPORTACIÓN CORREGIDA
 
 class ProfileController extends Controller
 {
- 
+    /**
+     * Display the user's profile form.
+     */
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -27,35 +26,26 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        // En nuestro sistema, los nombres están separados. Ajustamos la lógica básica.
+        $user = $request->user();
+        $user->primer_nombre = $request->primer_nombre;
+        $user->segundo_nombre = $request->segundo_nombre;
+        $user->primer_apellido = $request->primer_apellido;
+        $user->segundo_apellido = $request->segundo_apellido;
+        $user->email = $request->email;
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
+    
+    public function destroy(Request $request)
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        abort(403, 'En este sistema no está permitida la eliminación de cuentas. Contacte al administrador.');
     }
 }

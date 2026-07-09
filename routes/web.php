@@ -13,7 +13,9 @@ use App\Http\Controllers\ProfileController;
 Route::middleware(['auth'])->group(function () {
     
     Route::get('/', DashboardController::class)->name('dashboard');
-    
+    // Rutas de gestión de Horarios para el Admin
+        Route::get('empleados/{empleado}/horarios', [\App\Http\Controllers\ScheduleController::class, 'edit'])->name('empleados.horarios.edit');
+        Route::put('empleados/{empleado}/horarios', [\App\Http\Controllers\ScheduleController::class, 'update'])->name('empleados.horarios.update');
     // PERFIL: Todos los logueados pueden editar sus propios datos
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/perfil', [ProfileController::class, 'update'])->name('profile.update');

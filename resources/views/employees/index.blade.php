@@ -61,10 +61,11 @@
                             <x-status-badge :estado="$empleado->estado" />
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <x-action-buttons 
+                         <x-action-buttons 
                                 editRoute="{{ route('empleados.edit', $empleado) }}" 
                                 destroyRoute="{{ route('empleados.destroy', $empleado) }}" 
                                 :estado="$empleado->estado"
+                                scheduleRoute="{{ route('empleados.horarios.edit', $empleado) }}"
                             />
                         </td>
                     </tr>

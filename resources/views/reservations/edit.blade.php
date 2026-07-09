@@ -12,7 +12,7 @@
         </div>
         <form action="{{ route('reservas.update', $reserva) }}" method="POST" class="bg-white shadow-md rounded-lg p-8">
             @csrf @method('PUT')
-            <label class="block text-sm font-medium text-gray-700 mb-1">Cambiar Estado a:</label>;
+            <label class="block text-sm font-medium text-gray-700 mb-1">Cambiar Estado a:</label>
             @php
                 $fechaHoraFin = \Carbon\Carbon::parse($reserva->fecha . ' ' . $reserva->hora_fin);
                 $yaPaso = now()->greaterThanOrEqualTo($fechaHoraFin);
