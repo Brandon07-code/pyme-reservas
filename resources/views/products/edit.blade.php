@@ -6,7 +6,7 @@
             <h1 class="text-3xl font-bold text-gray-800">Editar: {{ $producto->nombre }}</h1>
             <a href="{{ route('productos.index') }}" class="text-gray-600 hover:text-gray-900 underline">Volver al listado</a>
         </div>
-        <form action="{{ route('productos.update', $producto) }}" method="POST" class="bg-white shadow-md rounded-lg p-8">
+        <form action="{{ route('productos.update', $producto) }}" method="POST" enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-8">
             @csrf @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                 <div>
@@ -42,8 +42,15 @@
                 </div>
 
                 <div class="lg:col-span-2">
-                    <label class="block text-sm font-medium mb-1">Ruta de la Imagen</label>
-                    <input type="text" name="imagen_url" value="{{ old('imagen_url', $producto->imagen_url) }}" class="w-full border p-2 rounded-md">
+                    <label class="block text-sm font-medium mb-1">Imagen del Producto (Opcional)</label>
+                    @if($producto->imagen_url)
+                        <div class="mb-2">
+                            <img src="{{ asset($producto->imagen_url) }}" alt="Miniatura" class="h-16 w-16 object-cover rounded border border-gray-300">
+                        </div>
+                    @endif
+                    <input type="file" name="imagen_url" accept="image/*" class="w-full border p-2 rounded-md bg-white">
+                    <p class="text-xs text-gray-500 mt-1">Sube una nueva foto para reemplazar la actual (JPG, PNG. Máx: 2MB).</p>
+                    @error('imagen_url') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Estado *</label>

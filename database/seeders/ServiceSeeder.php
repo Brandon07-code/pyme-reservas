@@ -4,13 +4,12 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Service;
-use App\Models\ServiceCategory;
 
 class ServiceSeeder extends Seeder
 {
     public function run(int $categoriaCortesId, int $categoriaRostroId): void
     {
-        
+        // CORTES JYM (Todos a $17.000)
         $cortes = [
             ['nombre' => 'Corte Clásico', 'duracion' => 30, 'imagen' => 'services/corte_clasico.jpg'],
             ['nombre' => 'Corte Siete', 'duracion' => 30, 'imagen' => 'services/corte_siete.jpg'],
@@ -34,10 +33,11 @@ class ServiceSeeder extends Seeder
             ]);
         }
 
+        // BARBA Y ROSTRO JYM
         $rostro = [
-            ['nombre' => 'Perfilado de Barba', 'precio' => 10000, 'duracion' => 15, 'imagen' => 'services/barba.jpg'],
+            ['nombre' => 'Barba Completa', 'precio' => 10000, 'duracion' => 15, 'imagen' => 'services/barba_completa.jpg'],
             ['nombre' => 'Perfilado de Bozo', 'precio' => 5000, 'duracion' => 15, 'imagen' => 'services/bozo.jpg'],
-            ['nombre' => 'Mascarilla Sencilla', 'precio' => 5000, 'duracion' => 15, 'imagen' => 'services/mascarilla.jpg'],
+            ['nombre' => 'Mascarilla Sencilla', 'precio' => 5000, 'duracion' => 15, 'imagen' => 'services/mascarilla_sencilla.jpg'],
             ['nombre' => 'Mascarilla Hidratante', 'precio' => 10000, 'duracion' => 30, 'imagen' => 'services/mascarilla_hidratante.jpg'],
         ];
 

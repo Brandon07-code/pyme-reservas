@@ -6,10 +6,9 @@
             <h1 class="text-3xl font-bold text-gray-800">Registrar Nuevo Producto</h1>
             <a href="{{ route('productos.index') }}" class="text-gray-600 hover:text-gray-900 underline">Volver al listado</a>
         </div>
-        <form action="{{ route('productos.store') }}" method="POST" class="bg-white shadow-md rounded-lg p-8">
+        <form action="{{ route('productos.store') }}" method="POST" enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-8">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                <!-- Línea 1: Nombre, Categoría, Marca -->
                 <div>
                     <label class="block text-sm font-medium mb-1">Nombre *</label>
                     <input type="text" name="nombre" value="{{ old('nombre') }}" required class="w-full border p-2 rounded-md">
@@ -27,7 +26,6 @@
                     <input type="text" name="marca" value="{{ old('marca') }}" placeholder="ej: Carolina Herrera" class="w-full border p-2 rounded-md">
                 </div>
 
-                <!-- Línea 2: Género, Precio, Stock -->
                 <div>
                     <label class="block text-sm font-medium mb-1">Género</label>
                     <select name="genero" class="w-full border p-2 rounded-md">
@@ -45,10 +43,11 @@
                     <input type="number" name="stock_actual" value="{{ old('stock_actual', 0) }}" required class="w-full border p-2 rounded-md">
                 </div>
 
-                <!-- Línea 3: Imagen y Estado -->
                 <div class="lg:col-span-2">
-                    <label class="block text-sm font-medium mb-1">Ruta de la Imagen</label>
-                    <input type="text" name="imagen_url" value="{{ old('imagen_url') }}" placeholder="ej: products/212vip.jpg" class="w-full border p-2 rounded-md">
+                    <label class="block text-sm font-medium mb-1">Imagen del Producto (Opcional)</label>
+                    <input type="file" name="imagen_url" accept="image/*" class="w-full border p-2 rounded-md bg-white">
+                    <p class="text-xs text-gray-500 mt-1">Formatos: JPG, PNG, WEBP. Máx: 2MB.</p>
+                    @error('imagen_url') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Estado *</label>
@@ -58,7 +57,6 @@
                     </select>
                 </div>
 
-                <!-- Descripción -->
                 <div class="md:col-span-2 lg:col-span-3">
                     <label class="block text-sm font-medium mb-1">Descripción</label>
                     <textarea name="descripcion" rows="3" class="w-full border p-2 rounded-md">{{ old('descripcion') }}</textarea>
