@@ -20,18 +20,20 @@ class RegisteredUserController extends Controller
         return view('auth.register');
     }
 
-    public function store(Request $request): RedirectResponse
+  public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'primer_nombre' => ['required', 'string', 'max:100'],
             'primer_apellido' => ['required', 'string', 'max:100'],
-            'telefono' => ['required', 'string', 'max:20'],
+            'telefono' => ['required', 'string', 'regex:/^3[\d]{9}$/'], 
             'email' => ['required', 'string', 'lowercase', 'email', 'max:150', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'telefono.regex' => 'El teléfono debe ser un celular colombiano válido (Ej: 3001234567).'
         ]);
 
         $user = User::create([
-            'role_id' => 3, // Rol Cliente
+            'role_id' => 3,
             'primer_nombre' => $request->primer_nombre,
             'primer_apellido' => $request->primer_apellido,
             'email' => $request->email,

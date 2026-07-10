@@ -1,69 +1,55 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingreso al Sistema - PYME Reservas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 font-sans antialiased text-gray-900 flex items-center justify-center min-h-screen">
+<x-guest-layout>
+    <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8 m-4">
-        
-        <!-- Logo / Titulo -->
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">💈 PYME Reservas</h1>
-            <p class="text-sm text-gray-500 mt-2">Acceso Administrativo y Operativo</p>
-        </div>
-
-        <!-- Session Status -->
-        <x-auth-session-status class="mb-4 text-green-600 font-bold text-center" :status="session('status')" />
-
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
-
-            <!-- Email Address -->
-            <div class="mb-5">
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
-                <input id="email" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500 text-xs italic" />
-            </div>
-
-            <!-- Password -->
-            <div class="mb-5">
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                <input id="password" type="password" name="password" required autocomplete="current-password"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500 text-xs italic" />
-            </div>
-
-            <!-- Remember Me & Forgot Password -->
-            <div class="flex items-center justify-between mb-6">
-                <label for="remember_me" class="inline-flex items-center">
-                    <input id="remember_me" type="checkbox" name="remember" class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
-                    <span class="ms-2 text-sm text-gray-600">Recordarme</span>
-                </label>
-
-                @if (Route::has('password.request'))
-                    <a class="text-sm text-blue-600 hover:text-blue-800 underline transition" href="{{ route('password.request') }}">
-                        ¿Olvidaste tu contraseña?
-                    </a>
-                @endif
-            </div>
-
-            <!-- Botón Ingresar -->
-            <div>
-                <button type="submit" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-4 rounded-lg shadow transition duration-200">
-                    Ingresar al Sistema
-                </button>
-            </div>
-        </form>
-
-        <div class="mt-8 text-center text-xs text-gray-400">
-            &copy; {{ date('Y') }} PYME Reservas. Cartago, Valle.
-        </div>
+    <div class="text-center mb-8 border-b pb-4">
+        <h2 class="text-xl font-bold text-gray-800">Bienvenido de nuevo</h2>
+        <p class="text-sm text-gray-500 mt-1">Acceso Administrativo y Clientes</p>
     </div>
 
-</body>
-</html>
+    <form method="POST" action="{{ route('login') }}" class="space-y-6">
+        @csrf
+
+        <!-- Email Address -->
+        <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+            <input id="email" class="block w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-indigo-500 focus:border-indigo-500" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500 text-xs" />
+        </div>
+
+        <!-- Password -->
+        <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+            <input id="password" class="block w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-indigo-500 focus:border-indigo-500" type="password" name="password" required autocomplete="current-password" />
+            <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500 text-xs" />
+        </div>
+
+        <!-- Remember Me -->
+        <div class="flex items-center justify-between">
+            <label for="remember_me" class="inline-flex items-center cursor-pointer">
+                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
+                <span class="ms-2 text-sm text-gray-600">Recordarme</span>
+            </label>
+
+            @if (Route::has('password.request'))
+                <a class="text-sm text-indigo-600 hover:text-indigo-900 font-semibold" href="{{ route('password.request') }}">
+                    ¿Olvidaste tu contraseña?
+                </a>
+            @endif
+        </div>
+
+        <div>
+            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                Ingresar al Sistema
+            </button>
+        </div>
+
+        <div class="text-center mt-6 pt-4 border-t border-gray-100">
+            <p class="text-sm text-gray-600">
+                ¿Eres cliente y aún no tienes cuenta? <br>
+                <a href="{{ route('register') }}" class="font-bold text-indigo-600 hover:text-indigo-900 transition block mt-2">
+                    Regístrate gratis aquí
+                </a>
+            </p>
+        </div>
+    </form>
+</x-guest-layout>
