@@ -42,9 +42,15 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function employee(): HasOne
+   public function employee(): HasOne
     {
         return $this->hasOne(Employee::class);
+    }
+
+    // NUEVO: La relación que une al usuario con su cuenta de cliente (Portal)
+    public function client(): HasOne
+    {
+        return $this->hasOne(Client::class);
     }
 
 

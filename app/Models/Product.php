@@ -33,4 +33,11 @@ class Product extends Model
         }
         return $query;
     }
+  
+    public function orders(): BelongsToMany
+    {
+        return $this->belongsToMany(Order::class)
+                    ->withPivot('cantidad', 'precio_historico')
+                    ->withTimestamps();
+    }
 }

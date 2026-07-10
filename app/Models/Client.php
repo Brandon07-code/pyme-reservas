@@ -40,4 +40,9 @@ class Client extends Model
         }
         return $query;
     }
+    // NUEVO: Un cliente puede tener muchos pedidos
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
 }
