@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleUserSeeder::class);
         $this->call(ClientSeeder::class);
 
-        // CORRECCIÓN: Traemos los datos frescos directamente de la base de datos
+        // Traemos los datos frescos directamente de la base de datos
         $barberos = Employee::all();
         $clientes = Client::all();
         $serviciosBase = Service::all();
@@ -57,6 +57,7 @@ class DatabaseSeeder extends Seeder
             
             if ($fechaActual->isSunday()) continue;
 
+            // Generamos bloques de disponibilidad para los barberos
             $disponibilidad = [];
             foreach ($barberos as $barbero) {
                 $bloques = [];
@@ -68,6 +69,9 @@ class DatabaseSeeder extends Seeder
                 }
                 $disponibilidad[$barbero->id] = $bloques;
             }
+
+            // Matriz para controlar y evitar la duplicidad/choques de los clientes en el mismo día
+            $agendaClientesDelDia = []; 
 
             $citasDelDia = rand(15, 25);
 
@@ -87,6 +91,8 @@ class DatabaseSeeder extends Seeder
 
                 foreach ($bloquesHorarios as $index => $hora) {
                     $libre = true;
+                    
+                    // 1. Verificamos disponibilidad del Barbero
                     for ($b = 0; $b < $bloquesNecesarios; $b++) {
                         if (!isset($bloquesHorarios[$index + $b]) || !$disponibilidad[$empleado->id][$bloquesHorarios[$index + $b]]) {
                             $libre = false;
@@ -95,21 +101,49 @@ class DatabaseSeeder extends Seeder
                     }
 
                     if ($libre) {
-                        $horaAsignada = $hora;
-                        for ($b = 0; $b < $bloquesNecesarios; $b++) {
-                            $disponibilidad[$empleado->id][$bloquesHorarios[$index + $b]] = false;
+                        // 2. Verificamos disponibilidad del Cliente (Evitar Clones/Choques)
+                        $horaInicioPropuesta = $hora;
+                        $horaFinPropuesta = Carbon::parse($hora)->addMinutes($servicio->duracion_minutos)->format('H:i:s');
+                        $clienteLibre = true;
+
+                        if (isset($agendaClientesDelDia[$cliente->id])) {
+                            foreach ($agendaClientesDelDia[$cliente->id] as $citaCliente) {
+                                if ($horaInicioPropuesta < $citaCliente['fin'] && $horaFinPropuesta > $citaCliente['inicio']) {
+                                    $clienteLibre = false;
+                                    break;
+                                }
+                            }
                         }
-                        break;
+
+                        // Si ambos están libres, confirmamos la asignación del horario
+                        if ($clienteLibre) {
+                            $horaAsignada = $hora;
+                            
+                            // Bloqueamos las horas del barbero
+                            for ($b = 0; $b < $bloquesNecesarios; $b++) {
+                                $disponibilidad[$empleado->id][$bloquesHorarios[$index + $b]] = false;
+                            }
+                            
+                            // Registramos el horario ocupado del cliente
+                            if (!isset($agendaClientesDelDia[$cliente->id])) {
+                                $agendaClientesDelDia[$cliente->id] = [];
+                            }
+                            $agendaClientesDelDia[$cliente->id][] = [
+                                'inicio' => $horaInicioPropuesta,
+                                'fin' => $horaFinPropuesta
+                            ];
+                            break;
+                        }
                     }
                 }
 
                 if (!$horaAsignada) continue;
 
                 $horaFinReserva = Carbon::parse($horaAsignada)->addMinutes($servicio->duracion_minutos)->format('H:i:s');
-
-                $estado = 'pendiente';
                 $fechaHoraFinCita = Carbon::parse($fechaActual->format('Y-m-d') . ' ' . $horaFinReserva);
+                $estado = 'pendiente';
 
+                // Lógica probabilística de estados de la cita
                 if ($hoy->greaterThanOrEqualTo($fechaHoraFinCita)) {
                     $dado = rand(1, 100);
                     if ($dado <= 85) $estado = 'completada';
@@ -119,6 +153,7 @@ class DatabaseSeeder extends Seeder
                     $estado = (rand(1, 100) <= 70) ? 'confirmada' : 'pendiente';
                 }
 
+                // Creación física del registro de reserva
                 $reserva = Reservation::create([
                     'client_id' => $cliente->id,
                     'employee_id' => $empleado->id,
@@ -130,6 +165,7 @@ class DatabaseSeeder extends Seeder
                     'created_at' => clone $fechaActual,
                 ]);
 
+                // Adjuntar la relación a la tabla intermedia pivot con datos históricos
                 $reserva->services()->attach($servicio->id, [
                     'precio_historico' => $servicio->precio,
                     'duracion_historica' => $servicio->duracion_minutos,

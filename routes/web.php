@@ -9,7 +9,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ProfileController;
-
+use App\Http\Controllers\PortalController;
 // ==============================================================
 // RUTAS COMUNES (LOGUEADOS)
 // ==============================================================
@@ -20,13 +20,24 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/perfil', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/perfil', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
- 
-       Route::middleware(['admin:3'])->group(function () {
+ // ==============================================================
+    // RUTAS CLIENTES (Solo Rol 3)
+    // ==============================================================
+    Route::middleware(['admin:3'])->group(function () {
         
-        // La vitrina comercial
-        Route::get('/mi-portal', [\App\Http\Controllers\PortalController::class, 'index'])->name('portal.index');
+        // Vitrina Comercial
+        Route::get('/mi-portal', [PortalController::class, 'index'])->name('portal.index');
         
-        // La raíz para los clientes los enviará a su portal
+        // Asistente de Agendamiento
+        Route::get('/mi-portal/agendar', [PortalController::class, 'agendar'])->name('portal.agendar');
+        Route::post('/mi-portal/agendar/disponibilidad', [PortalController::class, 'getDisponibilidad'])->name('portal.disponibilidad');
+        Route::post('/mi-portal/agendar', [PortalController::class, 'storeReserva'])->name('portal.store');
+
+        // NUEVO: Historial de Citas
+        Route::get('/mi-portal/mis-citas', [PortalController::class, 'misCitas'])->name('portal.citas');
+        Route::patch('/mi-portal/mis-citas/{reserva}/cancelar', [PortalController::class, 'cancelarCita'])->name('portal.citas.cancelar');
+
+        // Redirección Raíz
         Route::get('/', function() {
             if (auth()->user()->role_id == 3) {
                 return redirect()->route('portal.index');

@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+
 
 class User extends Authenticatable
 {
@@ -64,5 +66,16 @@ class User extends Authenticatable
                          ->orWhere('email', 'like', "%{$term}%");
         }
         return $query;
+    }
+     public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [
+            'role_id' => $this->role_id // Inyectamos el rol en el payload del token
+        ];
     }
 }

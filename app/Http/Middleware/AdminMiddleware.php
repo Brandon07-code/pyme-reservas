@@ -8,14 +8,26 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
-    public function handle(Request $request, Closure $next): Response
+    /**
+     * Handle an incoming request.
+     * @param  string[]  ...$roles (1=Admin, 2=Empleado, 3=Cliente)
+     */
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        // Verifica que esté logueado y que su role_id sea 1 (Administrador)
-        if (auth()->check() && auth()->user()->role_id === 1) {
-            return $next($request);
+        if (auth()->check()) {
+            $userRoleId = (string) auth()->user()->role_id;
+            
+            // Si el rol del usuario está dentro de los roles permitidos en la ruta, lo dejamos pasar
+            if (in_array($userRoleId, $roles)) {
+                return $next($request);
+            }
+            
+            // Si es un cliente intentando entrar al panel administrativo, lo mandamos a su portal
+            if ($userRoleId === '3') {
+                return redirect()->route('portal.index');
+            }
         }
 
-        // Si es un empleado intentando entrar donde no debe, lanza un error 403 (Acceso Denegado)
-        abort(403, 'Acceso denegado. Solo los administradores pueden entrar a este módulo.');
+        abort(403, 'Acceso denegado. No tienes permisos para ver este módulo.');
     }
 }

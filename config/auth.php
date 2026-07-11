@@ -36,13 +36,18 @@ return [
     | Supported: "session"
     |
     */
-
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
     ],
+    'api' => [
+        'driver' => 'jwt', // Cambiado de token a jwt
+        'provider' => 'users',
+    ],
+],
+
+   
 
     /*
     |--------------------------------------------------------------------------

@@ -5,45 +5,45 @@
 @section('content')
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Resumen General</h1>
 
-   {{-- FILA 1: TARJETAS KPI (Ampliadas) --}}
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        
-        {{-- KPI: Citas Pendientes Hoy --}}
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
-            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Citas Restantes Hoy</h3>
-            <p class="text-2xl font-bold text-gray-800">{{ $citasHoy }}</p>
-        </div>
+   <!-- Contenedor general de KPIs (Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
 
-        {{-- KPI: Completadas Hoy --}}
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
-            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Completadas Hoy</h3>
-            <p class="text-2xl font-bold text-green-600">{{ $citasCompletadasHoy }}</p>
-        </div>
-
-        {{-- KPI: Canceladas Hoy --}}
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
-            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Canceladas Hoy</h3>
-            <p class="text-2xl font-bold text-red-600">{{ $citasCanceladasHoy }}</p>
-        </div>
-
-        {{-- KPI: Citas Mañana --}}
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
-            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Agenda Mañana</h3>
-            <p class="text-2xl font-bold text-yellow-600">{{ $citasManana }}</p>
-        </div>
-
-        {{-- KPI: Ingresos Mes --}}
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-emerald-600">
-            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Ingresos (Mes)</h3>
-            <p class="text-xl font-bold text-emerald-600">${{ number_format($ingresosMes, 0, ',', '.') }}</p>
-        </div>
-
-        {{-- KPI: Nuevos Clientes --}}
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
-            <h3 class="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Nuevos Clientes (Mes)</h3>
-            <p class="text-2xl font-bold text-purple-600">{{ $clientesNuevos }}</p>
-        </div>
+    <!-- KPI: Citas Restantes -->
+    <div class="bg-gray-950 p-4 rounded-xl shadow-md border border-neutral-800">
+        <p class="text-xs font-bold text-neutral-400 uppercase tracking-wider">Citas Restantes Hoy</p>
+        <p class="text-3xl font-extrabold text-amber-500 mt-2">19</p>
     </div>
+
+    <!-- KPI: Completadas -->
+    <div class="bg-gray-950 p-4 rounded-xl shadow-md border border-neutral-800">
+        <p class="text-xs font-bold text-neutral-400 uppercase tracking-wider">Completadas Hoy</p>
+        <p class="text-3xl font-extrabold text-amber-500 mt-2">4</p>
+    </div>
+
+   <div class="bg-gray-950 p-4 rounded-xl shadow-md border border-neutral-800">
+            <p class="text-xs font-bold text-amber-500/70 uppercase tracking-wider">Canceladas Hoy</p>
+            <p class="text-3xl font-extrabold text-amber-500 mt-2">1</p>
+        </div>
+
+    <!-- KPI: Agenda Mañana -->
+    <div class="bg-gray-950 p-4 rounded-xl shadow-md border border-neutral-800">
+        <p class="text-xs font-bold text-neutral-400 uppercase tracking-wider">Agenda Mañana</p>
+        <p class="text-3xl font-extrabold text-amber-500 mt-2">0</p>
+    </div>
+
+    <!-- KPI: Ingresos (Destacado en Oro) -->
+    <div class="bg-gray-950 p-4 rounded-xl shadow-lg border border-amber-500/30 ring-1 ring-amber-500/10">
+        <p class="text-xs font-bold text-amber-500 uppercase tracking-wider">Ingresos (Mes)</p>
+        <p class="text-3xl font-extrabold text-amber-400 mt-2">$2.053.000</p>
+    </div>
+
+    <!-- KPI: Nuevos Clientes -->
+    <div class="bg-gray-950 p-4 rounded-xl shadow-md border border-neutral-800">
+        <p class="text-xs font-bold text-neutral-400 uppercase tracking-wider">Nuevos Clientes (Mes)</p>
+        <p class="text-3xl font-extrabold text-amber-500 mt-2">2</p>
+    </div>
+
+</div>
 
     {{-- FILA 2: GRÁFICA Y AGENDA DE HOY --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
