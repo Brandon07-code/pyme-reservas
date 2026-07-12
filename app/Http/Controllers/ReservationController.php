@@ -10,20 +10,9 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
-use Illuminate\Validation\ValidationException;
 
 class ReservationController extends Controller
 {
-    private function authorizeEmployee(Reservation $reserva)
-    {
-        $user = auth()->user();
-        if ($user->role_id == 2) {
-            if (!$user->employee || $reserva->employee_id !== $user->employee->id) {
-                abort(403, 'Acceso denegado. Esta reserva pertenece a la agenda de otro empleado.');
-            }
-        }
-    }
-
     public function index(Request $request)
     {
         $search = $request->get('search');
@@ -60,7 +49,8 @@ class ReservationController extends Controller
 
     public function markAsCompleted(Reservation $reserva)
     {
-        $this->authorizeEmployee($reserva);
+        
+        $this->authorize('update', $reserva);
 
         if (in_array($reserva->estado, ['completada', 'cancelada', 'no_asistio'])) {
             return redirect()->back()->withErrors('Esta reserva ya está cerrada.');
@@ -116,20 +106,23 @@ class ReservationController extends Controller
 
     public function edit(Reservation $reserva)
     {
-        $this->authorizeEmployee($reserva);
+       
+        $this->authorize('update', $reserva);
         return view('reservations.edit', compact('reserva'));
     }
 
     public function update(UpdateReservationRequest $request, Reservation $reserva)
     {
-        $this->authorizeEmployee($reserva);
+      
+        $this->authorize('update', $reserva);
         $reserva->update(['estado' => $request->estado]);
         return redirect()->route('reservas.index')->with('success', 'Estado de la reserva actualizado.');
     }
 
     public function destroy(Reservation $reserva)
     {
-        $this->authorizeEmployee($reserva);
+     
+        $this->authorize('delete', $reserva);
         $reserva->delete(); 
         return redirect()->route('reservas.index')->with('success', 'Reserva eliminada permanentemente del sistema.');
     }

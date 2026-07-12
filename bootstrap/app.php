@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Registro del middleware de rol
         $middleware->alias([
             'rol' => \App\Http\Middleware\VerificarRol::class,
+            'admin' => \App\Http\Middleware\VerificarRol::class,
         ]);
     
     })

@@ -9,8 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
@@ -44,7 +43,7 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-   public function employee(): HasOne
+    public function employee(): HasOne
     {
         return $this->hasOne(Employee::class);
     }
@@ -55,9 +54,6 @@ class User extends Authenticatable
         return $this->hasOne(Client::class);
     }
 
-
-  
-
     public function scopeSearch($query, $term)
     {
         if ($term) {
@@ -67,7 +63,10 @@ class User extends Authenticatable
         }
         return $query;
     }
-     public function getJWTIdentifier()
+    
+    // --- MÉTODOS REQUERIDOS POR JWT ---
+    
+    public function getJWTIdentifier()
     {
         return $this->getKey();
     }

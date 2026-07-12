@@ -10,9 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PortalController;
-// ==============================================================
-// RUTAS COMUNES (LOGUEADOS)
-// ==============================================================
+use App\Http\Controllers\ExternalPostController;
 Route::middleware(['auth'])->group(function () {
     
     // Perfil: Todos (Admin, Empleado, Cliente) pueden editar su perfil
@@ -47,7 +45,7 @@ Route::middleware(['auth'])->group(function () {
     });
  
     Route::middleware(['admin:1,2'])->group(function () {
-        
+       
         // La raíz para empleados/admin es el Dashboard
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
         
@@ -61,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
     // ==============================================================
     Route::middleware(['admin:1'])->group(function () {
         Route::resource('usuarios', UserController::class);
-        
+         Route::get('/integracion/posts', [ExternalPostController::class, 'index'])->name('posts.index');
         Route::get('empleados/{empleado}/horarios', [\App\Http\Controllers\ScheduleController::class, 'edit'])->name('empleados.horarios.edit');
         Route::put('empleados/{empleado}/horarios', [\App\Http\Controllers\ScheduleController::class, 'update'])->name('empleados.horarios.update');
         Route::resource('empleados', EmployeeController::class);
