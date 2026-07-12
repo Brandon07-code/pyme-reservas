@@ -75,11 +75,12 @@ class DashboardController extends Controller
             $queryProximas->where('employee_id', $usuario->employee->id);
         }
         $proximasCitas = $queryProximas->get();
+$fechaMananaFmt = $manana->format('Y-m-d');
 
         return view('dashboard.index', compact(
             'esAdmin', 'citasHoy', 'citasManana', 'ingresosMes', 'clientesNuevos', 
             'proximasCitas', 'inventarioCritico', 'topBarberos', 'topServicios', 
-            'labelsGrafica', 'datosGrafica', 'misCortesMes'
+            'labelsGrafica', 'datosGrafica', 'misCortesMes', 'fechaMananaFmt'
         ));
     }
 }

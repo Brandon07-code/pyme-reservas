@@ -20,11 +20,10 @@
             <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $citasHoy }}</p>
         </div>
 
-        <div class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition">
-            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2">Agenda Mañana</h3>
-            <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $citasManana }} Reservas</p>
-            
-        </div>
+          <a href="{{ route('reservas.index', ['fecha_filtro' => $fechaMananaFmt]) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer group">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2 group-hover:text-white transition">Agenda Mañana &rarr;</h3>
+            <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $citasManana }} Citas</p>
+        </a>
 
         @if($esAdmin)
             <div class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition">
