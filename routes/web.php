@@ -11,18 +11,20 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\ExternalPostController;
+use App\Http\Controllers\CartController; // NUEVA IMPORTACION
+
 Route::middleware(['auth'])->group(function () {
-    
+
     // Perfil: Todos (Admin, Empleado, Cliente) pueden editar su perfil
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/perfil', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/perfil', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
- // ==============================================================
-    // RUTAS CLIENTES (Solo Rol 3)
+
+    // ============================================================== 
+    // RUTAS CLIENTES (Solo Rol 3) 
     // ==============================================================
     Route::middleware(['admin:3'])->group(function () {
-        
+
         // Vitrina Comercial
         Route::get('/mi-portal', [PortalController::class, 'index'])->name('portal.index');
         
@@ -31,9 +33,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/mi-portal/agendar/disponibilidad', [PortalController::class, 'getDisponibilidad'])->name('portal.disponibilidad');
         Route::post('/mi-portal/agendar', [PortalController::class, 'storeReserva'])->name('portal.store');
 
-        // NUEVO: Historial de Citas
+        // Historial de Citas
         Route::get('/mi-portal/mis-citas', [PortalController::class, 'misCitas'])->name('portal.citas');
         Route::patch('/mi-portal/mis-citas/{reserva}/cancelar', [PortalController::class, 'cancelarCita'])->name('portal.citas.cancelar');
+
+        // NUEVO: Rutas del Carrito de Compras
+        Route::get('/mi-portal/carrito', [CartController::class, 'index'])->name('portal.cart.index');
+        Route::post('/mi-portal/carrito/add', [CartController::class, 'add'])->name('portal.cart.add');
+        Route::post('/mi-portal/carrito/remove', [CartController::class, 'remove'])->name('portal.cart.remove');
 
         // Redirección Raíz
         Route::get('/', function() {
@@ -43,13 +50,14 @@ Route::middleware(['auth'])->group(function () {
             return redirect()->route('dashboard');
         });
     });
- 
+
+    // ============================================================== 
+    // RUTAS OPERATIVAS (Admin 1, Empleado 2) 
+    // ==============================================================
     Route::middleware(['admin:1,2'])->group(function () {
-       
-        // La raíz para empleados/admin es el Dashboard
+    
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
         
-        // Módulo de Reservas Operativo
         Route::patch('/reservas/{reserva}/completar', [ReservationController::class, 'markAsCompleted'])->name('reservas.completar');
         Route::resource('reservas', ReservationController::class);
     });
@@ -59,7 +67,9 @@ Route::middleware(['auth'])->group(function () {
     // ==============================================================
     Route::middleware(['admin:1'])->group(function () {
         Route::resource('usuarios', UserController::class);
-         Route::get('/integracion/posts', [ExternalPostController::class, 'index'])->name('posts.index');
+        
+        Route::get('/integracion/posts', [ExternalPostController::class, 'index'])->name('posts.index');
+        
         Route::get('empleados/{empleado}/horarios', [\App\Http\Controllers\ScheduleController::class, 'edit'])->name('empleados.horarios.edit');
         Route::put('empleados/{empleado}/horarios', [\App\Http\Controllers\ScheduleController::class, 'update'])->name('empleados.horarios.update');
         Route::resource('empleados', EmployeeController::class);

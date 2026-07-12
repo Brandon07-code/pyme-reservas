@@ -51,9 +51,21 @@
         @endif
     @endforeach
 
-    <!-- SECCIÓN DE PERFUMERÍA -->
+   <!-- SECCIÓN DE PERFUMERÍA -->
     <div class="mt-12">
         <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center"><span class="text-[#D4AF37] mr-3 text-4xl">✨</span> Perfumería Exclusiva</h2>
+        
+        @if(session('success'))
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm">
+                <p class="font-bold">{{ session('success') }}</p>
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm">
+                <p class="font-bold">{{ $errors->first() }}</p>
+            </div>
+        @endif
         
         @if($productos->isEmpty())
             <p class="text-gray-500">Próximamente catálogo de perfumería.</p>
@@ -73,12 +85,29 @@
                         <div class="p-4 flex-1 flex flex-col bg-gray-50">
                             <p class="text-[10px] text-[#D4AF37] font-bold uppercase tracking-wider mb-1">{{ $producto->marca ?? 'Contratipo' }}</p>
                             <h4 class="text-md font-bold text-gray-900 mb-2 leading-tight">{{ $producto->nombre }}</h4>
-                            <span class="text-xl font-extrabold text-black mt-auto">${{ number_format($producto->precio, 0, ',', '.') }}</span>
+                            <span class="text-xl font-extrabold text-black mt-auto mb-4">${{ number_format($producto->precio, 0, ',', '.') }}</span>
+                            
+                            {{-- Botón Agregar al Carrito --}}
+                            @if($producto->stock_actual > 0)
+                                <form action="{{ route('portal.cart.add') }}" method="POST" class="mt-auto">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $producto->id }}">
+                                    <button type="submit" class="w-full bg-black hover:bg-gray-800 text-[#D4AF37] font-bold py-2 rounded transition text-sm uppercase tracking-wider shadow">
+                                       Agregar 🛒 
+                                    </button>
+                                </form>
+                            @else
+                                <button disabled class="w-full mt-auto bg-gray-300 text-gray-500 font-bold py-2 rounded text-sm uppercase tracking-wider cursor-not-allowed">
+                                    Agotado
+                                </button>
+                            @endif
                         </div>
                     </div>
                 @endforeach
             </div>
         @endif
     </div>
+
+
 
 @endsection
