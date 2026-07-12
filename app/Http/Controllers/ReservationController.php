@@ -17,6 +17,8 @@ class ReservationController extends Controller
     {
         $search = $request->get('search');
         $estadoFilter = $request->get('estado'); 
+        $fechaFilter = $request->get('fecha_filtro'); // NUEVO: Captura el filtro de fecha
+
         $usuario = auth()->user();
         $mesActual = Carbon::now()->month;
         $anioActual = Carbon::now()->year;
@@ -29,6 +31,11 @@ class ReservationController extends Controller
 
         if ($estadoFilter) {
             $query->where('estado', $estadoFilter);
+        }
+
+        // NUEVO: Aplica el filtro exacto por fecha en la consulta SQL
+        if ($fechaFilter) {
+            $query->whereDate('fecha', $fechaFilter);
         }
 
         $reservations = $query->latest('fecha')->latest('hora_inicio')->paginate(10);
@@ -44,12 +51,12 @@ class ReservationController extends Controller
         $completadas = (clone $statQuery)->where('estado', 'completada')->count();
         $canceladas = (clone $statQuery)->where('estado', 'cancelada')->count();
 
-        return view('reservations.index', compact('reservations', 'search', 'estadoFilter', 'total', 'pendientes', 'confirmadas', 'completadas', 'canceladas'));
+        // NUEVO: Pasamos $fechaFilter a la vista para mantener el input lleno
+        return view('reservations.index', compact('reservations', 'search', 'estadoFilter', 'fechaFilter', 'total', 'pendientes', 'confirmadas', 'completadas', 'canceladas'));
     }
 
     public function markAsCompleted(Reservation $reserva)
     {
-        
         $this->authorize('update', $reserva);
 
         if (in_array($reserva->estado, ['completada', 'cancelada', 'no_asistio'])) {
@@ -106,14 +113,12 @@ class ReservationController extends Controller
 
     public function edit(Reservation $reserva)
     {
-       
         $this->authorize('update', $reserva);
         return view('reservations.edit', compact('reserva'));
     }
 
     public function update(UpdateReservationRequest $request, Reservation $reserva)
     {
-      
         $this->authorize('update', $reserva);
         $reserva->update(['estado' => $request->estado]);
         return redirect()->route('reservas.index')->with('success', 'Estado de la reserva actualizado.');
@@ -121,7 +126,6 @@ class ReservationController extends Controller
 
     public function destroy(Reservation $reserva)
     {
-     
         $this->authorize('delete', $reserva);
         $reserva->delete(); 
         return redirect()->route('reservas.index')->with('success', 'Reserva eliminada permanentemente del sistema.');

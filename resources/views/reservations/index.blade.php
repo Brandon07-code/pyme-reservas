@@ -28,12 +28,28 @@
     @if(session('success')) <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm"><p>{{ session('success') }}</p></div> @endif
     @if($errors->any()) <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm"><p>{{ $errors->first() }}</p></div> @endif
 
-    {{-- Filtro de Búsqueda --}}
-    <form method="GET" action="{{ route('reservas.index') }}" class="mb-6 flex gap-2">
+    {{-- Filtro de Búsqueda y Fecha Exacta --}}
+    <form method="GET" action="{{ route('reservas.index') }}" class="mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
         @if($estadoFilter) <input type="hidden" name="estado" value="{{ $estadoFilter }}"> @endif
-        <input type="text" name="search" value="{{ $search }}" placeholder="Buscar por cliente o barbero..." class="w-full md:w-1/3 border-gray-300 rounded-md shadow-sm border p-2 focus:ring-blue-500 focus:border-blue-500">
-        <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded shadow">Buscar</button>
-        @if($search) <a href="{{ route('reservas.index', ['estado' => $estadoFilter]) }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded shadow">Limpiar</a> @endif
+        
+        <div class="flex flex-col md:flex-row gap-4 items-end">
+            <div class="w-full md:w-1/2">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Buscar Cliente o Barbero</label>
+                <input type="text" name="search" value="{{ $search }}" placeholder="Ej. Juan Pérez..." class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div class="w-full md:w-1/4">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Filtrar por Día</label>
+                <input type="date" name="fecha_filtro" value="{{ $fechaFilter ?? '' }}" class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700">
+            </div>
+
+            <div class="w-full md:w-1/4 flex gap-2">
+                <button type="submit" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded shadow transition">Filtrar</button>
+                @if($search || isset($fechaFilter)) 
+                    <a href="{{ route('reservas.index', ['estado' => $estadoFilter]) }}" class="w-full text-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded shadow transition">Limpiar</a> 
+                @endif
+            </div>
+        </div>
     </form>
 
     <div class="bg-white shadow-md rounded-lg overflow-hidden">
@@ -70,18 +86,12 @@
                         
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end items-center space-x-2">
                             
-                               @php
-    $fecha = \Carbon\Carbon::parse($reserva->fecha)->format('Y-m-d');
-
-    $fechaHoraFin = \Carbon\Carbon::createFromFormat(
-        'Y-m-d H:i:s',
-        $fecha . ' ' . $reserva->hora_fin
-    );
-
-    $puedeCompletarse = now()->greaterThanOrEqualTo($fechaHoraFin);
-@endphp 
+                            @php
+                                $fecha = \Carbon\Carbon::parse($reserva->fecha)->format('Y-m-d');
+                                $fechaHoraFin = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $fecha . ' ' . $reserva->hora_fin);
+                                $puedeCompletarse = now()->greaterThanOrEqualTo($fechaHoraFin);
+                            @endphp 
                             
-                            {{-- Solo pintamos el boton Verde si está activa y el tiempo YA PASÓ --}}
                             @if(in_array($reserva->estado, ['pendiente', 'confirmada']) && $puedeCompletarse)
                                 <form action="{{ route('reservas.completar', $reserva) }}" method="POST">
                                     @csrf @method('PATCH')
@@ -105,9 +115,4 @@
                     </tr>
                 @empty
                     <tr><td colspan="6" class="px-6 py-4 text-center text-gray-500 italic">No hay reservas con este filtro.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-        @if($reservations->hasPages()) <div class="px-6 py-3 bg-gray-50 border-t">{{ $reservations->appends(['search' => $search, 'estado' => $estadoFilter])->links() }}</div> @endif
-    </div>
-@endsection
+                @end
