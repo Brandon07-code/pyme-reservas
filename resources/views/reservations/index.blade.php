@@ -5,23 +5,27 @@
 @section('content')
     <x-page-header title="Gestión de Reservas" createRoute="{{ route('reservas.create') }}" buttonText="+ Nueva Reserva" />
 
-    {{-- Tarjetas KPI Clickeables (Mes Actual) --}}
-    <p class="text-sm text-gray-500 mb-2 font-semibold">Resumen del Mes (Clic para filtrar)</p>
+    <p class="text-xs text-gray-400 mb-2 font-bold uppercase tracking-wider">Resumen del Mes (Clic para filtrar)</p>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-        <a href="{{ route('reservas.index') }}" class="bg-white rounded-lg shadow p-4 border-l-4 border-gray-800 hover:bg-gray-50 transition cursor-pointer {{ !$estadoFilter ? 'ring-2 ring-gray-400' : '' }}">
-            <h3 class="text-gray-500 text-[10px] font-semibold uppercase">Total (Mes)</h3><p class="text-2xl font-bold text-gray-800">{{ $total }}</p>
+        <a href="{{ route('reservas.index') }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ !$estadoFilter ? 'ring-2 ring-gray-400' : '' }}">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total (Mes)</h3>
+            <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $total }}</p>
         </a>
-        <a href="{{ route('reservas.index', ['estado' => 'pendiente']) }}" class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500 hover:bg-yellow-50 transition cursor-pointer {{ $estadoFilter == 'pendiente' ? 'ring-2 ring-yellow-400' : '' }}">
-            <h3 class="text-gray-500 text-[10px] font-semibold uppercase">Pendientes</h3><p class="text-2xl font-bold text-yellow-600">{{ $pendientes }}</p>
+        <a href="{{ route('reservas.index', ['estado' => 'pendiente']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'pendiente' ? 'ring-2 ring-yellow-400' : '' }}">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Pendientes</h3>
+            <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $pendientes }}</p>
         </a>
-        <a href="{{ route('reservas.index', ['estado' => 'confirmada']) }}" class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500 hover:bg-blue-50 transition cursor-pointer {{ $estadoFilter == 'confirmada' ? 'ring-2 ring-blue-400' : '' }}">
-            <h3 class="text-gray-500 text-[10px] font-semibold uppercase">Confirmadas</h3><p class="text-2xl font-bold text-blue-600">{{ $confirmadas }}</p>
+        <a href="{{ route('reservas.index', ['estado' => 'confirmada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'confirmada' ? 'ring-2 ring-blue-400' : '' }}">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Confirmadas</h3>
+            <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $confirmadas }}</p>
         </a>
-        <a href="{{ route('reservas.index', ['estado' => 'completada']) }}" class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500 hover:bg-green-50 transition cursor-pointer {{ $estadoFilter == 'completada' ? 'ring-2 ring-green-400' : '' }}">
-            <h3 class="text-gray-500 text-[10px] font-semibold uppercase">Completadas</h3><p class="text-2xl font-bold text-green-600">{{ $completadas }}</p>
+        <a href="{{ route('reservas.index', ['estado' => 'completada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'completada' ? 'ring-2 ring-green-400' : '' }}">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Completadas</h3>
+            <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $completadas }}</p>
         </a>
-        <a href="{{ route('reservas.index', ['estado' => 'cancelada']) }}" class="bg-white rounded-lg shadow p-4 border-l-4 border-red-500 hover:bg-red-50 transition cursor-pointer {{ $estadoFilter == 'cancelada' ? 'ring-2 ring-red-400' : '' }}">
-            <h3 class="text-gray-500 text-[10px] font-semibold uppercase">Canceladas</h3><p class="text-2xl font-bold text-red-600">{{ $canceladas }}</p>
+        <a href="{{ route('reservas.index', ['estado' => 'cancelada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'cancelada' ? 'ring-2 ring-red-400' : '' }}">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Canceladas</h3>
+            <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $canceladas }}</p>
         </a>
     </div>
 
@@ -115,4 +119,13 @@
                     </tr>
                 @empty
                     <tr><td colspan="6" class="px-6 py-4 text-center text-gray-500 italic">No hay reservas con este filtro.</td></tr>
-                @end
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    {{-- Paginación --}}
+    <div class="mt-4">
+        {{ $reservations->links() }}
+    </div>
+@endsection

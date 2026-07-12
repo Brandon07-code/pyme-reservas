@@ -87,13 +87,14 @@
                             <h4 class="text-md font-bold text-gray-900 mb-2 leading-tight">{{ $producto->nombre }}</h4>
                             <span class="text-xl font-extrabold text-black mt-auto mb-4">${{ number_format($producto->precio, 0, ',', '.') }}</span>
                             
-                            {{-- Botón Agregar al Carrito --}}
+                          
                             @if($producto->stock_actual > 0)
-                                <form action="{{ route('portal.cart.add') }}" method="POST" class="mt-auto">
+                                <form action="{{ route('portal.cart.add') }}" method="POST" class="mt-auto flex gap-2">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $producto->id }}">
-                                    <button type="submit" class="w-full bg-black hover:bg-gray-800 text-[#D4AF37] font-bold py-2 rounded transition text-sm uppercase tracking-wider shadow">
-                                       Agregar 🛒 
+                                    <input type="number" name="cantidad" value="1" min="1" max="{{ min($producto->stock_actual, 20) }}" class="w-16 border-gray-300 rounded focus:ring-[#D4AF37] focus:border-[#D4AF37] text-center text-sm font-bold shadow-sm">
+                                    <button type="submit" class="flex-1 bg-black hover:bg-gray-800 text-[#D4AF37] font-bold py-2 rounded transition text-xs uppercase tracking-wider shadow">
+                                        🛒 Añadir
                                     </button>
                                 </form>
                             @else

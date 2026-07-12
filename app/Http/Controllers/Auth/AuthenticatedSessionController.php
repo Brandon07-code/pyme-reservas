@@ -21,11 +21,12 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
+        // REDIRECCIÓN ESTRICTA: Ignoramos el 'intended' para evitar el bug 403
         if ($request->user()->role_id == 3) {
-            return redirect()->intended(route('portal.index', absolute: false));
+            return redirect()->route('portal.index');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
 
     public function destroy(Request $request): RedirectResponse

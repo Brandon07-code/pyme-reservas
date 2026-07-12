@@ -7,7 +7,6 @@ use App\Models\Product;
 
 class CartController extends Controller
 {
-    // Mostrar el carrito
     public function index()
     {
         $cart = session()->get('cart', []);
@@ -20,30 +19,41 @@ class CartController extends Controller
         return view('portal.cart', compact('cart', 'total'));
     }
 
-    // Agregar producto al carrito
     public function add(Request $request)
     {
         $producto = Product::findOrFail($request->product_id);
+        $cantidadSolicitada = (int) $request->input('cantidad', 1);
 
         if ($producto->estado == 0 || $producto->stock_actual <= 0) {
-            return redirect()->back()->withErrors('El producto no está disponible.');
+            return redirect()->back()->withErrors('El producto no está disponible en este momento.');
+        }
+
+        if ($cantidadSolicitada > $producto->stock_actual) {
+            return redirect()->back()->withErrors("Solo nos quedan {$producto->stock_actual} unidades de {$producto->nombre}.");
+        }
+
+        if ($cantidadSolicitada > 20) {
+            return redirect()->back()->withErrors("El límite de reserva es de 20 unidades por pedido.");
         }
 
         $cart = session()->get('cart', []);
 
-        // Si ya está en el carrito, aumentamos la cantidad validando el stock
         if (isset($cart[$producto->id])) {
-            if ($cart[$producto->id]['cantidad'] < $producto->stock_actual) {
-                $cart[$producto->id]['cantidad']++;
-            } else {
-                return redirect()->back()->withErrors('No hay más stock disponible de ' . $producto->nombre);
+            $nuevaCantidad = $cart[$producto->id]['cantidad'] + $cantidadSolicitada;
+            
+            if ($nuevaCantidad > $producto->stock_actual) {
+                return redirect()->back()->withErrors("Ya tienes {$cart[$producto->id]['cantidad']} en el carrito. Solo quedan {$producto->stock_actual} unidades en total.");
             }
+            if ($nuevaCantidad > 20) {
+                return redirect()->back()->withErrors("No puedes llevar más de 20 unidades del mismo producto.");
+            }
+            
+            $cart[$producto->id]['cantidad'] = $nuevaCantidad;
         } else {
-            // Si no está, lo agregamos
             $cart[$producto->id] = [
                 "nombre" => $producto->nombre,
                 "marca" => $producto->marca,
-                "cantidad" => 1,
+                "cantidad" => $cantidadSolicitada,
                 "precio" => $producto->precio,
                 "imagen_url" => $producto->imagen_url,
                 "stock_maximo" => $producto->stock_actual
@@ -52,10 +62,9 @@ class CartController extends Controller
 
         session()->put('cart', $cart);
 
-        return redirect()->back()->with('success', 'Producto agregado al carrito.');
+        return redirect()->back()->with('success', "{$cantidadSolicitada}x {$producto->nombre} agregado al carrito.");
     }
 
-    // Quitar producto del carrito
     public function remove(Request $request)
     {
         if ($request->id) {
