@@ -62,10 +62,11 @@
                         <p class="text-sm text-gray-500 font-bold uppercase mb-1">Total a Pagar en Local:</p>
                         <p class="text-4xl font-extrabold text-black mb-4">${{ number_format($total, 0, ',', '.') }}</p>
                         
-                        <!-- BOTÓN PARA CONFIRMAR (Lo conectaremos en el siguiente paso con Checkout) -->
-                        <button class="bg-[#D4AF37] hover:bg-yellow-500 text-black font-extrabold py-3 px-8 rounded-full shadow-lg transition uppercase tracking-wide w-full md:w-auto">
-                            Confirmar Pedido
-                        </button>
+                       <form action="{{ route('portal.cart.checkout') }}" method="POST">
+                            @csrf
+                            <button type="submit" onclick="return confirm('¿Confirmas la reserva de estos productos? Recuerda que tienes 24 horas para recogerlos en nuestra sede.');" class="bg-[#D4AF37] hover:bg-yellow-500 text-black font-extrabold py-3 px-8 rounded-full shadow-lg transition uppercase tracking-wide w-full md:w-auto">
+                                Confirmar Pedido
+                            </button>
                     </div>
                 </div>
             @else

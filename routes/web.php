@@ -10,8 +10,9 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PortalController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ExternalPostController;
-use App\Http\Controllers\CartController; // NUEVA IMPORTACION
 
 Route::middleware(['auth'])->group(function () {
 
@@ -37,10 +38,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/mi-portal/mis-citas', [PortalController::class, 'misCitas'])->name('portal.citas');
         Route::patch('/mi-portal/mis-citas/{reserva}/cancelar', [PortalController::class, 'cancelarCita'])->name('portal.citas.cancelar');
 
-        // NUEVO: Rutas del Carrito de Compras
+        // Carrito de Compras y Checkout
         Route::get('/mi-portal/carrito', [CartController::class, 'index'])->name('portal.cart.index');
         Route::post('/mi-portal/carrito/add', [CartController::class, 'add'])->name('portal.cart.add');
         Route::post('/mi-portal/carrito/remove', [CartController::class, 'remove'])->name('portal.cart.remove');
+        Route::post('/mi-portal/carrito/checkout', [CartController::class, 'checkout'])->name('portal.cart.checkout'); // FIX DEL ERROR 500
 
         // Redirección Raíz
         Route::get('/', function() {
@@ -60,6 +62,12 @@ Route::middleware(['auth'])->group(function () {
         
         Route::patch('/reservas/{reserva}/completar', [ReservationController::class, 'markAsCompleted'])->name('reservas.completar');
         Route::resource('reservas', ReservationController::class);
+
+        // Notificaciones (Leer)
+        Route::post('/notificaciones/leer', function() {
+            auth()->user()->unreadNotifications->markAsRead();
+            return redirect()->back();
+        })->name('notificaciones.leer');
     });
 
     // ==============================================================
@@ -77,6 +85,9 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('clientes', ClientController::class);
         Route::resource('servicios', ServiceController::class);
         Route::resource('productos', ProductController::class);
+
+        // Módulo de Pedidos de Tienda
+        Route::resource('pedidos', OrderController::class)->only(['index', 'update'])->names('orders');
     });
 
 });

@@ -88,12 +88,12 @@
                             <span class="text-xl font-extrabold text-black mt-auto mb-4">${{ number_format($producto->precio, 0, ',', '.') }}</span>
                             
                           
-                            @if($producto->stock_actual > 0)
-                                <form action="{{ route('portal.cart.add') }}" method="POST" class="mt-auto flex gap-2">
+                          @if($producto->stock_actual > 0)
+                                <form action="{{ route('portal.cart.add') }}" method="POST" class="mt-auto flex gap-2 form-agregar-carrito">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $producto->id }}">
-                                    <input type="number" name="cantidad" value="1" min="1" max="{{ min($producto->stock_actual, 20) }}" class="w-16 border-gray-300 rounded focus:ring-[#D4AF37] focus:border-[#D4AF37] text-center text-sm font-bold shadow-sm">
-                                    <button type="submit" class="flex-1 bg-black hover:bg-gray-800 text-[#D4AF37] font-bold py-2 rounded transition text-xs uppercase tracking-wider shadow">
+                                    <input type="number" name="cantidad" value="1" min="1" max="{{ min($producto->stock_actual, 20) }}" class="w-16 border-gray-300 rounded focus:ring-[#D4AF37] focus:border-[#D4AF37] text-center text-sm font-bold shadow-sm input-cantidad" oninput="validarStock(this)">
+                                    <button type="submit" class="flex-1 bg-black hover:bg-gray-800 text-[#D4AF37] font-bold py-2 rounded transition text-xs uppercase tracking-wider shadow btn-submit-carrito">
                                         🛒 Añadir
                                     </button>
                                 </form>
@@ -110,5 +110,17 @@
     </div>
 
 
-
+<script>
+        function validarStock(input) {
+            const maxStock = parseInt(input.getAttribute('max'));
+            const btn = input.closest('form').querySelector('.btn-submit-carrito');
+            
+            if (parseInt(input.value) > maxStock) {
+                input.value = maxStock; // Obliga visualmente al input a bajarse al máximo
+                // Podríamos agregar un texto rojo temporal aquí si se desea
+            } else if (parseInt(input.value) < 1 || isNaN(parseInt(input.value))) {
+                input.value = 1; // Nunca permitir 0 o vacíos
+            }
+        }
+    </script>
 @endsection
