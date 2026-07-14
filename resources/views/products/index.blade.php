@@ -5,16 +5,20 @@
 @section('content')
     <x-page-header title="Gestión de Productos" createRoute="{{ route('productos.create') }}" buttonText="+ Nuevo Producto" />
 
-    {{-- Tarjetas KPI --}}
+    
+    <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-widest">Inventario de Perfumería</p>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
-            <h3 class="text-gray-500 text-sm font-semibold uppercase">Total Productos</h3><p class="text-3xl font-bold text-gray-800">{{ $total }}</p>
+        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Referencias</h3>
+            <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $total }}</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
-            <h3 class="text-gray-500 text-sm font-semibold uppercase">Activos</h3><p class="text-3xl font-bold text-green-600">{{ $activos }}</p>
+        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Activos en Vitrina</h3>
+            <p class="text-3xl font-extrabold text-green-500">{{ $activos }}</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
-            <h3 class="text-gray-500 text-sm font-semibold uppercase">Inactivos</h3><p class="text-3xl font-bold text-red-600">{{ $inactivos }}</p>
+        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Descontinuados</h3>
+            <p class="text-3xl font-extrabold text-red-500">{{ $inactivos }}</p>
         </div>
     </div>
 

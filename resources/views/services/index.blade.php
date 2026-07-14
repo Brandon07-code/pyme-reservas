@@ -5,16 +5,19 @@
 @section('content')
     <x-page-header title="Gestión de Servicios" createRoute="{{ route('servicios.create') }}" buttonText="+ Nuevo Servicio" />
 
-    {{-- Tarjetas KPI --}}
+    <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-widest">Catálogo de Servicios</p>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
-            <h3 class="text-gray-500 text-sm font-semibold uppercase">Total Servicios</h3><p class="text-3xl font-bold text-gray-800">{{ $total }}</p>
+        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Servicios</h3>
+            <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $total }}</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
-            <h3 class="text-gray-500 text-sm font-semibold uppercase">Activos</h3><p class="text-3xl font-bold text-green-600">{{ $activos }}</p>
+        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Ofertados (Activos)</h3>
+            <p class="text-3xl font-extrabold text-green-500">{{ $activos }}</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
-            <h3 class="text-gray-500 text-sm font-semibold uppercase">Inactivos</h3><p class="text-3xl font-bold text-red-600">{{ $inactivos }}</p>
+        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Ocultos (Inactivos)</h3>
+            <p class="text-3xl font-extrabold text-red-500">{{ $inactivos }}</p>
         </div>
     </div>
 
@@ -26,7 +29,6 @@
         @if($search) <a href="{{ route('servicios.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded shadow">Limpiar</a> @endif
     </form>
 
-    {{-- GALERÍA DE TARJETAS (REEMPLAZA A LA TABLA) --}}
     @if($services->isEmpty())
         <div class="bg-white shadow-md rounded-lg p-8 text-center text-gray-500">No se encontraron servicios en el catálogo.</div>
     @else
@@ -57,7 +59,7 @@
                         </div>
                     </div>
 
-                    {{-- Acciones (Botones integrados) --}}
+                   
                     <div class="bg-gray-50 px-4 py-3 border-t border-gray-100 flex justify-end">
                         <x-action-buttons editRoute="{{ route('servicios.edit', $servicio) }}" destroyRoute="{{ route('servicios.destroy', $servicio) }}" :estado="$servicio->estado" />
                     </div>

@@ -5,7 +5,8 @@
 @section('content')
     <x-page-header title="Gestión de Reservas" createRoute="{{ route('reservas.create') }}" buttonText="+ Nueva Reserva" />
 
-    <p class="text-xs text-gray-400 mb-2 font-bold uppercase tracking-wider">Resumen del Mes (Clic para filtrar)</p>
+    {{-- Tarjetas KPI (NEGRO PURO, ALTO CONTRASTE) --}}
+    <p class="text-xs text-gray-400 mb-2 font-bold uppercase tracking-widest">Resumen del Mes (Clic para filtrar)</p>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
         <a href="{{ route('reservas.index') }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ !$estadoFilter ? 'ring-2 ring-gray-400' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total (Mes)</h3>
@@ -13,62 +14,60 @@
         </a>
         <a href="{{ route('reservas.index', ['estado' => 'pendiente']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'pendiente' ? 'ring-2 ring-yellow-400' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Pendientes</h3>
-            <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $pendientes }}</p>
+            <p class="text-2xl font-extrabold text-yellow-500">{{ $pendientes }}</p>
         </a>
         <a href="{{ route('reservas.index', ['estado' => 'confirmada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'confirmada' ? 'ring-2 ring-blue-400' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Confirmadas</h3>
-            <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $confirmadas }}</p>
+            <p class="text-2xl font-extrabold text-blue-500">{{ $confirmadas }}</p>
         </a>
         <a href="{{ route('reservas.index', ['estado' => 'completada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'completada' ? 'ring-2 ring-green-400' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Completadas</h3>
-            <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $completadas }}</p>
+            <p class="text-2xl font-extrabold text-green-500">{{ $completadas }}</p>
         </a>
         <a href="{{ route('reservas.index', ['estado' => 'cancelada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'cancelada' ? 'ring-2 ring-red-400' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Canceladas</h3>
-            <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $canceladas }}</p>
+            <p class="text-2xl font-extrabold text-red-500">{{ $canceladas }}</p>
         </a>
     </div>
 
-    @if(session('success')) <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm"><p>{{ session('success') }}</p></div> @endif
-    @if($errors->any()) <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm"><p>{{ $errors->first() }}</p></div> @endif
+    @if(session('success')) <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm"><p class="font-bold">{{ session('success') }}</p></div> @endif
+    @if($errors->any()) <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm"><p class="font-bold">{{ $errors->first() }}</p></div> @endif
 
-    {{-- Filtro de Búsqueda y Fecha Exacta --}}
+    {{-- Filtro de Búsqueda --}}
     <form method="GET" action="{{ route('reservas.index') }}" class="mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
         @if($estadoFilter) <input type="hidden" name="estado" value="{{ $estadoFilter }}"> @endif
         
         <div class="flex flex-col md:flex-row gap-4 items-end">
             <div class="w-full md:w-1/2">
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Buscar Cliente o Barbero</label>
-                <input type="text" name="search" value="{{ $search }}" placeholder="Ej. Juan Pérez..." class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" name="search" value="{{ $search }}" placeholder="Ej. Juan Pérez..." class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
             </div>
-
             <div class="w-full md:w-1/4">
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Filtrar por Día</label>
-                <input type="date" name="fecha_filtro" value="{{ $fechaFilter ?? '' }}" class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700">
+                <input type="date" name="fecha_filtro" value="{{ $fechaFilter ?? '' }}" class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] text-gray-700">
             </div>
-
             <div class="w-full md:w-1/4 flex gap-2">
-                <button type="submit" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded shadow transition">Filtrar</button>
+                <button type="submit" class="w-full bg-black hover:bg-gray-900 text-[#D4AF37] font-bold py-2 px-4 rounded shadow transition uppercase tracking-wider text-xs">Filtrar</button>
                 @if($search || isset($fechaFilter)) 
-                    <a href="{{ route('reservas.index', ['estado' => $estadoFilter]) }}" class="w-full text-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded shadow transition">Limpiar</a> 
+                    <a href="{{ route('reservas.index', ['estado' => $estadoFilter]) }}" class="w-full text-center bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded shadow transition uppercase tracking-wider text-xs flex items-center justify-center">Limpiar</a> 
                 @endif
             </div>
         </div>
     </form>
 
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-100">
         <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+            <thead class="bg-black">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha y Hora</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Empleado (Barbero)</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-bold text-[#D4AF37] uppercase tracking-wider">Fecha y Hora</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-bold text-[#D4AF37] uppercase tracking-wider">Cliente</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-bold text-[#D4AF37] uppercase tracking-wider">Empleado (Barbero)</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-bold text-[#D4AF37] uppercase tracking-wider">Total</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-bold text-[#D4AF37] uppercase tracking-wider">Estado</th>
+                    <th class="px-6 py-4 text-right text-[10px] font-bold text-[#D4AF37] uppercase tracking-wider">Acciones</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-white divide-y divide-gray-100">
                 @forelse($reservations as $reserva)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
@@ -77,19 +76,18 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $reserva->client->primer_nombre }} {{ $reserva->client->primer_apellido }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $reserva->employee->user->primer_nombre }} {{ $reserva->employee->user->primer_apellido }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ number_format($reserva->total, 0, ',', '.') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-semibold">${{ number_format($reserva->total, 0, ',', '.') }}</td>
                         
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            @if($reserva->estado == 'pendiente') <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-md bg-yellow-100 text-yellow-800 border border-yellow-200">Pendiente</span>
-                            @elseif($reserva->estado == 'confirmada') <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-md bg-blue-100 text-blue-800 border border-blue-200">Confirmada</span>
-                            @elseif($reserva->estado == 'completada') <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-md bg-green-100 text-green-800 border border-green-200">Completada</span>
-                            @elseif($reserva->estado == 'cancelada') <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-md bg-red-100 text-red-800 border border-red-200">Cancelada</span>
-                            @else <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-md bg-gray-200 text-gray-800 border border-gray-300">No Asistió</span>
+                            @if($reserva->estado == 'pendiente') <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-md bg-yellow-100 text-yellow-800 border border-yellow-200 shadow-sm">Pendiente</span>
+                            @elseif($reserva->estado == 'confirmada') <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-md bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">Confirmada</span>
+                            @elseif($reserva->estado == 'completada') <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-md bg-green-100 text-green-800 border border-green-200 shadow-sm">Completada</span>
+                            @elseif($reserva->estado == 'cancelada') <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-md bg-red-100 text-red-800 border border-red-200 shadow-sm">Cancelada</span>
+                            @else <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-md bg-gray-200 text-gray-800 border border-gray-300 shadow-sm">No Asistió</span>
                             @endif
                         </td>
                         
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end items-center space-x-2">
-                            
                             @php
                                 $fecha = \Carbon\Carbon::parse($reserva->fecha)->format('Y-m-d');
                                 $fechaHoraFin = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $fecha . ' ' . $reserva->hora_fin);
@@ -106,26 +104,27 @@
                             @endif
                             
                             @if(in_array($reserva->estado, ['pendiente', 'confirmada']))
-                                <a href="{{ route('reservas.edit', $reserva) }}" class="text-indigo-600 hover:text-indigo-900 bg-indigo-100 hover:bg-indigo-200 px-3 py-1 rounded transition">Editar</a>
+                                <a href="{{ route('reservas.edit', $reserva) }}" class="text-indigo-600 hover:text-indigo-900 bg-indigo-100 hover:bg-indigo-200 px-3 py-1 rounded shadow-sm font-semibold transition">Editar</a>
                             @endif
                             
                             @if(Auth::user()->role_id == 1)
                                 <form action="{{ route('reservas.destroy', $reserva) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas ELIMINAR esta reserva permanentemente?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded transition">Eliminar</button>
+                                    <button type="submit" class="text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded shadow-sm font-semibold transition">Eliminar</button>
                                 </form>
                             @endif
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="px-6 py-4 text-center text-gray-500 italic">No hay reservas con este filtro.</td></tr>
+                    <tr><td colspan="6" class="px-6 py-6 text-center text-gray-500 italic">No hay reservas con este filtro.</td></tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-    {{-- Paginación --}}
-    <div class="mt-4">
-        {{ $reservations->links() }}
-    </div>
+    @if($reservations->hasPages()) 
+        <div class="mt-6 bg-black rounded-lg shadow-md p-4 border border-gray-800">
+            {{ $reservations->appends(['search' => $search, 'estado' => $estadoFilter, 'fecha_filtro' => $fechaFilter ?? null])->links() }}
+        </div> 
+    @endif
 @endsection
