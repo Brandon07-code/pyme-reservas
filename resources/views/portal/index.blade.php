@@ -51,7 +51,7 @@
         @endif
     @endforeach
 
-   <!-- SECCIÓN DE PERFUMERÍA -->
+   <!-- <!-- SECCIÓN DE PERFUMERÍA -->
     <div class="mt-12">
         <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center"><span class="text-[#D4AF37] mr-3 text-4xl">✨</span> Perfumería Exclusiva</h2>
         
@@ -61,18 +61,13 @@
             </div>
         @endif
 
-        @if($errors->any())
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm">
-                <p class="font-bold">{{ $errors->first() }}</p>
-            </div>
-        @endif
-        
         @if($productos->isEmpty())
             <p class="text-gray-500">Próximamente catálogo de perfumería.</p>
         @else
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 @foreach($productos as $producto)
-                    <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden border border-gray-100 flex flex-col group">
+                    {{-- ANCLAJE EXACTO AL PRODUCTO --}}
+                    <div id="producto-{{ $producto->id }}" class="bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden border border-gray-100 flex flex-col group">
                         <div class="h-56 w-full bg-white relative p-4 border-b border-gray-50">
                             <img src="{{ $producto->imagen_url ? asset($producto->imagen_url) : 'https://via.placeholder.com/400x400/ffffff/000000?text=Perfume' }}" 
                                  alt="{{ $producto->nombre }}" class="w-full h-full object-contain drop-shadow-lg group-hover:scale-105 transition duration-300">
@@ -87,15 +82,21 @@
                             <h4 class="text-md font-bold text-gray-900 mb-2 leading-tight">{{ $producto->nombre }}</h4>
                             <span class="text-xl font-extrabold text-black mt-auto mb-4">${{ number_format($producto->precio, 0, ',', '.') }}</span>
                             
-                          
-                          @if($producto->stock_actual > 0)
-                                <form action="{{ route('portal.cart.add') }}" method="POST" class="mt-auto flex gap-2 form-agregar-carrito">
+                            {{-- Botón Agregar y Errores Individuales --}}
+                            @if($producto->stock_actual > 0)
+                                <form action="{{ route('portal.cart.add') }}" method="POST" class="mt-auto">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $producto->id }}">
-                                    <input type="number" name="cantidad" value="1" min="1" max="{{ min($producto->stock_actual, 20) }}" class="w-16 border-gray-300 rounded focus:ring-[#D4AF37] focus:border-[#D4AF37] text-center text-sm font-bold shadow-sm input-cantidad" oninput="validarStock(this)">
-                                    <button type="submit" class="flex-1 bg-black hover:bg-gray-800 text-[#D4AF37] font-bold py-2 rounded transition text-xs uppercase tracking-wider shadow btn-submit-carrito">
-                                        🛒 Añadir
-                                    </button>
+                                    <div class="flex gap-2">
+                                        <input type="number" name="cantidad" value="1" min="1" max="{{ min($producto->stock_actual, 20) }}" class="w-16 border-gray-300 rounded focus:ring-[#D4AF37] focus:border-[#D4AF37] text-center text-sm font-bold shadow-sm input-cantidad">
+                                        <button type="button" class="flex-1 bg-black hover:bg-gray-800 text-[#D4AF37] font-bold py-2 rounded transition text-xs uppercase tracking-wider shadow btn-submit-carrito">
+                                            🛒 Añadir
+                                        </button>
+                                    </div>
+                                    {{-- Mensaje de Error Exclusivo para este perfume --}}
+                                    @error('producto_'.$producto->id)
+                                        <p class="text-red-500 text-[10px] font-bold mt-2 leading-tight text-center">{{ $message }}</p>
+                                    @enderror
                                 </form>
                             @else
                                 <button disabled class="w-full mt-auto bg-gray-300 text-gray-500 font-bold py-2 rounded text-sm uppercase tracking-wider cursor-not-allowed">
@@ -109,18 +110,36 @@
         @endif
     </div>
 
-
-<script>
-        function validarStock(input) {
-            const maxStock = parseInt(input.getAttribute('max'));
-            const btn = input.closest('form').querySelector('.btn-submit-carrito');
+    <!-- CEREBRO JAVASCRIPT REFORZADO -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lógica para los inputs de cantidad
+            const inputsCantidad = document.querySelectorAll('.input-cantidad');
             
-            if (parseInt(input.value) > maxStock) {
-                input.value = maxStock; // Obliga visualmente al input a bajarse al máximo
-                // Podríamos agregar un texto rojo temporal aquí si se desea
-            } else if (parseInt(input.value) < 1 || isNaN(parseInt(input.value))) {
-                input.value = 1; // Nunca permitir 0 o vacíos
-            }
-        }
+            inputsCantidad.forEach(input => {
+                const btnSubmit = input.closest('form').querySelector('.btn-submit-carrito');
+                const maxStock = parseInt(input.getAttribute('max'));
+                
+                // Convertimos el botón a tipo "button" para interceptar el clic con JS
+                btnSubmit.addEventListener('click', function(e) {
+                    const cantidad = parseInt(input.value);
+                    
+                    if (isNaN(cantidad) || cantidad < 1) {
+                        alert("Por favor ingresa una cantidad válida.");
+                        input.value = 1;
+                        return;
+                    }
+                    
+                    if (cantidad > maxStock) {
+                        alert(`¡Atención! Solo tenemos ${maxStock} unidades en stock.`);
+                        input.value = maxStock;
+                        return; // Detiene el envío
+                    }
+
+                    // Si pasa las validaciones JS, enviamos el formulario
+                    input.closest('form').submit();
+                });
+            });
+        });
     </script>
 @endsection

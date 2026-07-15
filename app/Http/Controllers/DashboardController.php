@@ -32,7 +32,6 @@ class DashboardController extends Controller
         $citasHoy = (clone $queryActivas)->whereDate('fecha', $hoy)->count();
         $citasManana = (clone $queryActivas)->whereDate('fecha', $manana)->count();
 
-        // Variables exclusivas Admin
         $ingresosMes = 0;
         $clientesNuevos = 0;
         $inventarioCritico = collect();
@@ -40,8 +39,7 @@ class DashboardController extends Controller
         $topServicios = collect();
         $labelsGrafica = [];
         $datosGrafica = [];
-        
-        // NUEVO: Variable exclusiva Barbero (Rendimiento personal)
+        $donutData = [];
         $misCortesMes = 0;
 
         if ($esAdmin) {
@@ -61,12 +59,16 @@ class DashboardController extends Controller
                 $labelsGrafica[] = ucfirst($mes->translatedFormat('F'));
                 $datosGrafica[] = $ingresoMes;
             }
+
+            $donutData = [
+                Reservation::delMes($mesActual, $anioActual)->where('estado', 'pendiente')->count(),
+                Reservation::delMes($mesActual, $anioActual)->where('estado', 'confirmada')->count(),
+                Reservation::delMes($mesActual, $anioActual)->where('estado', 'completada')->count(),
+                Reservation::delMes($mesActual, $anioActual)->where('estado', 'cancelada')->count(),
+            ];
         } else {
             if ($usuario->employee) {
-                $misCortesMes = Reservation::where('employee_id', $usuario->employee->id)
-                                           ->completadas()
-                                           ->delMes($mesActual, $anioActual)
-                                           ->count();
+                $misCortesMes = Reservation::where('employee_id', $usuario->employee->id)->completadas()->delMes($mesActual, $anioActual)->count();
             }
         }
 
@@ -75,12 +77,14 @@ class DashboardController extends Controller
             $queryProximas->where('employee_id', $usuario->employee->id);
         }
         $proximasCitas = $queryProximas->get();
-$fechaMananaFmt = $manana->format('Y-m-d');
+
+        $fechaHoyFmt = $hoy->format('Y-m-d');
+        $fechaMananaFmt = $manana->format('Y-m-d');
 
         return view('dashboard.index', compact(
             'esAdmin', 'citasHoy', 'citasManana', 'ingresosMes', 'clientesNuevos', 
             'proximasCitas', 'inventarioCritico', 'topBarberos', 'topServicios', 
-            'labelsGrafica', 'datosGrafica', 'misCortesMes', 'fechaMananaFmt'
+            'labelsGrafica', 'datosGrafica', 'misCortesMes', 'fechaHoyFmt', 'fechaMananaFmt', 'donutData'
         ));
     }
 }

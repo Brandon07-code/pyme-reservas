@@ -9,7 +9,11 @@ use App\Models\ServiceCategory;
 use App\Models\Employee;
 use App\Models\Reservation;
 use App\Models\Schedule;
+use App\Models\Order;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Notifications\NuevaReservaNotification;
+use Illuminate\Support\Facades\Notification;
 
 class PortalController extends Controller
 {
@@ -140,12 +144,17 @@ class PortalController extends Controller
             ]);
         }
 
+        $admins = User::where('role_id', 1)->get();
+        Notification::send($admins, new NuevaReservaNotification($reserva));
+        
+        $barberoUser = User::find($reserva->employee->user_id);
+        if($barberoUser) {
+            $barberoUser->notify(new NuevaReservaNotification($reserva));
+        }
+
         return redirect()->route('portal.index')->with('success', '¡Tu cita ha sido agendada con éxito!');
     }
 
-    // ==========================================
-    // NUEVO: HISTORIAL Y CANCELACIÓN DEL CLIENTE
-    // ==========================================
     public function misCitas()
     {
         $clienteId = auth()->user()->client->id;
@@ -159,14 +168,12 @@ class PortalController extends Controller
         return view('portal.citas', compact('reservas'));
     }
 
-   public function cancelarCita(Reservation $reserva)
+    public function cancelarCita(Reservation $reserva)
     {
-        // 1. Seguridad: Verificar que la cita le pertenece al cliente logueado
         if ($reserva->client_id !== auth()->user()->client->id) {
             abort(403, 'No tienes permiso para cancelar esta cita.');
         }
 
-        // 2. Seguridad: Verificar que la cita está en el futuro (Fix Carbon)
         $fechaFmt = Carbon::parse($reserva->fecha)->format('Y-m-d');
         $fechaHoraInicio = Carbon::createFromFormat('Y-m-d H:i:s', $fechaFmt . ' ' . $reserva->hora_inicio);
         
@@ -174,14 +181,54 @@ class PortalController extends Controller
             return redirect()->back()->withErrors('No puedes cancelar una cita que ya pasó o está en curso.');
         }
 
-        // 3. Seguridad: Verificar que la cita esté activa
         if (in_array($reserva->estado, ['completada', 'cancelada', 'no_asistio'])) {
             return redirect()->back()->withErrors('Esta cita ya se encuentra cerrada en el sistema.');
         }
 
-        // Cancelamos
         $reserva->update(['estado' => 'cancelada']);
 
         return redirect()->back()->with('success', 'Tu cita ha sido cancelada correctamente. ¡Te esperamos pronto!');
+    }
+
+    // ==========================================
+    // NUEVO: HISTORIAL DE PEDIDOS (PICK-UP)
+    // ==========================================
+    public function misPedidos()
+    {
+        $clienteId = auth()->user()->client->id;
+        
+        // Cargar los pedidos con sus productos y paginarlos
+        $pedidos = Order::with('products')
+            ->where('client_id', $clienteId)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('portal.pedidos', compact('pedidos'));
+    }
+
+public function cancelarPedido(Order $order)
+    {
+        if ($order->client_id !== auth()->user()->client->id) {
+            abort(403, 'No tienes permiso para alterar este pedido.');
+        }
+
+        if (!in_array($order->estado, ['pendiente', 'pendiente_recogida'])) {
+            return redirect()->back()->withErrors('Este pedido ya fue entregado o cancelado previamente.');
+        }
+
+        foreach ($order->products as $producto) {
+            $producto->increment('stock_actual', $producto->pivot->cantidad);
+        }
+
+        $order->update(['estado' => 'cancelado']);
+
+        User::where('role_id', 1)->get()->each(function ($admin) use ($order) {
+            $admin->unreadNotifications
+                ->where('data.tipo', 'pedido')
+                ->where('data.pedido_id', $order->id)
+                ->each->markAsRead();
+        });
+
+        return redirect()->back()->with('success', 'Pedido cancelado. El inventario ha sido devuelto a la tienda.');
     }
 }

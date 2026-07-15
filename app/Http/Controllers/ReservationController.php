@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
+use Illuminate\Support\Facades\Gate; // <-- NUEVO: Importamos Gate para Laravel 11
 
 class ReservationController extends Controller
 {
@@ -17,7 +18,8 @@ class ReservationController extends Controller
     {
         $search = $request->get('search');
         $estadoFilter = $request->get('estado'); 
-        $fechaFilter = $request->get('fecha_filtro'); // NUEVO: Captura el filtro de fecha
+        $fechaFilter = $request->get('fecha_filtro');
+        $reservaIdFilter = $request->get('reserva_id');
 
         $usuario = auth()->user();
         $mesActual = Carbon::now()->month;
@@ -36,6 +38,10 @@ class ReservationController extends Controller
         // NUEVO: Aplica el filtro exacto por fecha en la consulta SQL
         if ($fechaFilter) {
             $query->whereDate('fecha', $fechaFilter);
+        }
+
+        if ($reservaIdFilter) {
+            $query->where('id', $reservaIdFilter);
         }
 
         $reservations = $query->latest('fecha')->latest('hora_inicio')->paginate(10);
@@ -57,7 +63,8 @@ class ReservationController extends Controller
 
     public function markAsCompleted(Reservation $reserva)
     {
-        $this->authorize('update', $reserva);
+        // 🔒 Laravel 11 Standard Policy check
+        Gate::authorize('update', $reserva);
 
         if (in_array($reserva->estado, ['completada', 'cancelada', 'no_asistio'])) {
             return redirect()->back()->withErrors('Esta reserva ya está cerrada.');
@@ -113,20 +120,23 @@ class ReservationController extends Controller
 
     public function edit(Reservation $reserva)
     {
-        $this->authorize('update', $reserva);
+        // 🔒 Laravel 11 Standard Policy check
+        Gate::authorize('update', $reserva);
         return view('reservations.edit', compact('reserva'));
     }
 
     public function update(UpdateReservationRequest $request, Reservation $reserva)
     {
-        $this->authorize('update', $reserva);
+        // 🔒 Laravel 11 Standard Policy check
+        Gate::authorize('update', $reserva);
         $reserva->update(['estado' => $request->estado]);
         return redirect()->route('reservas.index')->with('success', 'Estado de la reserva actualizado.');
     }
 
     public function destroy(Reservation $reserva)
     {
-        $this->authorize('delete', $reserva);
+        
+        Gate::authorize('delete', $reserva);
         $reserva->delete(); 
         return redirect()->route('reservas.index')->with('success', 'Reserva eliminada permanentemente del sistema.');
     }

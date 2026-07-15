@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->restrictOnDelete();
-            $table->enum('estado', ['pendiente_recogida', 'entregado', 'cancelado'])->default('pendiente_recogida');
+          $table->enum('estado', ['pendiente', 'pendiente_recogida', 'entregado', 'cancelado'])->default('pendiente');
             $table->decimal('total', 10, 2)->default(0.00);
             $table->timestamps();
         });

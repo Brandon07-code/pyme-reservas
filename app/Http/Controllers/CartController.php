@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
-
+    use App\Models\User;
+    use App\Notifications\NuevoPedidoNotification;
+    use Illuminate\Support\Facades\Notification;
 class CartController extends Controller
 {
     public function index()
@@ -21,21 +23,22 @@ class CartController extends Controller
         return view('portal.cart', compact('cart', 'total'));
     }
 
-    public function add(Request $request)
+   public function add(Request $request)
     {
         $producto = Product::findOrFail($request->product_id);
         $cantidadSolicitada = (int) $request->input('cantidad', 1);
+        $ancla = '#producto-' . $producto->id; // Anclaje exacto al producto
 
         if ($producto->estado == 0 || $producto->stock_actual <= 0) {
-            return redirect()->route('portal.index')->withErrors('El producto no está disponible en este momento.')->withFragment('seccion-perfumeria');
+            return redirect(url()->previous() . $ancla)->withErrors(['producto_'.$producto->id => 'El producto no está disponible.']);
         }
 
         if ($cantidadSolicitada > $producto->stock_actual) {
-            return redirect()->route('portal.index')->withErrors("Solo nos quedan {$producto->stock_actual} unidades de {$producto->nombre}.")->withFragment('seccion-perfumeria');
+            return redirect(url()->previous() . $ancla)->withErrors(['producto_'.$producto->id => "Solo quedan {$producto->stock_actual} unidades."]);
         }
 
         if ($cantidadSolicitada > 20) {
-            return redirect()->route('portal.index')->withErrors("El límite de reserva es de 20 unidades por pedido.")->withFragment('seccion-perfumeria');
+            return redirect(url()->previous() . $ancla)->withErrors(['producto_'.$producto->id => "Máximo 20 unidades por pedido."]);
         }
 
         $cart = session()->get('cart', []);
@@ -44,10 +47,10 @@ class CartController extends Controller
             $nuevaCantidad = $cart[$producto->id]['cantidad'] + $cantidadSolicitada;
             
             if ($nuevaCantidad > $producto->stock_actual) {
-                return redirect()->route('portal.index')->withErrors("Ya tienes {$cart[$producto->id]['cantidad']} en el carrito. Solo quedan {$producto->stock_actual} unidades en total.")->withFragment('seccion-perfumeria');
+                return redirect(url()->previous() . $ancla)->withErrors(['producto_'.$producto->id => "Ya tienes {$cart[$producto->id]['cantidad']} en el carrito. Stock total: {$producto->stock_actual}."]);
             }
             if ($nuevaCantidad > 20) {
-                return redirect()->route('portal.index')->withErrors("No puedes llevar más de 20 unidades del mismo producto.")->withFragment('seccion-perfumeria');
+                return redirect(url()->previous() . $ancla)->withErrors(['producto_'.$producto->id => "Máximo 20 unidades en total."]);
             }
             
             $cart[$producto->id]['cantidad'] = $nuevaCantidad;
@@ -64,8 +67,7 @@ class CartController extends Controller
 
         session()->put('cart', $cart);
 
-        // FIX: Forzamos la redirección exacta con el anclaje
-        return redirect()->route('portal.index')->with('success', "{$cantidadSolicitada}x {$producto->nombre} agregado al carrito.")->withFragment('seccion-perfumeria');
+        return redirect(url()->previous() . $ancla)->with('success', "{$cantidadSolicitada}x {$producto->nombre} añadido.");
     }
 
     public function remove(Request $request)
@@ -94,9 +96,9 @@ class CartController extends Controller
             $totalPedido = 0;
             $clienteId = auth()->user()->client->id;
 
-            $order = Order::create([
+        $order = Order::create([
                 'client_id' => $clienteId,
-                'estado' => 'pendiente_recogida',
+                'estado' => 'pendiente', 
                 'total' => 0 
             ]);
 
@@ -118,8 +120,14 @@ class CartController extends Controller
             }
 
             $order->update(['total' => $totalPedido]);
-
             session()->forget('cart');
+            
+            // ==========================================
+            // NUEVO: DISPARADOR DE NOTIFICACIONES (SOLO ADMIN)
+            // ==========================================
+            $admins = User::where('role_id', 1)->get();
+            Notification::send($admins, new NuevoPedidoNotification($order));
+
             DB::commit();
 
             return redirect()->route('portal.index')->with('success', '¡Pedido confirmado! Hemos separado tus productos. Recuerda que tienes 24 horas para recogerlos y pagarlos en la barbería.');

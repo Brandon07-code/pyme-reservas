@@ -5,19 +5,23 @@
 @section('content')
     <x-page-header title="Recepción de Pedidos (Tienda)" createRoute="" buttonText="" />
 
-    {{-- Tarjetas KPI JyM Style --}}
+    {{-- Tarjetas KPI JyM Style (Ahora son 4 columnas) --}}
     <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-widest">Resumen de Tienda (Filtros)</p>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <a href="{{ route('orders.index') }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 border-b-4 border-gray-600 hover:bg-black transition cursor-pointer {{ !$estadoFilter ? 'ring-2 ring-gray-400' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Pedidos</h3>
             <p class="text-3xl font-extrabold text-white">{{ $total }}</p>
         </a>
+        <a href="{{ route('orders.index', ['estado' => 'pendiente']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 border-b-4 border-blue-500 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'pendiente' ? 'ring-2 ring-blue-400' : '' }}">
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Nuevos (Empacar)</h3>
+            <p class="text-3xl font-extrabold text-blue-500">{{ $nuevos }}</p>
+        </a>
         <a href="{{ route('orders.index', ['estado' => 'pendiente_recogida']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 border-b-4 border-yellow-500 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'pendiente_recogida' ? 'ring-2 ring-yellow-400' : '' }}">
-            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Por Recoger (Pendientes)</h3>
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Por Recoger (Caja)</h3>
             <p class="text-3xl font-extrabold text-yellow-500">{{ $pendientes }}</p>
         </a>
         <a href="{{ route('orders.index', ['estado' => 'entregado']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 border-b-4 border-green-500 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'entregado' ? 'ring-2 ring-green-400' : '' }}">
-            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Entregados / Pagados</h3>
+            <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Entregados</h3>
             <p class="text-3xl font-extrabold text-green-500">{{ $entregados }}</p>
         </a>
     </div>
@@ -44,9 +48,12 @@
                         <div>
                             <div class="flex justify-between items-start mb-4">
                                 <h4 class="text-xs text-gray-500 font-bold uppercase tracking-widest">Productos Solicitados</h4>
-                                @if($pedido->estado == 'pendiente_recogida') <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-bold text-[10px] uppercase shadow-sm">Pendiente</span>
-                                @elseif($pedido->estado == 'entregado') <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full font-bold text-[10px] uppercase shadow-sm">Entregado</span>
-                                @else <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full font-bold text-[10px] uppercase shadow-sm">Cancelado</span>
+                                
+                                {{-- Badges de Estado Mejorados --}}
+                                @if($pedido->estado == 'pendiente') <span class="bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1 rounded-full font-bold text-[10px] uppercase shadow-sm animate-pulse">¡NUEVO! Por Empacar</span>
+                                @elseif($pedido->estado == 'pendiente_recogida') <span class="bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-1 rounded-full font-bold text-[10px] uppercase shadow-sm">Listo en Caja</span>
+                                @elseif($pedido->estado == 'entregado') <span class="bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-full font-bold text-[10px] uppercase shadow-sm">Entregado</span>
+                                @else <span class="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full font-bold text-[10px] uppercase shadow-sm">Cancelado</span>
                                 @endif
                             </div>
                             
@@ -61,31 +68,43 @@
                         </div>
 
                         {{-- Total y Botones de Acción --}}
-                        <div class="mt-6 pt-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
-                            <div>
-                                <span class="text-[10px] font-bold uppercase text-gray-400 mr-2">Total a Cobrar:</span>
-                                <span class="text-2xl font-extrabold text-black">${{ number_format($pedido->total, 0, ',', '.') }}</span>
-                            </div>
-                            
-                            @if($pedido->estado == 'pendiente_recogida')
-                                <div class="flex gap-2 w-full sm:w-auto">
-                                    <form action="{{ route('orders.update', $pedido) }}" method="POST" onsubmit="return confirm('¿El cliente ya pagó y recogió el pedido?');" class="w-full sm:w-auto">
-                                        @csrf @method('PUT')
-                                        <input type="hidden" name="estado" value="entregado">
-                                        <button type="submit" class="w-full bg-[#0f172a] hover:bg-black text-[#D4AF37] font-bold py-2 px-6 rounded text-xs uppercase tracking-widest shadow transition">✔ Entregar</button>
-                                    </form>
-                                    
-                                    <form action="{{ route('orders.update', $pedido) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas cancelar? El stock volverá a la vitrina.');" class="w-full sm:w-auto">
-                                        @csrf @method('PUT')
-                                        <input type="hidden" name="estado" value="cancelado">
-                                        <button type="submit" class="w-full bg-red-100 hover:bg-red-600 text-red-600 hover:text-white font-bold py-2 px-6 rounded text-xs uppercase tracking-widest shadow transition border border-red-200">Cancelar</button>
-                                    </form>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
+                        <div class="flex gap-2 w-full sm:w-auto">
+    
+    {{-- 1. Si está RECIÉN COMPRADO ('pendiente'), el admin debe EMPACAR --}}
+    @if($pedido->estado == 'pendiente')
+        <form action="{{ route('orders.update', $pedido) }}" method="POST">
+            @csrf @method('PUT')
+            <input type="hidden" name="estado" value="pendiente_recogida">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded text-xs uppercase tracking-widest shadow transition">
+                📦 EMPACAR
+            </button>
+        </form>
+    @endif
 
-                </div>
+    {{-- 2. Si ya lo empacó ('pendiente_recogida'), el admin cobra y ENTREGA --}}
+    @if($pedido->estado == 'pendiente_recogida')
+        <form action="{{ route('orders.update', $pedido) }}" method="POST" onsubmit="return confirm('¿El cliente ya pagó y recogió el pedido?');">
+            @csrf @method('PUT')
+            <input type="hidden" name="estado" value="entregado">
+            <button type="submit" class="bg-[#0f172a] hover:bg-black text-white font-bold py-2 px-6 rounded text-xs uppercase tracking-widest shadow transition flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#D4AF37]" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                ENTREGAR
+            </button>
+        </form>
+    @endif
+
+    {{-- 3. Botón de CANCELAR (Solo visible si no se ha entregado) --}}
+    @if(in_array($pedido->estado, ['pendiente', 'pendiente_recogida']))
+        <form action="{{ route('orders.update', $pedido) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas cancelar? El stock volverá a la vitrina.');">
+            @csrf @method('PUT')
+            <input type="hidden" name="estado" value="cancelado">
+            <button type="submit" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-bold py-2 px-6 rounded text-xs uppercase tracking-widest shadow transition border border-red-200">
+                CANCELAR
+            </button>
+        </form>
+    @endif
+
+</div>
             @endforeach
         </div>
         

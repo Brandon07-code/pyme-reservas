@@ -10,16 +10,22 @@ class ClientController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
-        
-        // Scope de búsqueda
-        $clients = Client::search($search)->latest()->paginate(10);
+        $nuevosMes = $request->boolean('nuevos_mes');
 
-        // Tarjetas de Estadísticas
+        $query = Client::search($search)->latest();
+
+        if ($nuevosMes) {
+            $query->whereMonth('created_at', now()->month)
+                  ->whereYear('created_at', now()->year);
+        }
+
+        $clients = $query->paginate(10);
+
         $totalClients = Client::count();
         $activeClients = Client::where('estado', 1)->count();
         $inactiveClients = Client::where('estado', 0)->count();
 
-        return view('clients.index', compact('clients', 'search', 'totalClients', 'activeClients', 'inactiveClients'));
+        return view('clients.index', compact('clients', 'search', 'nuevosMes', 'totalClients', 'activeClients', 'inactiveClients'));
     }
 
     public function create()
