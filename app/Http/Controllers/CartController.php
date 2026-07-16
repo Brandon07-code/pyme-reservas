@@ -123,7 +123,6 @@ class CartController extends Controller
             session()->forget('cart');
             
             // ==========================================
-            // NUEVO: DISPARADOR DE NOTIFICACIONES (SOLO ADMIN)
             // ==========================================
             $admins = User::where('role_id', 1)->get();
             Notification::send($admins, new NuevoPedidoNotification($order));

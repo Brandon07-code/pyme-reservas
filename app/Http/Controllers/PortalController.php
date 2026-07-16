@@ -191,7 +191,6 @@ class PortalController extends Controller
     }
 
     // ==========================================
-    // NUEVO: HISTORIAL DE PEDIDOS (PICK-UP)
     // ==========================================
     public function misPedidos()
     {

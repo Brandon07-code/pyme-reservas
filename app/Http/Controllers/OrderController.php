@@ -26,7 +26,7 @@ class OrderController extends Controller
 
         // Estadísticas rápidas para las 4 Tarjetas
         $total = Order::count();
-        $nuevos = Order::where('estado', 'pendiente')->count(); // NUEVO ESTADO
+        $nuevos = Order::where('estado', 'pendiente')->count();
         $pendientes = Order::where('estado', 'pendiente_recogida')->count();
         $entregados = Order::where('estado', 'entregado')->count();
 

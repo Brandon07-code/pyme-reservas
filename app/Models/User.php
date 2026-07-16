@@ -48,7 +48,6 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Employee::class);
     }
 
-    // NUEVO: La relación que une al usuario con su cuenta de cliente (Portal)
     public function client(): HasOne
     {
         return $this->hasOne(Client::class);

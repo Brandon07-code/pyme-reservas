@@ -35,7 +35,6 @@ class ReservationController extends Controller
             $query->where('estado', $estadoFilter);
         }
 
-        // NUEVO: Aplica el filtro exacto por fecha en la consulta SQL
         if ($fechaFilter) {
             $query->whereDate('fecha', $fechaFilter);
         }
@@ -57,7 +56,6 @@ class ReservationController extends Controller
         $completadas = (clone $statQuery)->where('estado', 'completada')->count();
         $canceladas = (clone $statQuery)->where('estado', 'cancelada')->count();
 
-        // NUEVO: Pasamos $fechaFilter a la vista para mantener el input lleno
         return view('reservations.index', compact('reservations', 'search', 'estadoFilter', 'fechaFilter', 'total', 'pendientes', 'confirmadas', 'completadas', 'canceladas'));
     }
 
