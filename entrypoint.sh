@@ -24,18 +24,18 @@ php artisan storage:link --force || true
 echo "Ejecutando migraciones de base de datos..."
 php artisan migrate --force
 
-# Poblar la base de datos solo en el primer despliegue (si no hay usuarios)
+# Iniciar PHP-FPM en segundo plano
+php-fpm -D
+
+# Poblar la base de datos en SEGUNDO PLANO si está vacía (primer despliegue)
 USER_COUNT=$(php artisan tinker --execute="echo \App\Models\User::count();" 2>/dev/null | grep -E '^[0-9]+$' | head -1)
 if [ "$USER_COUNT" = "0" ] || [ -z "$USER_COUNT" ]; then
-    echo "Base de datos vacia detectada. Poblando con datos iniciales..."
-    php artisan db:seed --force
+    echo "Base de datos vacia. Poblando datos en segundo plano..."
+    php artisan db:seed --force &
 else
     echo "Base de datos ya tiene $USER_COUNT usuarios. Omitiendo seeders."
 fi
 
-# Iniciar PHP-FPM en segundo plano
-php-fpm -D
-
-# Arrancar el servidor web Nginx en primer plano
+# Arrancar Nginx EN PRIMER PLANO (esto abre el puerto 80 para que Render lo detecte)
 echo "Iniciando Nginx..."
 nginx -g 'daemon off;'
