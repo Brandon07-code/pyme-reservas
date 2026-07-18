@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
     
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
         
+        Route::get('/reservas/export-pdf', [ReservationController::class, 'exportPdf'])->name('reservas.export-pdf');
         Route::patch('/reservas/{reserva}/completar', [ReservationController::class, 'markAsCompleted'])->name('reservas.completar');
         Route::resource('reservas', ReservationController::class);
 

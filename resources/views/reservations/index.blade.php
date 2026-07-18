@@ -58,7 +58,13 @@
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Hasta</label>
                 <input type="date" name="fecha_fin" value="{{ request('fecha_fin') }}" class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] text-gray-700">
             </div>
-            <div class="md:col-span-5 flex justify-end gap-2 mt-2">
+            <div class="md:col-span-5 flex flex-wrap justify-end gap-2 mt-2">
+                <a href="{{ route('reservas.export-pdf', request()->query()) }}" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded shadow transition uppercase tracking-wider text-xs flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Exportar PDF
+                </a>
                 <button type="submit" class="bg-black hover:bg-gray-900 text-[#D4AF37] font-bold py-2 px-6 rounded shadow transition uppercase tracking-wider text-xs">Filtrar</button>
                 <a href="{{ route('reservas.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded shadow transition uppercase tracking-wider text-xs flex items-center justify-center">Limpiar</a> 
             </div>

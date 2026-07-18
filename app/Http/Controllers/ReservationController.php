@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateReservationRequest;
 use Illuminate\Support\Facades\Gate; // <-- NUEVO: Importamos Gate para Laravel 11
 use App\Events\ReservationCreated;
 use App\Events\ReservationUpdated;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReservationController extends Controller
 {
@@ -58,6 +59,33 @@ class ReservationController extends Controller
         $canceladas = (clone $statQuery)->where('estado', 'cancelada')->count();
 
         return view('reservations.index', compact('reservations', 'search', 'estadoFilter', 'fechaInicio', 'fechaFin', 'total', 'pendientes', 'confirmadas', 'completadas', 'canceladas'));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        ini_set('max_execution_time', 300); // 5 minutos para DomPDF
+        
+        $search = $request->get('search');
+        $estadoFilter = $request->get('estado'); 
+        $fechaInicio = $request->get('fecha_inicio');
+        $fechaFin = $request->get('fecha_fin');
+        $usuario = auth()->user();
+
+        $query = Reservation::with(['client', 'employee.user']);
+
+        $query->buscar($search)
+              ->filtrarEstado($estadoFilter)
+              ->fechas($fechaInicio, $fechaFin);
+
+        if ($usuario->role_id == 2 && $usuario->employee) {
+            $query->where('employee_id', $usuario->employee->id);
+        }
+
+        $reservations = $query->latest('fecha')->latest('hora_inicio')->get();
+
+        $pdf = Pdf::loadView('pdf.reservas', compact('reservations'));
+        
+        return $pdf->download('reporte-citas-jym-' . date('Y-m-d') . '.pdf');
     }
 
     public function markAsCompleted(Reservation $reserva)
