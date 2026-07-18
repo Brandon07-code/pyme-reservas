@@ -14,6 +14,8 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Notifications\NuevaReservaNotification;
 use Illuminate\Support\Facades\Notification;
+use App\Events\ReservationCreated;
+use App\Events\ReservationUpdated;
 
 class PortalController extends Controller
 {
@@ -147,6 +149,8 @@ class PortalController extends Controller
         $admins = User::where('role_id', 1)->get();
         Notification::send($admins, new NuevaReservaNotification($reserva));
         
+        event(new ReservationCreated($reserva));
+        
         $barberoUser = User::find($reserva->employee->user_id);
         if($barberoUser) {
             $barberoUser->notify(new NuevaReservaNotification($reserva));
@@ -186,6 +190,7 @@ class PortalController extends Controller
         }
 
         $reserva->update(['estado' => 'cancelada']);
+        event(new ReservationUpdated($reserva));
 
         return redirect()->back()->with('success', 'Tu cita ha sido cancelada correctamente. ¡Te esperamos pronto!');
     }

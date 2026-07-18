@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
 use Illuminate\Support\Facades\Gate; // <-- NUEVO: Importamos Gate para Laravel 11
+use App\Events\ReservationCreated;
+use App\Events\ReservationUpdated;
 
 class ReservationController extends Controller
 {
@@ -75,6 +77,8 @@ class ReservationController extends Controller
         }
 
         $reserva->update(['estado' => 'completada']);
+        event(new ReservationUpdated($reserva));
+        
         return redirect()->back()->with('success', '¡Cita marcada como completada exitosamente!');
     }
 
@@ -112,6 +116,8 @@ class ReservationController extends Controller
             ]);
         }
 
+        event(new ReservationCreated($reserva));
+
         return redirect()->route('reservas.index')->with('success', 'Reserva agendada correctamente.');
     }
 
@@ -127,6 +133,8 @@ class ReservationController extends Controller
         // 🔒 Laravel 11 Standard Policy check
         Gate::authorize('update', $reserva);
         $reserva->update(['estado' => $request->estado]);
+        event(new ReservationUpdated($reserva));
+        
         return redirect()->route('reservas.index')->with('success', 'Estado de la reserva actualizado.');
     }
 
