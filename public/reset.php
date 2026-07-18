@@ -3,7 +3,7 @@
 // Se ejecuta en segundo plano para evitar el timeout de 100 segundos de Render
 
 $logFile = '/tmp/seeder.log';
-$command = 'cd /var/www/html && php artisan migrate:fresh --seed > ' . $logFile . ' 2>&1 &';
+$command = 'cd /var/www/html && php artisan migrate:fresh --force > /tmp/seeder.log 2>&1 && php artisan db:seed --force >> /tmp/seeder.log 2>&1 &';
 
 exec($command);
 
