@@ -18,32 +18,31 @@ class ReservationController extends Controller
     {
         $search = $request->get('search');
         $estadoFilter = $request->get('estado'); 
-        $fechaFilter = $request->get('fecha_filtro');
+        $fechaInicio = $request->get('fecha_inicio');
+        $fechaFin = $request->get('fecha_fin');
         $reservaIdFilter = $request->get('reserva_id');
 
         $usuario = auth()->user();
         $mesActual = Carbon::now()->month;
         $anioActual = Carbon::now()->year;
         
-        $query = Reservation::with(['client', 'employee.user'])->search($search);
+        $query = Reservation::with(['client', 'employee.user']);
 
+        // Aplicar filtros de la Guía 2
+        $query->buscar($search)
+              ->filtrarEstado($estadoFilter)
+              ->fechas($fechaInicio, $fechaFin);
+
+        // Lógica de acceso para el empleado
         if ($usuario->role_id == 2 && $usuario->employee) {
             $query->where('employee_id', $usuario->employee->id);
-        }
-
-        if ($estadoFilter) {
-            $query->where('estado', $estadoFilter);
-        }
-
-        if ($fechaFilter) {
-            $query->whereDate('fecha', $fechaFilter);
         }
 
         if ($reservaIdFilter) {
             $query->where('id', $reservaIdFilter);
         }
 
-        $reservations = $query->latest('fecha')->latest('hora_inicio')->paginate(10);
+        $reservations = $query->latest('fecha')->latest('hora_inicio')->paginate(10)->appends(request()->query());
 
         $statQuery = Reservation::delMes($mesActual, $anioActual);
         if ($usuario->role_id == 2 && $usuario->employee) {
@@ -56,7 +55,7 @@ class ReservationController extends Controller
         $completadas = (clone $statQuery)->where('estado', 'completada')->count();
         $canceladas = (clone $statQuery)->where('estado', 'cancelada')->count();
 
-        return view('reservations.index', compact('reservations', 'search', 'estadoFilter', 'fechaFilter', 'total', 'pendientes', 'confirmadas', 'completadas', 'canceladas'));
+        return view('reservations.index', compact('reservations', 'search', 'estadoFilter', 'fechaInicio', 'fechaFin', 'total', 'pendientes', 'confirmadas', 'completadas', 'canceladas'));
     }
 
     public function markAsCompleted(Reservation $reserva)

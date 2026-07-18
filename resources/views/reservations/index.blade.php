@@ -33,24 +33,34 @@
     @if(session('success')) <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm"><p class="font-bold">{{ session('success') }}</p></div> @endif
     @if($errors->any()) <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm"><p class="font-bold">{{ $errors->first() }}</p></div> @endif
 
-    {{-- Filtro de Búsqueda --}}
+    {{-- Filtro de Búsqueda Avanzada (Guía 2) --}}
     <form method="GET" action="{{ route('reservas.index') }}" class="mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-        @if($estadoFilter) <input type="hidden" name="estado" value="{{ $estadoFilter }}"> @endif
-        
-        <div class="flex flex-col md:flex-row gap-4 items-end">
-            <div class="w-full md:w-1/2">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+            <div class="md:col-span-2">
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Buscar Cliente o Barbero</label>
-                <input type="text" name="search" value="{{ $search }}" placeholder="Ej. Juan Pérez..." class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Ej. Juan Pérez..." class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
             </div>
-            <div class="w-full md:w-1/4">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Filtrar por Día</label>
-                <input type="date" name="fecha_filtro" value="{{ $fechaFilter ?? '' }}" class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] text-gray-700">
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Estado</label>
+                <select name="estado" class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
+                    <option value="">Todos</option>
+                    <option value="pendiente" {{ request('estado') == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                    <option value="confirmada" {{ request('estado') == 'confirmada' ? 'selected' : '' }}>Confirmada</option>
+                    <option value="completada" {{ request('estado') == 'completada' ? 'selected' : '' }}>Completada</option>
+                    <option value="cancelada" {{ request('estado') == 'cancelada' ? 'selected' : '' }}>Cancelada</option>
+                </select>
             </div>
-            <div class="w-full md:w-1/4 flex gap-2">
-                <button type="submit" class="w-full bg-black hover:bg-gray-900 text-[#D4AF37] font-bold py-2 px-4 rounded shadow transition uppercase tracking-wider text-xs">Filtrar</button>
-                @if($search || isset($fechaFilter)) 
-                    <a href="{{ route('reservas.index', ['estado' => $estadoFilter]) }}" class="w-full text-center bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded shadow transition uppercase tracking-wider text-xs flex items-center justify-center">Limpiar</a> 
-                @endif
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Desde</label>
+                <input type="date" name="fecha_inicio" value="{{ request('fecha_inicio') }}" class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] text-gray-700">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Hasta</label>
+                <input type="date" name="fecha_fin" value="{{ request('fecha_fin') }}" class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] text-gray-700">
+            </div>
+            <div class="md:col-span-5 flex justify-end gap-2 mt-2">
+                <button type="submit" class="bg-black hover:bg-gray-900 text-[#D4AF37] font-bold py-2 px-6 rounded shadow transition uppercase tracking-wider text-xs">Filtrar</button>
+                <a href="{{ route('reservas.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded shadow transition uppercase tracking-wider text-xs flex items-center justify-center">Limpiar</a> 
             </div>
         </div>
     </form>
@@ -135,7 +145,7 @@
 
     @if($reservations->hasPages()) 
         <div class="mt-6 bg-black rounded-lg shadow-md p-4 border border-gray-800">
-            {{ $reservations->appends(['search' => $search, 'estado' => $estadoFilter, 'fecha_filtro' => $fechaFilter ?? null])->links() }}
+            {{ $reservations->links() }}
         </div> 
     @endif
 @endsection

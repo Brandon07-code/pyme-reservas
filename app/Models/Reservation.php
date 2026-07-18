@@ -34,19 +34,41 @@ class Reservation extends Model
                     ->withPivot('precio_historico', 'duracion_historica', 'observaciones')
                     ->withTimestamps();
     }
-      public function scopeSearch($query, $term)
+    public function scopeBuscar($query, $term)
     {
-        if ($term) {
-            return $query->whereHas('client', function ($q) use ($term) {
-                $q->where('primer_nombre', 'like', "%{$term}%")
-                  ->orWhere('primer_apellido', 'like', "%{$term}%");
-            })->orWhereHas('employee.user', function ($q) use ($term) {
-                $q->where('primer_nombre', 'like', "%{$term}%")
-                  ->orWhere('primer_apellido', 'like', "%{$term}%");
-            });
+        if (empty($term)) return $query;
+        return $query->whereHas('client', function ($q) use ($term) {
+            $q->where('primer_nombre', 'like', "%{$term}%")
+              ->orWhere('primer_apellido', 'like', "%{$term}%");
+        })->orWhereHas('employee.user', function ($q) use ($term) {
+            $q->where('primer_nombre', 'like', "%{$term}%")
+              ->orWhere('primer_apellido', 'like', "%{$term}%");
+        });
+    }
+
+    public function scopeFiltrarEstado($query, $estado)
+    {
+        if (empty($estado)) return $query;
+        return $query->where('estado', $estado);
+    }
+
+    public function scopeFechas($query, $fechaInicio, $fechaFin)
+    {
+        if (!empty($fechaInicio)) {
+            $query->whereDate('fecha', '>=', $fechaInicio);
+        }
+        if (!empty($fechaFin)) {
+            $query->whereDate('fecha', '<=', $fechaFin);
         }
         return $query;
     }
+
+    // Scopes originales que ya usábamos para los KPIs
+    public function scopeSearch($query, $term)
+    {
+        return $this->scopeBuscar($query, $term);
+    }
+
     public function scopeCompletadas($query)
     {
         return $query->where('estado', 'completada');
