@@ -34,6 +34,16 @@
     <!-- Gradient Glow -->
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#D4AF37] opacity-5 rounded-full blur-[120px] z-0 pointer-events-none"></div>
 
+    <!-- Small Admin Login Link at the top -->
+    <div class="absolute top-6 right-6 z-20 opacity-0 animate-fade-in-up">
+        <a href="{{ route('login') }}" class="text-[10px] font-bold text-gray-500 hover:text-[#D4AF37] uppercase tracking-widest transition-colors flex items-center border border-gray-800 rounded-full px-3 py-1 bg-black/50 backdrop-blur-sm hover:border-[#D4AF37]/50">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+            </svg>
+            Acceso Administrativo
+        </a>
+    </div>
+
     <main class="flex-grow flex flex-col items-center justify-center relative z-10 px-4 text-center">
         <!-- Logo Icon -->
         <div class="mb-6 opacity-0 animate-fade-in-up">
@@ -63,7 +73,7 @@
             </a>
 
             <a href="{{ route('login') }}" class="px-8 py-4 bg-[#0A0A0A] border border-[#D4AF37] rounded-full text-[#D4AF37] font-extrabold uppercase tracking-wider text-sm transition-all hover:bg-[#D4AF37]/10 hover:shadow-[0_0_20px_rgba(212,175,55,0.2)] hover:scale-105 flex items-center justify-center">
-                Acceso Administrativo
+                Acceso Clientes
             </a>
         </div>
     </main>
