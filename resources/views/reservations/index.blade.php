@@ -8,7 +8,7 @@
     {{-- Tarjetas KPI (NEGRO PURO, ALTO CONTRASTE) --}}
     <p class="text-xs text-gray-400 mb-2 font-bold uppercase tracking-widest">Resumen del Mes (Clic para filtrar)</p>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-        <a href="{{ route('reservas.index') }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ !$estadoFilter ? 'ring-2 ring-gray-400' : '' }}">
+        <a href="{{ route('reservas.index') }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total (Mes)</h3>
             <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $total }}</p>
         </a>

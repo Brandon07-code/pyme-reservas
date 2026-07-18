@@ -8,21 +8,21 @@
     {{-- Tarjetas KPI JyM Style (Ahora son 4 columnas) --}}
     <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-widest">Resumen de Tienda (Filtros)</p>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <a href="{{ route('orders.index') }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 border-b-4 border-gray-600 hover:bg-black transition cursor-pointer {{ !$estadoFilter ? 'ring-2 ring-gray-400' : '' }}">
+        <a href="{{ route('orders.index') }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ !$estadoFilter ? 'ring-2 ring-[#D4AF37]' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Pedidos</h3>
-            <p class="text-3xl font-extrabold text-white">{{ $total }}</p>
+            <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $total }}</p>
         </a>
-        <a href="{{ route('orders.index', ['estado' => 'pendiente']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 border-b-4 border-blue-500 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'pendiente' ? 'ring-2 ring-blue-400' : '' }}">
+        <a href="{{ route('orders.index', ['estado' => 'pendiente']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'pendiente' ? 'ring-2 ring-[#D4AF37]' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Nuevos (Empacar)</h3>
-            <p class="text-3xl font-extrabold text-blue-500">{{ $nuevos }}</p>
+            <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $nuevos }}</p>
         </a>
-        <a href="{{ route('orders.index', ['estado' => 'pendiente_recogida']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 border-b-4 border-yellow-500 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'pendiente_recogida' ? 'ring-2 ring-yellow-400' : '' }}">
+        <a href="{{ route('orders.index', ['estado' => 'pendiente_recogida']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'pendiente_recogida' ? 'ring-2 ring-[#D4AF37]' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Por Recoger (Caja)</h3>
-            <p class="text-3xl font-extrabold text-yellow-500">{{ $pendientes }}</p>
+            <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $pendientes }}</p>
         </a>
-        <a href="{{ route('orders.index', ['estado' => 'entregado']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 border-b-4 border-green-500 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'entregado' ? 'ring-2 ring-green-400' : '' }}">
+        <a href="{{ route('orders.index', ['estado' => 'entregado']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'entregado' ? 'ring-2 ring-[#D4AF37]' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Entregados</h3>
-            <p class="text-3xl font-extrabold text-green-500">{{ $entregados }}</p>
+            <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $entregados }}</p>
         </a>
     </div>
 
