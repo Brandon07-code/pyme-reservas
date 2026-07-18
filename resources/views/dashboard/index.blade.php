@@ -15,12 +15,12 @@
     {{-- FILA 1: TARJETAS KPI (DISEÑO CLEAN PREMIUM) --}}
     <div class="grid grid-cols-2 {{ $esAdmin ? 'md:grid-cols-4' : 'md:grid-cols-3' }} gap-4 mb-8">
         
-        <a href="{{ route('reservas.index', ['fecha_filtro' => $fechaHoyFmt]) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer group">
+        <a href="{{ route('reservas.index', ['fecha_inicio' => $fechaHoyFmt, 'fecha_fin' => $fechaHoyFmt]) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer group">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2 group-hover:text-white transition">Citas Restantes Hoy &rarr;</h3>
             <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $citasHoy }}</p>
         </a>
 
-          <a href="{{ route('reservas.index', ['fecha_filtro' => $fechaMananaFmt]) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer group">
+          <a href="{{ route('reservas.index', ['fecha_inicio' => $fechaMananaFmt, 'fecha_fin' => $fechaMananaFmt]) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer group">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2 group-hover:text-white transition">Agenda Mañana &rarr;</h3>
             <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $citasManana }} Citas</p>
         </a>
