@@ -37,7 +37,10 @@
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col md:flex-row hover:shadow-md transition">
                     
                     {{-- Bloque Info Cliente --}}
-                    <div class="bg-gray-50 p-6 md:w-1/3 border-b md:border-b-0 md:border-r border-gray-200 flex flex-col justify-center">
+                    <div class="bg-gray-50 p-6 md:w-1/3 border-b md:border-b-0 md:border-r border-gray-200 flex flex-col justify-center relative">
+                        @if($pedido->client->user && $pedido->client->user->avatar)
+                            <img src="{{ $pedido->client->user->avatar_url }}" alt="Avatar" class="w-12 h-12 rounded-full object-cover border-2 border-[#D4AF37] absolute top-4 right-4 shadow-sm">
+                        @endif
                         <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{{ $pedido->created_at->format('d/m/Y h:i A') }}</p>
                         <h3 class="text-lg font-bold text-gray-900">{{ $pedido->client->primer_nombre }} {{ $pedido->client->primer_apellido }}</h3>
                         <p class="text-sm text-indigo-600 font-semibold mt-1">📞 {{ $pedido->client->telefono }}</p>

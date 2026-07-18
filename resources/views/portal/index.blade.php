@@ -78,7 +78,7 @@
                             @endif
                         </div>
                         <div class="p-4 flex-1 flex flex-col bg-gray-50">
-                            <p class="text-[10px] text-[#D4AF37] font-bold uppercase tracking-wider mb-1">{{ $producto->marca ?? 'Contratipo' }}</p>
+                            <p class="text-[10px] text-[#D4AF37] font-bold uppercase tracking-wider mb-1">Inspiración {{ $producto->marca ?? 'Contratipo' }}</p>
                             <h4 class="text-md font-bold text-gray-900 mb-2 leading-tight">{{ $producto->nombre }}</h4>
                             <span class="text-xl font-extrabold text-black mt-auto mb-4">${{ number_format($producto->precio, 0, ',', '.') }}</span>
                             

@@ -22,6 +22,9 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'password',
         'estado',
+        'telefono',
+        'direccion',
+        'avatar',
     ];
 
     protected $hidden = [
@@ -61,6 +64,11 @@ class User extends Authenticatable implements JWTSubject
                          ->orWhere('email', 'like', "%{$term}%");
         }
         return $query;
+    }
+    
+    public function getAvatarUrlAttribute()
+    {
+        return $this->avatar ? asset('storage/' . $this->avatar) : null;
     }
     
     // --- MÉTODOS REQUERIDOS POR JWT ---

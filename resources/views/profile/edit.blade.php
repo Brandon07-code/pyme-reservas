@@ -25,7 +25,7 @@
         {{-- TARJETA 1: Actualizar Información --}}
         <div class="bg-white shadow-md rounded-lg p-8 border {{ Auth::user()->role_id == 3 ? 'border-[#D4AF37]/30' : 'border-gray-200' }}">
             <h2 class="text-xl font-bold text-gray-800 border-b pb-2 mb-4">Información Personal</h2>
-            <form method="post" action="{{ route('profile.update') }}" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @csrf
                 @method('patch')
 
@@ -47,6 +47,29 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
                     <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="w-full border-gray-300 rounded-md border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
                     @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                    <input type="text" name="telefono" value="{{ old('telefono', $user->telefono) }}" class="w-full border-gray-300 rounded-md border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
+                    @error('telefono') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+                    <textarea name="direccion" class="w-full border-gray-300 rounded-md border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]" rows="2">{{ old('direccion', $user->direccion) }}</textarea>
+                    @error('direccion') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Avatar (Foto de Perfil)</label>
+                    <input type="file" name="avatar" accept="image/*" class="w-full border-gray-300 rounded-md border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
+                    @if($user->avatar)
+                        <div class="mt-4">
+                            <img src="{{ $user->avatar_url }}" alt="Avatar" class="w-24 h-24 rounded-full object-cover border-2 border-[#D4AF37]">
+                        </div>
+                    @endif
+                    @error('avatar') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="md:col-span-2 flex justify-end">

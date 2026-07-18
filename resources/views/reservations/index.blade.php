@@ -74,8 +74,19 @@
                             {{ \Carbon\Carbon::parse($reserva->fecha)->format('d/m/Y') }} <br>
                             <span class="text-xs text-gray-500 font-normal">{{ \Carbon\Carbon::parse($reserva->hora_inicio)->format('h:i A') }} - {{ \Carbon\Carbon::parse($reserva->hora_fin)->format('h:i A') }}</span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $reserva->client->primer_nombre }} {{ $reserva->client->primer_apellido }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $reserva->employee->user->primer_nombre }} {{ $reserva->employee->user->primer_apellido }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex items-center gap-3">
+                            @if($reserva->client->user && $reserva->client->user->avatar)
+                                <img src="{{ $reserva->client->user->avatar_url }}" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-[#D4AF37]">
+                            @else
+                                <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-xs border border-gray-300">
+                                    {{ substr($reserva->client->primer_nombre, 0, 1) }}
+                                </div>
+                            @endif
+                            <span>{{ $reserva->client->primer_nombre }} {{ $reserva->client->primer_apellido }}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ $reserva->employee->user->primer_nombre }} {{ $reserva->employee->user->primer_apellido }}
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-semibold">${{ number_format($reserva->total, 0, ',', '.') }}</td>
                         
                         <td class="px-6 py-4 whitespace-nowrap text-sm">

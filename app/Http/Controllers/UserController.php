@@ -7,6 +7,7 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -66,13 +67,23 @@ class UserController extends Controller
             'primer_apellido' => 'required|string|max:100',
             'segundo_apellido' => 'nullable|string|max:100',
             'email' => ['required', 'email', Rule::unique('users')->ignore($usuario->id)],
-            'estado' => 'boolean'
+            'estado' => 'boolean',
+            'telefono' => 'nullable|string|max:20',
+            'direccion' => 'nullable|string|max:255',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         // Solo actualizar contraseña si el usuario escribió una nueva
         if ($request->filled('password')) {
             $request->validate(['password' => 'string|min:6']);
             $validated['password'] = Hash::make($request->password);
+        }
+        
+        if ($request->hasFile('avatar')) {
+            if ($usuario->avatar && Storage::disk('public')->exists($usuario->avatar)) {
+                Storage::disk('public')->delete($usuario->avatar);
+            }
+            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
         $usuario->update($validated);
