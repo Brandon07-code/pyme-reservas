@@ -1,18 +1,17 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        // Actualizamos el ENUM para que acepte el nuevo estado inicial
-        DB::statement("ALTER TABLE orders MODIFY COLUMN estado ENUM('pendiente', 'pendiente_recogida', 'entregado', 'cancelado') NOT NULL DEFAULT 'pendiente'");
+        // Ya no se necesita: los valores del enum de orders
+        // ya están correctos en la migración original de create_orders_table.
     }
 
-    public function down()
+    public function down(): void
     {
-        DB::statement("ALTER TABLE orders MODIFY COLUMN estado ENUM('pendiente_recogida', 'entregado', 'cancelado') NOT NULL DEFAULT 'pendiente_recogida'");
+        //
     }
 };
