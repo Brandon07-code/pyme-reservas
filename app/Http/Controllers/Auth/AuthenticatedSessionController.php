@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -19,14 +20,25 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-        $request->session()->regenerate();
 
-        // REDIRECCIÓN ESTRICTA: Ignoramos el 'intended' para evitar el bug 403
-        if ($request->user()->role_id == 3) {
-            return redirect()->route('portal.index');
-        }
+        $user = Auth::user();
 
-        return redirect()->route('dashboard');
+        // Generar OTP y enviar correo
+        $otp = $user->generateOtp();
+
+        Mail::send('emails.otp', ['otp' => $otp, 'user' => $user], function ($message) use ($user) {
+            $message->to($user->email)
+                    ->subject('Código de verificación de seguridad');
+        });
+
+        // Cerrar sesión temporalmente para forzar verificación
+        Auth::logout();
+
+        // Guardar ID y preferencias en sesión para verificación posterior
+        $request->session()->put('otp_user_id', $user->id);
+        $request->session()->put('otp_remember', $request->boolean('remember'));
+
+        return redirect()->route('otp.verify');
     }
 
     public function destroy(Request $request): RedirectResponse

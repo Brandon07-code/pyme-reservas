@@ -13,6 +13,7 @@ use App\Http\Controllers\PortalController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ExternalPostController;
+use App\Http\Controllers\OtpVerificationController;
 
 Route::get('/', function () {
     if (auth()->check()) {
@@ -22,6 +23,13 @@ Route::get('/', function () {
     }
     return view('welcome');
 })->name('home');
+
+// ============================================================== 
+// RUTAS DE VERIFICACIÓN OTP (Fuera del middleware auth)
+// ==============================================================
+Route::get('/otp-verify', [OtpVerificationController::class, 'show'])->name('otp.verify');
+Route::post('/otp-verify', [OtpVerificationController::class, 'verify'])->name('otp.verify.post');
+Route::post('/otp-resend', [OtpVerificationController::class, 'resend'])->name('otp.resend');
 
 Route::middleware(['auth'])->group(function () {
 
