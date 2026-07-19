@@ -36,7 +36,7 @@
                 <ul class="details-list">
                     <li><strong>Día:</strong> {{ \Carbon\Carbon::parse($reserva->fecha)->format('d/m/Y') }}</li>
                     <li><strong>Hora:</strong> {{ \Carbon\Carbon::parse($reserva->hora_inicio)->format('h:i A') }}</li>
-                    <li><strong>Profesional:</strong> {{ $reserva->employee->user->primer_nombre }} {{ $reserva->employee->user->primer_apellido }}</li>
+                    <li><strong>Profesional:</strong> {{ $reserva->employee?->user?->primer_nombre ?? 'Barbero' }} {{ $reserva->employee?->user?->primer_apellido ?? '' }}</li>
                     <li><strong>Estado:</strong> <span style="text-transform: uppercase; color: #D4AF37; font-weight: bold;">{{ $reserva->estado }}</span></li>
                     <li><strong>Total a Pagar:</strong> ${{ number_format($reserva->total, 0, ',', '.') }}</li>
                 </ul>
