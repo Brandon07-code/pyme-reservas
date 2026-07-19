@@ -30,7 +30,7 @@
 
             <div class="details-box">
                 <ul class="details-list">
-                    <li><strong>Cliente:</strong> {{ $reserva->client->user->primer_nombre ?? $reserva->client->primer_nombre }} {{ $reserva->client->user->primer_apellido ?? $reserva->client->primer_apellido }}</li>
+                    <li><strong>Cliente:</strong> {{ $reserva->client->user?->primer_nombre ?? $reserva->client->primer_nombre }} {{ $reserva->client->user?->primer_apellido ?? $reserva->client->primer_apellido }}</li>
                     <li><strong>Día:</strong> {{ \Carbon\Carbon::parse($reserva->fecha)->format('d/m/Y') }}</li>
                     <li><strong>Hora:</strong> {{ \Carbon\Carbon::parse($reserva->hora_inicio)->format('h:i A') }} - {{ \Carbon\Carbon::parse($reserva->hora_fin)->format('h:i A') }}</li>
                     <li><strong>Servicios solicitados:</strong> 
