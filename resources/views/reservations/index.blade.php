@@ -12,19 +12,19 @@
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total (Mes)</h3>
             <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $total }}</p>
         </a>
-        <a href="{{ route('reservas.index', ['estado' => 'pendiente']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'pendiente' ? 'ring-2 ring-yellow-400' : '' }}">
+        <a href="{{ route('reservas.index', ['estado' => 'pendiente']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Pendientes</h3>
             <p class="text-2xl font-extrabold text-yellow-500">{{ $pendientes }}</p>
         </a>
-        <a href="{{ route('reservas.index', ['estado' => 'confirmada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'confirmada' ? 'ring-2 ring-blue-400' : '' }}">
+        <a href="{{ route('reservas.index', ['estado' => 'confirmada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Confirmadas</h3>
             <p class="text-2xl font-extrabold text-blue-500">{{ $confirmadas }}</p>
         </a>
-        <a href="{{ route('reservas.index', ['estado' => 'completada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'completada' ? 'ring-2 ring-green-400' : '' }}">
+        <a href="{{ route('reservas.index', ['estado' => 'completada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Completadas</h3>
             <p class="text-2xl font-extrabold text-green-500">{{ $completadas }}</p>
         </a>
-        <a href="{{ route('reservas.index', ['estado' => 'cancelada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ $estadoFilter == 'cancelada' ? 'ring-2 ring-red-400' : '' }}">
+        <a href="{{ route('reservas.index', ['estado' => 'cancelada']) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Canceladas</h3>
             <p class="text-2xl font-extrabold text-red-500">{{ $canceladas }}</p>
         </a>
@@ -126,6 +126,15 @@
                                     @csrf @method('PATCH')
                                     <button type="submit" title="Marcar como Completada" class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-600 hover:bg-green-600 hover:text-white transition shadow-sm border border-green-200">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($reserva->estado == 'pendiente')
+                                <form action="{{ route('reservas.confirmar', $reserva) }}" method="POST">
+                                    @csrf @method('PATCH')
+                                    <button type="submit" title="Confirmar Cita" class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition shadow-sm border border-blue-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                                     </button>
                                 </form>
                             @endif

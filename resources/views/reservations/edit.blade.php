@@ -22,7 +22,9 @@
             
             <select name="estado" class="w-full border-gray-300 rounded-md shadow-sm border p-2 mb-4">
                 @if(!$yaPaso)
-                    <option value="pendiente" {{ $reserva->estado == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                    @if($reserva->estado == 'pendiente')
+                        <option value="pendiente" selected>Pendiente</option>
+                    @endif
                     <option value="confirmada" {{ $reserva->estado == 'confirmada' ? 'selected' : '' }}>Confirmada</option>
                 @else
                     <option value="completada" {{ $reserva->estado == 'completada' ? 'selected' : '' }}>Completada</option>

@@ -88,6 +88,20 @@ class ReservationController extends Controller
         return $pdf->download('reporte-citas-jym-' . date('Y-m-d') . '.pdf');
     }
 
+    public function markAsConfirmed(Reservation $reserva)
+    {
+        Gate::authorize('update', $reserva);
+
+        if ($reserva->estado !== 'pendiente') {
+            return redirect()->back()->withErrors('Solo las citas pendientes pueden ser confirmadas rápidamente.');
+        }
+
+        $reserva->update(['estado' => 'confirmada']);
+        event(new ReservationUpdated($reserva));
+        
+        return redirect()->back()->with('success', '¡Cita confirmada exitosamente!');
+    }
+
     public function markAsCompleted(Reservation $reserva)
     {
         // 🔒 Laravel 11 Standard Policy check
@@ -153,6 +167,11 @@ class ReservationController extends Controller
     {
         // 🔒 Laravel 11 Standard Policy check
         Gate::authorize('update', $reserva);
+
+        if (in_array($reserva->estado, ['completada', 'cancelada', 'no_asistio'])) {
+            return redirect()->route('reservas.index')->withErrors('Esta reserva ya está cerrada y no se puede editar.');
+        }
+
         return view('reservations.edit', compact('reserva'));
     }
 
@@ -160,6 +179,15 @@ class ReservationController extends Controller
     {
         // 🔒 Laravel 11 Standard Policy check
         Gate::authorize('update', $reserva);
+
+        if (in_array($reserva->estado, ['completada', 'cancelada', 'no_asistio'])) {
+            return redirect()->route('reservas.index')->withErrors('Esta reserva ya está cerrada y no se puede modificar.');
+        }
+
+        if ($reserva->estado === 'confirmada' && $request->estado === 'pendiente') {
+            return redirect()->back()->withErrors('Una reserva confirmada no puede volver a estar pendiente.');
+        }
+
         $reserva->update(['estado' => $request->estado]);
         event(new ReservationUpdated($reserva));
         

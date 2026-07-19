@@ -62,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
         
         Route::get('/reservas/export-pdf', [ReservationController::class, 'exportPdf'])->name('reservas.export-pdf');
         Route::patch('/reservas/{reserva}/completar', [ReservationController::class, 'markAsCompleted'])->name('reservas.completar');
+        Route::patch('/reservas/{reserva}/confirmar', [ReservationController::class, 'markAsConfirmed'])->name('reservas.confirmar');
         Route::resource('reservas', ReservationController::class);
 
         Route::post('/notificaciones/leer', function() {
