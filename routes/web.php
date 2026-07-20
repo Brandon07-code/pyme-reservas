@@ -101,3 +101,20 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// ==============================================================
+// RUTA PARA CRON JOB EXTERNO (cron-job.org)
+// ==============================================================
+Route::get('/cron/marcar-citas-vencidas', function (\Illuminate\Http\Request $request) {
+    // Verificación de seguridad simple
+    if ($request->query('token') !== 'jym-seguro-2026') {
+        abort(403, 'Acceso denegado');
+    }
+
+    \Illuminate\Support\Facades\Artisan::call('reservas:marcar-vencidas');
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Comando ejecutado exitosamente',
+        'output' => \Illuminate\Support\Facades\Artisan::output()
+    ]);
+});

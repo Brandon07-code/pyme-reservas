@@ -66,7 +66,7 @@
         <!-- Action Buttons -->
         <div class="flex flex-col sm:flex-row gap-6 w-full max-w-2xl justify-center opacity-0 animate-fade-in-up delay-300">
             <a href="{{ route('register') }}" class="group relative px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B38D1C] rounded-full text-black font-extrabold uppercase tracking-wider text-sm transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:shadow-[0_0_30px_rgba(212,175,55,0.7)] hover:scale-105 flex items-center justify-center border border-[#FFE173]">
-                <span>Agendar mi Cita</span>
+                <span>Soy Nuevo — Quiero mi Cita</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
