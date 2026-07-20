@@ -32,12 +32,14 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-10">
                 @foreach($categoria->services as $servicio)
                     <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden border border-gray-100 flex flex-col group">
-                        <div class="h-48 w-full bg-black relative overflow-hidden">
+                        <a href="{{ route('portal.agendar', ['servicio' => $servicio->id]) }}" class="h-48 w-full bg-black relative overflow-hidden block">
                             <img src="{{ $servicio->imagen_url ? asset($servicio->imagen_url) : 'https://via.placeholder.com/400x300/111827/D4AF37?text=JyM' }}" 
                                  alt="{{ $servicio->nombre }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500 opacity-90">
-                        </div>
+                        </a>
                         <div class="p-5 flex-1 flex flex-col">
-                            <h4 class="text-lg font-bold text-gray-900 mb-1">{{ $servicio->nombre }}</h4>
+                            <a href="{{ route('portal.agendar', ['servicio' => $servicio->id]) }}">
+                                <h4 class="text-lg font-bold text-gray-900 mb-1 hover:text-[#D4AF37] transition">{{ $servicio->nombre }}</h4>
+                            </a>
                             <p class="text-xs text-gray-500 mb-4 line-clamp-2">{{ $servicio->descripcion ?? 'Servicio profesional de alta calidad.' }}</p>
                             
                             <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">

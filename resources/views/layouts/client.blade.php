@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JyM Barbería y Perfumería - @yield('title', 'Portal')</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         @keyframes fadeIn { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:none } }
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
@@ -14,16 +15,26 @@
 </head>
 <body class="bg-gray-50 font-sans leading-normal tracking-normal text-gray-800">
     
-   <nav class="bg-black p-4 w-full shadow-lg border-b border-[#D4AF37]/20">
+   <nav class="bg-black p-4 w-full shadow-lg border-b border-[#D4AF37]/20" x-data="{ mobileMenuOpen: false }">
         <div class="container mx-auto flex flex-wrap items-center justify-between">
-            <div class="flex justify-center md:justify-start font-extrabold">
+            <div class="flex items-center justify-between w-full md:w-1/4">
                 <a class="text-[#D4AF37] no-underline hover:text-yellow-300 transition flex items-center" href="{{ route('portal.index') }}">
                     <span class="text-2xl mr-2">💈</span> 
-                    <span class="text-xl tracking-wider uppercase">JyM <span class="text-white font-light text-sm hidden sm:inline">Barbería & Perfumería</span></span>
+                    <span class="text-xl tracking-wider uppercase font-extrabold">JyM <span class="text-white font-light text-sm hidden sm:inline">Barbería & Perfumería</span></span>
                 </a>
+                
+                {{-- Botón Hamburguesa --}}
+                <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="md:hidden text-gray-400 hover:text-[#D4AF37] focus:outline-none">
+                    <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path :class="{'hidden': mobileMenuOpen, 'inline-flex': !mobileMenuOpen }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        <path :class="{'hidden': !mobileMenuOpen, 'inline-flex': mobileMenuOpen }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
             </div>
-            <div class="flex w-full pt-2 content-center justify-between md:w-auto md:justify-end">
-                <ul class="list-reset flex flex-nowrap overflow-x-auto pb-2 md:pb-0 justify-start md:justify-between flex-1 md:flex-none items-center text-sm font-semibold space-x-4 md:space-x-0 w-full">
+            
+            {{-- Contenedor colapsable --}}
+            <div :class="mobileMenuOpen ? 'block' : 'hidden'" class="w-full md:flex md:items-center md:w-auto md:flex-1 md:justify-between transition-all duration-300 ease-in-out mt-4 md:mt-0">
+                <ul class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 lg:space-x-6 items-center text-sm font-semibold w-full md:w-auto border-t md:border-t-0 border-[#D4AF37]/20 pt-4 md:pt-0">
                     
                     <li class="mr-3">
                         <a class="inline-block py-2 px-2 {{ request()->routeIs('portal.index') ? 'text-[#D4AF37] border-b-2 border-[#D4AF37]' : 'text-gray-400 no-underline hover:text-[#D4AF37] transition' }}" href="{{ route('portal.index') }}">Catálogo</a>
@@ -53,12 +64,12 @@
                     </li>
                     
                     @auth
-                        <li class="ml-4 pl-4 border-l border-gray-700 flex items-center space-x-4">
+                        <li class="w-full md:w-auto flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 md:border-l md:border-gray-700 md:pl-4 pt-4 md:pt-0 border-t md:border-t-0 border-[#D4AF37]/20">
                             <span class="text-gray-300">Hola, <span class="text-[#D4AF37]">{{ Auth::user()->primer_nombre }}</span></span>
                             
                             <a href="{{ route('profile.edit') }}" class="text-gray-400 hover:text-white transition">Mi Perfil</a>
 
-                            <form method="POST" action="{{ route('logout') }}">
+                            <form method="POST" action="{{ route('logout') }}" class="m-0 p-0">
                                 @csrf
                                 <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded shadow text-xs transition">Salir</button>
                             </form>
@@ -66,6 +77,7 @@
                     @endauth
                 </ul>
             </div>
+            {{-- Fin del contenedor colapsable --}}
         </div>
     </nav>
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none">

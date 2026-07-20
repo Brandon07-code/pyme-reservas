@@ -15,23 +15,36 @@
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal text-gray-800">
     
-    <nav class="bg-gray-900 p-4 w-full shadow border-b border-gray-800">
+    <nav class="bg-gray-900 p-4 w-full shadow border-b border-gray-800" x-data="{ mobileMenuOpen: false }">
         <div class="container mx-auto flex flex-wrap items-center justify-between">
             
-            <div class="flex items-center justify-start w-full md:w-1/4 mb-4 md:mb-0">
-                <a class="text-[#D4AF37] no-underline hover:text-yellow-300 transition flex items-center" href="/">
-                    <span class="text-xl mr-2">💈</span> 
-                    <span class="text-lg tracking-widest uppercase font-extrabold">JyM <span class="text-white font-light text-xs hidden lg:inline">Reservas</span></span>
-                </a>
-                <div class="ml-4 pl-4 border-l border-gray-700 hidden xl:block">
-                    <span id="live-clock" class="text-[10px] font-bold text-[#D4AF37] tracking-widest uppercase bg-black px-2 py-1 rounded-full shadow-inner border border-gray-800">
-                        --:--
-                    </span>
+            <div class="flex items-center justify-between w-full md:w-1/4 mb-4 md:mb-0">
+                <div class="flex items-center">
+                    <a class="text-[#D4AF37] no-underline hover:text-yellow-300 transition flex items-center" href="/">
+                        <span class="text-xl mr-2">💈</span> 
+                        <span class="text-lg tracking-widest uppercase font-extrabold">JyM <span class="text-white font-light text-xs hidden lg:inline">Reservas</span></span>
+                    </a>
+                    <div class="ml-4 pl-4 border-l border-gray-700 hidden xl:block">
+                        <span id="live-clock" class="text-[10px] font-bold text-[#D4AF37] tracking-widest uppercase bg-black px-2 py-1 rounded-full shadow-inner border border-gray-800">
+                            --:--
+                        </span>
+                    </div>
                 </div>
+                
+                {{-- Botón Hamburguesa --}}
+                <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="md:hidden text-gray-400 hover:text-[#D4AF37] focus:outline-none">
+                    <svg class="h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path :class="{'hidden': mobileMenuOpen, 'inline-flex': !mobileMenuOpen }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        <path :class="{'hidden': !mobileMenuOpen, 'inline-flex': mobileMenuOpen }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
             </div>
 
-            <div class="flex justify-center w-full md:w-2/4">
-                <ul class="flex flex-nowrap overflow-x-auto pb-2 lg:pb-0 justify-start lg:justify-center space-x-4 lg:space-x-6 items-center text-sm font-semibold w-full">
+            {{-- Contenedor colapsable --}}
+            <div :class="mobileMenuOpen ? 'block' : 'hidden'" class="w-full md:flex md:items-center md:w-auto md:flex-1 md:justify-between transition-all duration-300 ease-in-out">
+                
+                <div class="flex flex-col md:flex-row md:justify-center w-full md:w-2/3 border-t md:border-t-0 border-gray-800 pt-4 md:pt-0 mb-4 md:mb-0">
+                    <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 lg:space-x-6 items-center text-sm font-semibold w-full md:w-auto">
                     <li><a class="inline-block py-2 px-2 {{ request()->routeIs('dashboard') ? 'text-white border-b-2 border-[#D4AF37]' : 'text-gray-400 hover:text-white transition' }}" href="{{ route('dashboard') }}">Inicio</a></li>
                     
                     @if(Auth::check() && Auth::user()->role_id == 1)
@@ -45,11 +58,11 @@
                     
                     <li><a class="inline-block py-2 px-2 {{ request()->routeIs('reservas.*') ? 'text-white border-b-2 border-[#D4AF37]' : 'text-gray-400 hover:text-white transition' }}" href="{{ route('reservas.index') }}">Reservas</a></li>
                 </ul>
-            </div>
-
-            <div class="flex items-center justify-end w-full md:w-1/4 mt-4 md:mt-0">
+                </div>
+    
+                <div class="flex flex-col md:flex-row items-center justify-center md:justify-end w-full md:w-1/3 border-t md:border-t-0 border-gray-800 pt-4 md:pt-0">
                 @auth
-                    <div class="flex items-center space-x-3">
+                    <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-3 w-full md:w-auto">
                         
                         {{-- CAMPANITA DE NOTIFICACIONES (AHORA SÍ DESPLIEGA) --}}
                         @php 
@@ -113,8 +126,10 @@
                             <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-[10px] uppercase tracking-wider transition shadow-sm">Salir</button>
                         </form>
                     </div>
+                    </div>
                 @endauth
             </div>
+            {{-- Fin del contenedor colapsable --}}
 
         </div>
     </nav>

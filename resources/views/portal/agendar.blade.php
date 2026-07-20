@@ -30,7 +30,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         @foreach($services as $servicio)
                             <label class="cursor-pointer border border-gray-200 rounded-lg p-3 hover:border-[#D4AF37] hover:bg-gray-50 transition flex items-start">
-                                <input type="checkbox" name="servicios[]" value="{{ $servicio->id }}" data-duracion="{{ $servicio->duracion_minutos }}" class="mt-1 h-5 w-5 text-[#D4AF37] border-gray-300 rounded focus:ring-[#D4AF37] checkbox-servicio">
+                                <input type="checkbox" name="servicios[]" value="{{ $servicio->id }}" data-duracion="{{ $servicio->duracion_minutos }}" class="mt-1 h-5 w-5 text-[#D4AF37] border-gray-300 rounded focus:ring-[#D4AF37] checkbox-servicio" {{ request('servicio') == $servicio->id ? 'checked' : '' }}>
                                 <div class="ml-3">
                                     <span class="block text-sm font-bold text-gray-900">{{ $servicio->nombre }}</span>
                                     <span class="block text-xs text-gray-500">${{ number_format($servicio->precio, 0, ',', '.') }} • ⏱ {{ $servicio->duracion_minutos }}m</span>
