@@ -23,7 +23,7 @@
                 </a>
             </div>
             <div class="flex w-full pt-2 content-center justify-between md:w-auto md:justify-end">
-                <ul class="list-reset flex justify-between flex-1 md:flex-none items-center text-sm font-semibold">
+                <ul class="list-reset flex flex-nowrap overflow-x-auto pb-2 md:pb-0 justify-start md:justify-between flex-1 md:flex-none items-center text-sm font-semibold space-x-4 md:space-x-0 w-full">
                     
                     <li class="mr-3">
                         <a class="inline-block py-2 px-2 {{ request()->routeIs('portal.index') ? 'text-[#D4AF37] border-b-2 border-[#D4AF37]' : 'text-gray-400 no-underline hover:text-[#D4AF37] transition' }}" href="{{ route('portal.index') }}">Catálogo</a>

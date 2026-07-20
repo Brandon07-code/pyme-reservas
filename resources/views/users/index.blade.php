@@ -43,7 +43,7 @@
         @endif
     </form>
 
-    <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-100">
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto border border-gray-100">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-[#0f172a]">
                 <tr>

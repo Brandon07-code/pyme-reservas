@@ -31,7 +31,7 @@
             </div>
 
             <div class="flex justify-center w-full md:w-2/4">
-                <ul class="flex flex-wrap justify-center space-x-2 lg:space-x-6 items-center text-sm font-semibold">
+                <ul class="flex flex-nowrap overflow-x-auto pb-2 lg:pb-0 justify-start lg:justify-center space-x-4 lg:space-x-6 items-center text-sm font-semibold w-full">
                     <li><a class="inline-block py-2 px-2 {{ request()->routeIs('dashboard') ? 'text-white border-b-2 border-[#D4AF37]' : 'text-gray-400 hover:text-white transition' }}" href="{{ route('dashboard') }}">Inicio</a></li>
                     
                     @if(Auth::check() && Auth::user()->role_id == 1)

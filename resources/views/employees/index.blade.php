@@ -28,7 +28,7 @@
         @if($search) <a href="{{ route('empleados.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded shadow text-xs uppercase tracking-wider transition">Limpiar</a> @endif
     </form>
 
-    <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-100">
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto border border-gray-100">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-[#0f172a]">
                 <tr>
