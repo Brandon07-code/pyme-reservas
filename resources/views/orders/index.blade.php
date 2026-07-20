@@ -86,7 +86,7 @@
 
     {{-- 2. Si ya lo empacó ('pendiente_recogida'), el admin cobra y ENTREGA --}}
     @if($pedido->estado == 'pendiente_recogida')
-        <form action="{{ route('orders.update', $pedido) }}" method="POST" onsubmit="return confirm('¿El cliente ya pagó y recogió el pedido?');">
+        <form action="{{ route('orders.update', $pedido) }}" method="POST">
             @csrf @method('PUT')
             <input type="hidden" name="estado" value="entregado">
             <button type="submit" class="bg-[#0f172a] hover:bg-black text-white font-bold py-2 px-6 rounded text-xs uppercase tracking-widest shadow transition flex items-center gap-2">
@@ -98,7 +98,7 @@
 
     {{-- 3. Botón de CANCELAR (Solo visible si no se ha entregado) --}}
     @if(in_array($pedido->estado, ['pendiente', 'pendiente_recogida']))
-        <form action="{{ route('orders.update', $pedido) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas cancelar? El stock volverá a la vitrina.');">
+        <form action="{{ route('orders.update', $pedido) }}" method="POST">
             @csrf @method('PUT')
             <input type="hidden" name="estado" value="cancelado">
             <button type="submit" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-bold py-2 px-6 rounded text-xs uppercase tracking-widest shadow transition border border-red-200">

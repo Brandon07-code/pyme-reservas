@@ -73,6 +73,15 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/reservas/{reserva}/confirmar', [ReservationController::class, 'markAsConfirmed'])->name('reservas.confirmar');
         Route::resource('reservas', ReservationController::class);
 
+        Route::get('/notificaciones/check', function() {
+            $notificaciones = auth()->user()->unreadNotifications;
+            $html = view('partials.notifications-list', compact('notificaciones'))->render();
+            return response()->json([
+                'count' => $notificaciones->count(),
+                'html' => $html
+            ]);
+        })->name('notificaciones.check');
+
         Route::post('/notificaciones/leer', function() {
             auth()->user()->unreadNotifications->markAsRead();
             return redirect()->back();
