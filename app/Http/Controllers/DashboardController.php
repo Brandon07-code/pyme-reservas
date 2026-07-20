@@ -87,4 +87,19 @@ class DashboardController extends Controller
             'labelsGrafica', 'datosGrafica', 'misCortesMes', 'fechaHoyFmt', 'fechaMananaFmt', 'donutData'
         ));
     }
+
+    public function citasHoyAjax(Request $request)
+    {
+        $hoy = Carbon::today();
+        $usuario = Auth::user();
+        $esAdmin = $usuario->role_id == 1;
+
+        $queryProximas = Reservation::with(['client', 'employee.user'])->activas()->whereDate('fecha', $hoy)->orderBy('hora_inicio', 'asc')->take(5);
+        if (!$esAdmin && $usuario->employee) {
+            $queryProximas->where('employee_id', $usuario->employee->id);
+        }
+        $proximasCitas = $queryProximas->get();
+
+        return view('dashboard.partials.citas-hoy-list', compact('proximasCitas', 'esAdmin'))->render();
+    }
 }
