@@ -86,6 +86,8 @@ Route::middleware(['auth'])->group(function () {
             auth()->user()->unreadNotifications->markAsRead();
             return redirect()->back();
         })->name('notificaciones.leer');
+        
+        Route::get('/dashboard/citas-hoy', [App\Http\Controllers\DashboardController::class, 'citasHoyAjax'])->name('dashboard.citas_hoy_ajax');
     });
 
     // ==============================================================
