@@ -30,16 +30,9 @@ class SendReservationUpdatedNotification
             if ($reserva->client && $reserva->client->user && $reserva->client->user->email) {
                 Mail::to($reserva->client->user->email)->send(new ReservationNotification($reserva, 'actualizada'));
             }
-
-            // Enviar correo al barbero si la cita acaba de ser "confirmada"
-            if ($reserva->estado === 'confirmada') {
-                if ($reserva->employee && $reserva->employee->user && $reserva->employee->user->email) {
-                    Mail::to($reserva->employee->user->email)->send(new \App\Mail\BarberReservationNotification($reserva));
-                }
-            }
-        } catch (\Exception $e) {
-            // Re-lanzamos el error temporalmente para ver en pantalla por qué falla el correo del barbero
-            throw $e;
+        } catch (\Throwable $e) {
+            // Registrar el error pero no detener la ejecución (evita el Error 500)
+            \Illuminate\Support\Facades\Log::error('Error enviando notificación de reserva al cliente: ' . $e->getMessage());
         }
     }
 }
