@@ -74,13 +74,18 @@
                                     </div>
                                     
                                     {{-- Solo permite cancelar si sigue pendiente --}}
-                                    @if($pedido->estado == 'pendiente_recogida')
-                                        <form action="{{ route('portal.pedidos.cancelar', $pedido) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar este pedido? Perderás tu reserva de los perfumes.');">
+                                    @if(in_array($pedido->estado, ['pendiente', 'pendiente_recogida']))
+                                        {{-- Botón que abre el modal de cancelación para este pedido --}}
+                                        <button type="button"
+                                            onclick="abrirModalCancelar('{{ $pedido->id }}')"
+                                            class="text-red-600 hover:text-white border border-red-600 hover:bg-red-600 font-bold py-2 px-4 rounded transition text-sm">
+                                            Cancelar Pedido
+                                        </button>
+
+                                        {{-- Formulario oculto para este pedido --}}
+                                        <form id="formCancelar-{{ $pedido->id }}" action="{{ route('portal.pedidos.cancelar', $pedido) }}" method="POST" class="hidden">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" class="text-red-600 hover:text-white border border-red-600 hover:bg-red-600 font-bold py-2 px-4 rounded transition text-sm">
-                                                Cancelar Pedido
-                                            </button>
                                         </form>
                                     @endif
                                 </div>
@@ -100,4 +105,65 @@
 
         </div>
     </div>
+    {{-- ===== MODAL DE CANCELACIÓN DE PEDIDO ===== --}}
+    <div id="modalCancelarPedido" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0,0,0,0.85);">
+        <div class="bg-[#111111] rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+
+            {{-- Icono de advertencia --}}
+            <div class="flex justify-center mb-5">
+                <div class="bg-red-600 rounded-full p-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            {{-- Título --}}
+            <h2 class="text-2xl font-extrabold text-white uppercase tracking-wide mb-3">¿Cancelar tu pedido?</h2>
+
+            {{-- Descripción --}}
+            <p class="text-gray-400 text-sm leading-relaxed mb-8">
+                Si cancelas ahora, perderás la reserva de los productos seleccionados y el equipo de
+                <span class="text-[#D4AF37] font-semibold">JyM Barbería</span>
+                será notificado del cambio.<br><br>
+                <span class="text-red-400 font-semibold">Esta acción no se puede deshacer.</span>
+            </p>
+
+            {{-- Botones --}}
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                {{-- Mantener pedido --}}
+                <button type="button" onclick="cerrarModalCancelar()"
+                    class="flex-1 py-3 px-6 rounded-full font-bold text-gray-400 hover:text-white transition uppercase tracking-wide text-sm" style="background:#222;">
+                    Conservar Pedido
+                </button>
+                {{-- Confirmar cancelación --}}
+                <button type="button" id="btnConfirmarCancelacion"
+                    class="flex-1 py-3 px-6 rounded-full font-extrabold text-white bg-red-600 hover:bg-red-700 transition uppercase tracking-wide text-sm shadow-lg">
+                    Sí, cancelar pedido
+                </button>
+            </div>
+        </div>
+    </div>
+    {{-- ===== FIN MODAL ===== --}}
+
+    <script>
+        let pedidoIdActivo = null;
+
+        function abrirModalCancelar(pedidoId) {
+            pedidoIdActivo = pedidoId;
+            document.getElementById('modalCancelarPedido').classList.remove('hidden');
+        }
+
+        function cerrarModalCancelar() {
+            pedidoIdActivo = null;
+            document.getElementById('modalCancelarPedido').classList.add('hidden');
+        }
+
+        document.getElementById('btnConfirmarCancelacion').addEventListener('click', function () {
+            if (pedidoIdActivo) {
+                document.getElementById('formCancelar-' + pedidoIdActivo).submit();
+            }
+        });
+    </script>
+
 @endsection
