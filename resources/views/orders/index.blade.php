@@ -107,6 +107,8 @@
         </form>
     @endif
 
+    </div>
+    </div>
 </div>
             @endforeach
         </div>
