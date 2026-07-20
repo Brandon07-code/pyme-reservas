@@ -118,3 +118,8 @@ Route::get('/cron/marcar-citas-vencidas', function (\Illuminate\Http\Request $re
         'output' => \Illuminate\Support\Facades\Artisan::output()
     ]);
 });
+
+Route::get('/debug-email', function() {
+    $reserva = \App\Models\Reservation::first();
+    return (new \App\Mail\BarberReservationNotification($reserva))->render();
+});

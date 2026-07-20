@@ -38,8 +38,8 @@ class SendReservationUpdatedNotification
                 }
             }
         } catch (\Exception $e) {
-            // Registrar el error pero no detener la ejecución (evita el Error 500)
-            \Illuminate\Support\Facades\Log::error('Error enviando notificación de reserva: ' . $e->getMessage());
+            // Re-lanzamos el error temporalmente para ver en pantalla por qué falla el correo del barbero
+            throw $e;
         }
     }
 }

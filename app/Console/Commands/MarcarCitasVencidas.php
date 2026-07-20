@@ -16,7 +16,7 @@ class MarcarCitasVencidas extends Command
     /**
      * Descripción del comando.
      */
-    protected $description = 'Marca automáticamente como "No Asistió" las citas pendientes o confirmadas cuya fecha y hora ya pasaron.';
+    protected $description = 'Procesa citas pasadas: pendientes a "No Asistió", confirmadas a "Completada".';
 
     /**
      * Ejecutar el comando.
@@ -37,10 +37,19 @@ class MarcarCitasVencidas extends Command
             return;
         }
 
+        $noAsistioCount = 0;
+        $completadasCount = 0;
+
         foreach ($citasVencidas as $cita) {
-            $cita->update(['estado' => 'no_asistio']);
+            if ($cita->estado === 'pendiente') {
+                $cita->update(['estado' => 'no_asistio']);
+                $noAsistioCount++;
+            } elseif ($cita->estado === 'confirmada') {
+                $cita->update(['estado' => 'completada']);
+                $completadasCount++;
+            }
         }
 
-        $this->info("✅ {$total} cita(s) marcadas como 'No Asistió' correctamente.");
+        $this->info("✅ Proceso terminado: {$noAsistioCount} a 'No Asistió', {$completadasCount} a 'Completada'.");
     }
 }
