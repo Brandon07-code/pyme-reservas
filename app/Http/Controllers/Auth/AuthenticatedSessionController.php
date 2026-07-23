@@ -36,7 +36,7 @@ class AuthenticatedSessionController extends Controller
             // Si el correo falla, cerramos sesión y mostramos error al usuario
             Auth::logout();
             return back()->withErrors([
-                'email' => 'Error de servidor: No se pudo enviar el correo OTP. Por favor, intente más tarde.'
+                'email' => 'Error real: ' . $e->getMessage() . ' en ' . $e->getFile() . ':' . $e->getLine()
             ]);
         }
 
