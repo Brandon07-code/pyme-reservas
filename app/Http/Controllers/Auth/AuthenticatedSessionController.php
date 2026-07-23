@@ -23,15 +23,24 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        // Generar OTP y enviar correo
+        // Generar OTP
         $otp = $user->generateOtp();
 
-        Mail::send('emails.otp', ['otp' => $otp, 'user' => $user], function ($message) use ($user) {
-            $message->to($user->email)
-                    ->subject('Código de verificación de seguridad');
-        });
+        try {
+            // Enviar correo
+            Mail::send('emails.otp', ['otp' => $otp, 'user' => $user], function ($message) use ($user) {
+                $message->to($user->email)
+                        ->subject('Código de verificación de seguridad');
+            });
+        } catch (\Exception $e) {
+            // Si el correo falla, cerramos sesión y mostramos error al usuario
+            Auth::logout();
+            return back()->withErrors([
+                'email' => 'Error de servidor: No se pudo enviar el correo OTP. Por favor, intente más tarde.'
+            ]);
+        }
 
-        // Cerrar sesión temporalmente para forzar verificación
+        // Si el correo se envía correctamente, cerramos sesión temporalmente
         Auth::logout();
 
         // Guardar ID y preferencias en sesión para verificación posterior

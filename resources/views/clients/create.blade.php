@@ -44,9 +44,15 @@
                     @error('telefono') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                 </div>
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" name="email" id="email" value="{{ old('email') }}" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 border p-2">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 border p-2">
                     @error('email') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña *</label>
+                    <input type="password" name="password" id="password" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 border p-2" minlength="8">
+                    @error('password') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                 </div>
                 
                 <div>

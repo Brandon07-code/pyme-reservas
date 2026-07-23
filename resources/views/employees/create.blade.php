@@ -13,19 +13,38 @@
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- Usuario Asociado -->
+                <!-- Nombres y Apellidos -->
+                <div>
+                    <label for="primer_nombre" class="block text-sm font-medium text-gray-700 mb-1">Primer Nombre *</label>
+                    <input type="text" name="primer_nombre" id="primer_nombre" value="{{ old('primer_nombre') }}" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 border p-2">
+                    @error('primer_nombre') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label for="primer_apellido" class="block text-sm font-medium text-gray-700 mb-1">Primer Apellido *</label>
+                    <input type="text" name="primer_apellido" id="primer_apellido" value="{{ old('primer_apellido') }}" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 border p-2">
+                    @error('primer_apellido') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Credenciales -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email de Acceso *</label>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 border p-2">
+                    @error('email') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña *</label>
+                    <input type="password" name="password" id="password" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 border p-2" minlength="8">
+                    @error('password') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Rol -->
                 <div class="md:col-span-2">
-                    <label for="user_id" class="block text-sm font-medium text-gray-700 mb-1">Vincular con Cuenta de Usuario *</label>
-                    <select name="user_id" id="user_id" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 border p-2 bg-white">
-                        <option value="">Seleccione un usuario activo</option>
-                        @foreach($users as $user)
-                            <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                {{ $user->primer_nombre }} {{ $user->primer_apellido }} ({{ $user->email }})
-                            </option>
-                        @endforeach
+                    <label for="role_id" class="block text-sm font-medium text-gray-700 mb-1">Rol en el Sistema *</label>
+                    <select name="role_id" id="role_id" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 border p-2 bg-white">
+                        <option value="2" {{ old('role_id') == '2' ? 'selected' : '' }}>Empleado (Barbero)</option>
+                        <option value="1" {{ old('role_id') == '1' ? 'selected' : '' }}>Administrador</option>
                     </select>
-                    @error('user_id') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
-                    <p class="text-xs text-gray-500 mt-1">Solo se muestran usuarios sin perfil de empleado asignado.</p>
+                    @error('role_id') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Especialidad -->

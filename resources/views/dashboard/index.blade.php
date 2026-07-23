@@ -12,7 +12,7 @@
         <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm"><p class="font-bold">{{ $errors->first() }}</p></div> 
     @endif
 
-    {{-- FILA 1: TARJETAS KPI (DISEÑO CLEAN PREMIUM) --}}
+    {{-- FILA 1: TARJETAS KPI --}}
     <div class="grid grid-cols-2 {{ $esAdmin ? 'md:grid-cols-4' : 'md:grid-cols-3' }} gap-4 mb-8">
         
         <a href="{{ route('reservas.index', ['fecha_inicio' => $fechaHoyFmt, 'fecha_fin' => $fechaHoyFmt]) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer group">

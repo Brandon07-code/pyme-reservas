@@ -3,7 +3,7 @@
 @section('title', 'Usuarios')
 
 @section('content')
-    <x-page-header title="Gestión de Usuarios" createRoute="{{ route('usuarios.create') }}" buttonText="+ Nuevo Usuario" />
+    <x-page-header title="Gestión de Usuarios" createRoute="" buttonText="" />
 
     {{-- Tarjetas KPI JyM Style --}}
     <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-widest">Resumen de Cuentas</p>

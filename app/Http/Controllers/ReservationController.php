@@ -127,7 +127,13 @@ class ReservationController extends Controller
     public function create()
     {
         $clients = Client::where('estado', true)->get();
-        $employees = Employee::with('user')->where('estado', true)->get();
+        
+        $employeesQuery = Employee::with('user')->where('estado', true);
+        if (auth()->check() && auth()->user()->employee) {
+            $employeesQuery->where('id', '!=', auth()->user()->employee->id);
+        }
+        $employees = $employeesQuery->get();
+        
         $services = Service::where('estado', true)->get();
         
         return view('reservations.create', compact('clients', 'employees', 'services'));
@@ -135,6 +141,10 @@ class ReservationController extends Controller
 
     public function store(StoreReservationRequest $request)
     {
+        if (auth()->check() && auth()->user()->employee && auth()->user()->employee->id == $request->employee_id) {
+            return redirect()->back()->withErrors('No puedes agendar una cita para ser atendido por ti mismo.')->withInput();
+        }
+
         $serviciosSeleccionados = Service::whereIn('id', $request->servicios)->get();
         $precioTotal = $serviciosSeleccionados->sum('precio');
         $duracionTotalMinutos = (int) $serviciosSeleccionados->sum('duracion_minutos');

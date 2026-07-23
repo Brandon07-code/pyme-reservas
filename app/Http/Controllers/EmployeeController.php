@@ -30,15 +30,39 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id|unique:employees,user_id',
+            'primer_nombre' => 'required|string|max:100',
+            'primer_apellido' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+            'role_id' => 'required|in:1,2',
             'telefono' => 'nullable|string|max:20',
             'direccion' => 'nullable|string|max:255',
             'especialidad' => 'nullable|string|max:100',
             'estado' => 'boolean'
         ]);
 
-        Employee::create($validated);
-        return redirect()->route('empleados.index')->with('success', 'Empleado creado correctamente.');
+        \Illuminate\Support\Facades\DB::transaction(function () use ($validated) {
+            // 1. Crear el Usuario
+            $user = \App\Models\User::create([
+                'primer_nombre' => $validated['primer_nombre'],
+                'primer_apellido' => $validated['primer_apellido'],
+                'email' => $validated['email'],
+                'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+                'role_id' => $validated['role_id'],
+                'estado' => true
+            ]);
+
+            // 2. Crear el perfil de Empleado vinculado al Usuario
+            Employee::create([
+                'user_id' => $user->id,
+                'telefono' => $validated['telefono'] ?? null,
+                'direccion' => $validated['direccion'] ?? null,
+                'especialidad' => $validated['especialidad'] ?? null,
+                'estado' => $validated['estado'] ?? 1,
+            ]);
+        });
+
+        return redirect()->route('empleados.index')->with('success', 'Empleado y usuario creados correctamente.');
     }
 
     public function edit(Employee $empleado)

@@ -21,7 +21,7 @@
             <div class="flex items-center justify-between w-full md:w-1/4 mb-4 md:mb-0">
                 <div class="flex items-center">
                     <a class="text-[#D4AF37] no-underline hover:text-yellow-300 transition flex items-center" href="/">
-                        <span class="text-xl mr-2">💈</span> 
+                        <span class="text-xl mr-2"></span> 
                         <span class="text-lg tracking-widest uppercase font-extrabold">JyM <span class="text-white font-light text-xs hidden lg:inline">Reservas</span></span>
                     </a>
                     <div class="ml-4 pl-4 border-l border-gray-700 hidden xl:block">

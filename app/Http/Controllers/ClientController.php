@@ -41,12 +41,36 @@ class ClientController extends Controller
             'primer_apellido' => 'required|string|max:100',
             'segundo_apellido' => 'nullable|string|max:100',
             'telefono' => 'required|string|max:20',
-            'email' => 'nullable|email|unique:clients,email',
+            'email' => 'required|email|unique:users,email|unique:clients,email',
+            'password' => 'required|string|min:8',
             'estado' => 'boolean'
         ]);
 
-        Client::create($validated);
-        return redirect()->route('clientes.index')->with('success', 'Cliente registrado correctamente.');
+        \Illuminate\Support\Facades\DB::transaction(function () use ($validated) {
+            // 1. Crear el Usuario con rol de Cliente (role_id = 3)
+            $user = \App\Models\User::create([
+                'primer_nombre' => $validated['primer_nombre'],
+                'primer_apellido' => $validated['primer_apellido'],
+                'email' => $validated['email'],
+                'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+                'role_id' => 3, // 3 = Cliente
+                'estado' => true
+            ]);
+
+            // 2. Crear el perfil de Cliente vinculado al Usuario
+            Client::create([
+                'user_id' => $user->id,
+                'primer_nombre' => $validated['primer_nombre'],
+                'segundo_nombre' => $validated['segundo_nombre'] ?? null,
+                'primer_apellido' => $validated['primer_apellido'],
+                'segundo_apellido' => $validated['segundo_apellido'] ?? null,
+                'telefono' => $validated['telefono'],
+                'email' => $validated['email'],
+                'estado' => $validated['estado'] ?? 1,
+            ]);
+        });
+
+        return redirect()->route('clientes.index')->with('success', 'Cliente y usuario web registrados correctamente.');
     }
 
     public function edit(Client $cliente)
