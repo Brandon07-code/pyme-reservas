@@ -119,15 +119,24 @@ require __DIR__.'/auth.php';
 Route::get('/cron/marcar-citas-vencidas', function (\Illuminate\Http\Request $request) {
     // Verificación de seguridad simple
     if ($request->query('token') !== 'jym-seguro-2026') {
-        abort(403, 'Acceso denegado');
+        return response()->json(['error' => 'Acceso denegado'], 403);
     }
 
-    \Illuminate\Support\Facades\Artisan::call('reservas:marcar-vencidas');
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Comando ejecutado exitosamente',
-        'output' => \Illuminate\Support\Facades\Artisan::output()
-    ]);
+    try {
+        \Illuminate\Support\Facades\Artisan::call('reservas:marcar-vencidas');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Comando ejecutado exitosamente',
+            'output' => \Illuminate\Support\Facades\Artisan::output()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile()
+        ], 500);
+    }
 });
 
 Route::get('/debug-email', function() {
