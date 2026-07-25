@@ -65,7 +65,7 @@
                         {{-- Botón que abre el modal (ya NO usa confirm() nativo) --}}
                         <button type="button" onclick="document.getElementById('modalConfirmar').classList.remove('hidden')"
                             class="bg-[#D4AF37] hover:bg-yellow-500 text-black font-extrabold py-3 px-8 rounded-full shadow-lg transition uppercase tracking-wide w-full md:w-auto">
-                            Confirmar Pedido
+                            Solicitar Reserva
                         </button>
 
                         {{-- Formulario oculto que solo se envía si el cliente confirma en el modal --}}
@@ -99,14 +99,14 @@
             </div>
 
             {{-- Título --}}
-            <h2 class="text-2xl font-extrabold text-white uppercase tracking-wide mb-3">¿Confirmar tu pedido?</h2>
+            <h2 class="text-2xl font-extrabold text-white uppercase tracking-wide mb-3">¿Enviar Solicitud?</h2>
 
             {{-- Descripción --}}
             <p class="text-gray-400 text-sm leading-relaxed mb-8">
-                Estás a punto de reservar tu selección de productos. Una vez confirmado, el equipo de
-                <span class="text-[#D4AF37] font-semibold">JyM Barbería</span>
-                lo tendrá listo para que lo recojas en nuestra sede.<br><br>
-                <span class="text-yellow-400 font-semibold">Recuerda: Una vez se confirme el pedido, tienes 24 horas para recogerlo.</span>
+                Tu selección de productos está lista para ser procesada. Enviaremos tu solicitud a la
+                <span class="text-[#D4AF37] font-semibold">Barbería JyM</span>
+                para separar tus artículos.<br><br>
+                <span class="text-yellow-400 font-semibold">Importante: Cuando te notifiquemos que tu pedido ha sido Aprobado, dispondrás de un plazo máximo de 24 horas para recogerlo en el local.</span>
             </p>
 
             {{-- Botones --}}
@@ -119,7 +119,7 @@
                 {{-- Confirmar definitivo --}}
                 <button type="button" onclick="document.getElementById('formCheckout').submit()"
                     class="flex-1 py-3 px-6 rounded-full font-extrabold text-black bg-[#D4AF37] hover:bg-yellow-500 transition uppercase tracking-wide text-sm shadow-lg">
-                    Sí, confirmar pedido →
+                    Sí, Solicitar Reserva →
                 </button>
             </div>
         </div>
