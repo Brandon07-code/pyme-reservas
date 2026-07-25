@@ -17,7 +17,7 @@ use App\Http\Controllers\OtpVerificationController;
 
 Route::get('/', function () {
     if (auth()->check()) {
-        return auth()->user()->role_id === 3
+        return auth()->user()->role_id == 3
             ? redirect()->route('portal.index')
             : redirect()->route('dashboard');
     }

@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         
+        // Redirigir a los usuarios autenticados que intenten acceder a rutas de invitados
+        $middleware->redirectUsersTo(fn (Request $request) => '/');
+
         // Registro del middleware de rol
         $middleware->alias([
             'rol' => \App\Http\Middleware\VerificarRol::class,

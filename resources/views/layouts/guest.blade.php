@@ -22,7 +22,7 @@
             background: #111111;
             width: 100%;
             max-width: 420px;
-            padding: 2.75rem 2.5rem;
+            padding: 2.2rem 2.5rem;
             box-shadow: 0 0 0 1px #2a2a2a, 0 30px 60px rgba(0,0,0,0.8);
         }
 
@@ -66,7 +66,7 @@
             height: 1px;
             background: linear-gradient(90deg, transparent, #D4AF37, transparent);
             opacity: 0.5;
-            margin: 1.75rem 0;
+            margin: 1.25rem 0;
         }
 
         .btn-submit {

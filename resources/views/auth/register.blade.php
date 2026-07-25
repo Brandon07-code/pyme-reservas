@@ -1,60 +1,123 @@
 <x-guest-layout>
-    <div class="text-center mb-8 border-b border-gray-200 pb-6">
-        <div class="mx-auto w-16 h-16 bg-black rounded-full flex items-center justify-center mb-4 shadow-lg border-2 border-[#D4AF37]">
-            <span class="text-2xl">💈</span>
-        </div>
-        <h2 class="text-2xl font-extrabold text-gray-900 uppercase tracking-widest">Crear Cuenta</h2>
-        <p class="text-xs text-[#D4AF37] font-bold uppercase tracking-widest mt-1">JyM Barbería & Perfumería</p>
+    {{-- Encabezado --}}
+    <div class="text-center mb-2">
+        <p class="text-4xl font-black mb-0" style="color:#D4AF37; letter-spacing:0.08em;">JyM</p>
+        <h1 class="text-[11px] font-black text-white uppercase tracking-widest mt-1">Crear Cuenta</h1>
     </div>
 
-    <form method="POST" action="{{ route('register') }}" class="space-y-4">
+    <div class="gold-divider"></div>
+
+    <form method="POST" action="{{ route('register') }}" class="space-y-3">
         @csrf
 
+        {{-- Nombres y Apellidos en dos columnas --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label for="primer_nombre" class="block text-sm font-bold text-gray-700 mb-1">Primer Nombre *</label>
-                <input id="primer_nombre" class="block w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]" type="text" name="primer_nombre" :value="old('primer_nombre')" required autofocus />
+                <label for="primer_nombre" class="form-label">Primer Nombre *</label>
+                <input
+                    id="primer_nombre"
+                    class="form-input"
+                    type="text"
+                    name="primer_nombre"
+                    value="{{ old('primer_nombre') }}"
+                    required
+                    autofocus
+                    placeholder="Ej: Juan"
+                />
+                <x-input-error :messages="$errors->get('primer_nombre')" class="mt-1 text-red-400 text-xs" />
             </div>
 
             <div>
-                <label for="primer_apellido" class="block text-sm font-bold text-gray-700 mb-1">Primer Apellido *</label>
-                <input id="primer_apellido" class="block w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]" type="text" name="primer_apellido" :value="old('primer_apellido')" required />
+                <label for="primer_apellido" class="form-label">Primer Apellido *</label>
+                <input
+                    id="primer_apellido"
+                    class="form-input"
+                    type="text"
+                    name="primer_apellido"
+                    value="{{ old('primer_apellido') }}"
+                    required
+                    placeholder="Ej: Pérez"
+                />
+                <x-input-error :messages="$errors->get('primer_apellido')" class="mt-1 text-red-400 text-xs" />
             </div>
         </div>
 
+        {{-- Teléfono --}}
         <div>
-            <label for="telefono" class="block text-sm font-bold text-gray-700 mb-1">Teléfono Celular (Colombia) *</label>
-            <input id="telefono" placeholder="Ej: 3001234567" class="block w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]" type="text" name="telefono" :value="old('telefono')" required />
-            @error('telefono') <span class="text-red-500 text-xs font-bold">{{ $message }}</span> @enderror
+            <label for="telefono" class="form-label">Teléfono Celular *</label>
+            <input
+                id="telefono"
+                class="form-input"
+                type="text"
+                name="telefono"
+                value="{{ old('telefono') }}"
+                required
+                placeholder="Ej: 3001234567"
+            />
+            <x-input-error :messages="$errors->get('telefono')" class="mt-1 text-red-400 text-xs" />
         </div>
 
+        {{-- Email --}}
         <div>
-            <label for="email" class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico *</label>
-            <input id="email" class="block w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]" type="email" name="email" :value="old('email')" required />
-            @error('email') <span class="text-red-500 text-xs font-bold">{{ $message }}</span> @enderror
+            <label for="email" class="form-label">Correo Electrónico *</label>
+            <input
+                id="email"
+                class="form-input"
+                type="email"
+                name="email"
+                value="{{ old('email') }}"
+                required
+                placeholder="correo@ejemplo.com"
+            />
+            <x-input-error :messages="$errors->get('email')" class="mt-1 text-red-400 text-xs" />
         </div>
 
+        {{-- Contraseña y Confirmación en dos columnas --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label for="password" class="block text-sm font-bold text-gray-700 mb-1">Contraseña *</label>
-                <input id="password" class="block w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]" type="password" name="password" required />
+                <label for="password" class="form-label">Contraseña *</label>
+                <input
+                    id="password"
+                    class="form-input"
+                    type="password"
+                    name="password"
+                    required
+                    placeholder="••••••••"
+                />
+                <x-input-error :messages="$errors->get('password')" class="mt-1 text-red-400 text-xs" />
             </div>
 
             <div>
-                <label for="password_confirmation" class="block text-sm font-bold text-gray-700 mb-1">Confirmar Contraseña *</label>
-                <input id="password_confirmation" class="block w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]" type="password" name="password_confirmation" required />
+                <label for="password_confirmation" class="form-label">Confirmar *</label>
+                <input
+                    id="password_confirmation"
+                    class="form-input"
+                    type="password"
+                    name="password_confirmation"
+                    required
+                    placeholder="••••••••"
+                />
+                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1 text-red-400 text-xs" />
             </div>
         </div>
 
-        <div class="pt-6">
-            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-lg text-sm font-bold text-[#D4AF37] bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition uppercase tracking-widest">
+        {{-- Botón --}}
+        <div class="pt-1">
+            <button type="submit" class="btn-submit">
                 Completar Registro
             </button>
         </div>
 
-        <div class="text-center mt-4 border-t border-gray-100 pt-4">
-            <a class="text-sm text-gray-500 hover:text-black font-bold transition" href="{{ route('login') }}">
-                ¿Ya tienes una cuenta? Inicia sesión
+        {{-- Volver al login --}}
+        <div class="text-center pt-1">
+            <div class="gold-divider"></div>
+            <p class="text-xs mt-2" style="color:#444">¿Ya tienes una cuenta registrada?</p>
+            <a href="{{ route('login') }}"
+               class="inline-block mt-1 text-xs font-bold uppercase tracking-widest transition-colors"
+               style="color:#D4AF37"
+               onmouseover="this.style.color='#fff'"
+               onmouseout="this.style.color='#D4AF37'">
+                Inicia sesión aquí
             </a>
         </div>
     </form>
