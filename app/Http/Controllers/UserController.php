@@ -143,23 +143,34 @@ class UserController extends Controller
         
         if (in_array($role_id, [1, 2])) {
             // Es Admin o Empleado -> Garantizar perfil en tabla empleados
+            $telefono = $request->telefono ?? ($usuario->client ? $usuario->client->telefono : '0000000000');
+            
             if (!$usuario->employee) {
                 \App\Models\Employee::create([
                     'user_id' => $usuario->id,
                     'nombre' => $usuario->primer_nombre . ' ' . $usuario->primer_apellido,
                     'email' => $usuario->email,
-                    'telefono' => $request->telefono ?? '0000000000',
+                    'telefono' => $telefono,
                     'cargo' => $role_id == 1 ? 'Administrador' : 'Barbero',
                     'estado' => 1
                 ]);
             } else {
                 $usuario->employee->update([
                     'cargo' => $role_id == 1 ? 'Administrador' : 'Barbero',
-                    'estado' => 1
+                    'estado' => 1,
+                    'telefono' => $telefono !== '0000000000' ? $telefono : $usuario->employee->telefono
                 ]);
             }
+            
+            // Si tenía un perfil de cliente, lo desactivamos (no lo borramos para no perder historial)
+            if ($usuario->client) {
+                $usuario->client->update(['estado' => 0]);
+            }
+            
         } elseif ($role_id == 3) {
             // Es Cliente -> Garantizar perfil en tabla clientes
+            $telefono = $request->telefono ?? ($usuario->employee ? $usuario->employee->telefono : '0000000000');
+            
             if (!$usuario->client) {
                 \App\Models\Client::create([
                     'user_id' => $usuario->id,
@@ -168,11 +179,16 @@ class UserController extends Controller
                     'primer_apellido' => $usuario->primer_apellido,
                     'segundo_apellido' => $usuario->segundo_apellido,
                     'email' => $usuario->email,
-                    'telefono' => $request->telefono ?? '0000000000',
+                    'telefono' => $telefono,
                     'estado' => 1
                 ]);
+            } else {
+                $usuario->client->update([
+                    'estado' => 1,
+                    'telefono' => $telefono !== '0000000000' ? $telefono : $usuario->client->telefono
+                ]);
             }
-            // Si tenía un perfil de empleado, lo desactivamos (no lo borramos para no perder historial de servicios prestados)
+            // Si tenía un perfil de empleado, lo desactivamos (no lo borramos para no perder historial)
             if ($usuario->employee) {
                 $usuario->employee->update(['estado' => 0]);
             }
