@@ -5,10 +5,10 @@ echo "Ajustando permisos de almacenamiento..."
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Forzar la optimización de caché en producción
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+# Limpiar caché para que Render lea las variables de entorno frescas
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 
 # Enlace simbólico para storage (si se usa)
 php artisan storage:link --force || true
