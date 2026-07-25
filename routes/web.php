@@ -72,23 +72,26 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/reservas/{reserva}/completar', [ReservationController::class, 'markAsCompleted'])->name('reservas.completar');
         Route::patch('/reservas/{reserva}/confirmar', [ReservationController::class, 'markAsConfirmed'])->name('reservas.confirmar');
         Route::resource('reservas', ReservationController::class);
-
-        Route::get('/notificaciones/check', function() {
-            $notificaciones = auth()->user()->unreadNotifications;
-            $html = view('partials.notifications-list', compact('notificaciones'))->render();
-            return response()->json([
-                'count' => $notificaciones->count(),
-                'html' => $html
-            ]);
-        })->name('notificaciones.check');
-
-        Route::post('/notificaciones/leer', function() {
-            auth()->user()->unreadNotifications->markAsRead();
-            return redirect()->back();
-        })->name('notificaciones.leer');
         
         Route::get('/dashboard/citas-hoy', [App\Http\Controllers\DashboardController::class, 'citasHoyAjax'])->name('dashboard.citas_hoy_ajax');
     });
+
+    // ==============================================================
+    // RUTAS COMPARTIDAS (Notificaciones)
+    // ==============================================================
+    Route::get('/notificaciones/check', function() {
+        $notificaciones = auth()->user()->unreadNotifications;
+        $html = view('partials.notifications-list', compact('notificaciones'))->render();
+        return response()->json([
+            'count' => $notificaciones->count(),
+            'html' => $html
+        ]);
+    })->name('notificaciones.check');
+
+    Route::post('/notificaciones/leer', function() {
+        auth()->user()->unreadNotifications->markAsRead();
+        return redirect()->back();
+    })->name('notificaciones.leer');
 
     // ==============================================================
     // RUTAS ADMINISTRATIVAS (Solo Admin(1))

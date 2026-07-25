@@ -129,7 +129,7 @@ class CartController extends Controller
 
             DB::commit();
 
-            return redirect()->route('portal.index')->with('success', '¡Pedido confirmado! Hemos separado tus productos. Recuerda que tienes 24 horas para recogerlos y pagarlos en la barbería.');
+            return redirect()->route('portal.index')->with('success', '¡Solicitud enviada! Tu pedido está en revisión. Te notificaremos cuando sea Aprobado para que puedas recogerlo.');
 
         } catch (\Exception $e) {
             DB::rollBack();

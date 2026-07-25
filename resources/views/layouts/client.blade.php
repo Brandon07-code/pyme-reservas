@@ -65,13 +65,45 @@
                     
                     @auth
                         <li class="w-full md:w-auto flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 md:border-l md:border-gray-700 md:pl-4 pt-4 md:pt-0 border-t md:border-t-0 border-[#D4AF37]/20">
-                            <span class="text-gray-300">Hola, <span class="text-[#D4AF37]">{{ Auth::user()->primer_nombre }}</span></span>
+                            
+                            {{-- CAMPANITA DE NOTIFICACIONES --}}
+                            @php 
+                                $notificaciones = Auth::user()->unreadNotifications;
+                                $notificacionesCount = $notificaciones->count(); 
+                            @endphp
+                            
+                            <div class="relative mr-2" x-data="{ open: false }">
+                                <button @click="open = !open" @click.away="open = false" class="text-gray-400 hover:text-[#D4AF37] transition relative focus:outline-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                    </svg>
+                                    <span id="notificaciones-badge" class="{{ $notificacionesCount > 0 ? '' : 'hidden' }} absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-black bg-[#D4AF37] rounded-full transform translate-x-1/2 -translate-y-1/2 border border-black">
+                                        {{ $notificacionesCount }}
+                                    </span>
+                                </button>
+
+                                {{-- Dropdown de Notificaciones --}}
+                                <div x-show="open" style="display: none;" class="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-2xl overflow-hidden z-50 border border-gray-200">
+                                    <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex justify-between items-center">
+                                        <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Notificaciones</h3>
+                                        <form action="{{ route('notificaciones.leer') }}" method="POST" id="form-marcar-leidas" class="{{ $notificacionesCount > 0 ? '' : 'hidden' }}">
+                                            @csrf
+                                            <button type="submit" class="text-[10px] text-blue-600 hover:underline">Marcar leídas</button>
+                                        </form>
+                                    </div>
+                                    <div class="max-h-64 overflow-y-auto" id="notificaciones-lista">
+                                        @include('partials.notifications-list')
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span class="text-gray-300">Hola, <span class="text-[#D4AF37] font-bold">{{ Auth::user()->primer_nombre }}</span></span>
                             
                             <a href="{{ route('profile.edit') }}" class="text-gray-400 hover:text-white transition">Mi Perfil</a>
 
                             <form method="POST" action="{{ route('logout') }}" class="m-0 p-0">
                                 @csrf
-                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded shadow text-xs transition">Salir</button>
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded shadow text-xs transition uppercase font-bold">Salir</button>
                             </form>
                         </li>
                     @endauth
@@ -171,6 +203,43 @@
                 }
             });
         });
+    </script>
+
+    <script>
+        @auth
+        // Sondeo en tiempo real para notificaciones (AJAX Polling) para el cliente
+        function checkNotifications() {
+            fetch('{{ route('notificaciones.check') }}', {
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('notificaciones-badge');
+                const btnMarcar = document.getElementById('form-marcar-leidas');
+                const lista = document.getElementById('notificaciones-lista');
+                
+                if (badge && lista) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.classList.remove('hidden');
+                        if(btnMarcar) btnMarcar.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                        if(btnMarcar) btnMarcar.classList.add('hidden');
+                    }
+                    
+                    lista.innerHTML = data.html;
+                }
+            })
+            .catch(err => console.error('Error fetching notifications:', err));
+        }
+        
+        // Revisar si hay nuevas notificaciones cada 15 segundos
+        setInterval(checkNotifications, 15000);
+        @endauth
     </script>
 
 </body>

@@ -57,6 +57,11 @@ class OrderController extends Controller
         // Mensaje dinámico según la acción del admin
         if ($request->estado == 'pendiente_recogida') {
             $mensaje = 'Paquete marcado como listo. El cliente puede pasar a recogerlo.';
+            
+            // Notificar al cliente
+            if ($pedido->client && $pedido->client->user) {
+                $pedido->client->user->notify(new \App\Notifications\PedidoAprobadoNotification($pedido));
+            }
         } elseif ($request->estado == 'entregado') {
             $mensaje = 'Pedido entregado y cobrado en caja.';
         } else {

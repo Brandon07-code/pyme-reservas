@@ -1,8 +1,12 @@
 @forelse($notificaciones as $notificacion)
     @php
-        $urlDestino = $notificacion->data['tipo'] == 'reserva' 
-            ? route('reservas.index', ['reserva_id' => $notificacion->data['reserva_id'] ?? ''])
-            : route('orders.index', ['pedido_id' => $notificacion->data['pedido_id'] ?? '']);
+        if ($notificacion->data['tipo'] == 'reserva') {
+            $urlDestino = route('reservas.index', ['reserva_id' => $notificacion->data['reserva_id'] ?? '']);
+        } elseif ($notificacion->data['tipo'] == 'pedido_cliente') {
+            $urlDestino = route('portal.pedidos');
+        } else {
+            $urlDestino = route('orders.index', ['pedido_id' => $notificacion->data['pedido_id'] ?? '']);
+        }
     @endphp
     <a href="{{ $urlDestino }}" class="block px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition">
         <p class="text-sm font-bold text-gray-800">{{ $notificacion->data['mensaje'] }}</p>
