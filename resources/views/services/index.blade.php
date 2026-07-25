@@ -61,7 +61,7 @@
 
                    
                     <div class="bg-gray-50 px-4 py-3 border-t border-gray-100 flex justify-end">
-                        <x-action-buttons editRoute="{{ route('servicios.edit', $servicio) }}" destroyRoute="{{ route('servicios.destroy', $servicio) }}" :estado="$servicio->estado" />
+                        <x-action-buttons editRoute="{{ route('servicios.edit', $servicio) }}" destroyRoute="{{ route('servicios.destroy', $servicio) }}" :estado="$servicio->estado" :deletable="!$servicio->reservations()->exists()" />
                     </div>
                 </div>
             @endforeach

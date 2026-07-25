@@ -144,7 +144,7 @@
                             @endif
                             
                             @if(Auth::user()->role_id == 1)
-                                <form action="{{ route('reservas.destroy', $reserva) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas ELIMINAR esta reserva permanentemente?');">
+                                <form action="{{ route('reservas.destroy', $reserva) }}" method="POST" onsubmit="event.preventDefault(); confirmForm(this, '¿Seguro que deseas ELIMINAR esta reserva permanentemente?');">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded shadow-sm font-semibold transition">Eliminar</button>
                                 </form>

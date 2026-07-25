@@ -90,16 +90,46 @@ class UserController extends Controller
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
     }
 
- public function destroy(User $usuario)
+    public function destroy(User $usuario)
     {
-        // Invierte el estado actual (Si es 1 pasa a 0, si es 0 pasa a 1)
-        $nuevoEstado = !$usuario->estado;
-        
-        $usuario->update(['estado' => $nuevoEstado]);
+        // Proteger: no modificar la propia cuenta
+        if ($usuario->id === auth()->id()) {
+            return redirect()->route('usuarios.index')->with('error', 'No puedes desactivar o eliminar tu propia cuenta.');
+        }
 
-        // Mensaje dinámico
-        $mensaje = $nuevoEstado ? 'Usuario activado correctamente.' : 'Usuario desactivado correctamente.';
-        
-        return redirect()->route('usuarios.index')->with('success', $mensaje);
+        // Proteger: garantizar que siempre exista al menos un administrador activo
+        if ($usuario->role_id === 1 && $usuario->estado === 1) {
+            $adminsActivos = User::where('role_id', 1)->where('estado', 1)->count();
+            if ($adminsActivos <= 1) {
+                return redirect()->route('usuarios.index')->with('error', 'No se puede desactivar al único administrador activo del sistema. Crea otro administrador primero.');
+            }
+        }
+
+        // Verificar si tiene datos históricos vinculados
+        $tieneHistorial = false;
+        if ($usuario->client && ($usuario->client->reservations()->exists() || $usuario->client->orders()->exists())) {
+            $tieneHistorial = true;
+        }
+        if ($usuario->employee && $usuario->employee->reservations()->exists()) {
+            $tieneHistorial = true;
+        }
+
+        if ($tieneHistorial) {
+            // Solo desactivar/activar si tiene historial
+            $nuevoEstado = !$usuario->estado;
+            $usuario->update(['estado' => $nuevoEstado]);
+            $mensaje = $nuevoEstado ? 'Usuario activado correctamente.' : 'Usuario desactivado correctamente. No se puede eliminar porque tiene reservas o pedidos registrados.';
+            return redirect()->route('usuarios.index')->with('success', $mensaje);
+        }
+
+        // Sin historial: eliminar registros hijos primero (respeta FK RESTRICT)
+        if ($usuario->employee) {
+            $usuario->employee->delete();
+        }
+        if ($usuario->client) {
+            $usuario->client->delete();
+        }
+        $usuario->delete();
+        return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado definitivamente.');
     }
 }

@@ -69,7 +69,10 @@
                             @if(Auth::id() == $user->id)
                                 <a href="{{ route('profile.edit') }}" class="text-[#D4AF37] hover:text-yellow-600 bg-gray-900 hover:bg-black px-4 py-2 rounded shadow-sm font-bold text-xs uppercase tracking-wider transition">Mi Perfil</a>
                             @else
-                                <x-action-buttons editRoute="{{ route('usuarios.edit', $user) }}" destroyRoute="{{ route('usuarios.destroy', $user) }}" :estado="$user->estado" />
+                                @php
+                                    $tieneHistorial = ($user->client && ($user->client->reservations()->exists() || $user->client->orders()->exists())) || ($user->employee && $user->employee->reservations()->exists());
+                                @endphp
+                                <x-action-buttons editRoute="{{ route('usuarios.edit', $user) }}" destroyRoute="{{ route('usuarios.destroy', $user) }}" :estado="$user->estado" :deletable="!$tieneHistorial && $user->id !== auth()->id()" />
                             @endif
                             
                         </td>

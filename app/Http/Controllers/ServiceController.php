@@ -85,9 +85,19 @@ class ServiceController extends Controller
 
     public function destroy(Service $servicio)
     {
-        $nuevoEstado = !$servicio->estado;
-        $servicio->update(['estado' => $nuevoEstado]);
-        $mensaje = $nuevoEstado ? 'Servicio activado correctamente.' : 'Servicio desactivado correctamente.';
-        return redirect()->route('servicios.index')->with('success', $mensaje);
+        // Si el servicio tiene reservas históricas, solo se puede desactivar/activar
+        if ($servicio->reservations()->exists()) {
+            $nuevoEstado = !$servicio->estado;
+            $servicio->update(['estado' => $nuevoEstado]);
+            $mensaje = $nuevoEstado ? 'Servicio activado correctamente.' : 'Servicio desactivado correctamente.';
+            return redirect()->route('servicios.index')->with('success', $mensaje);
+        }
+
+        // Si no tiene historial, se elimina definitivamente
+        if ($servicio->imagen_url && Storage::disk('public')->exists(str_replace('storage/', '', $servicio->imagen_url))) {
+            Storage::disk('public')->delete(str_replace('storage/', '', $servicio->imagen_url));
+        }
+        $servicio->delete();
+        return redirect()->route('servicios.index')->with('success', 'Servicio eliminado definitivamente.');
     }
 }

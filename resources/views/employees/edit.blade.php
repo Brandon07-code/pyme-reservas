@@ -21,9 +21,9 @@
                     <p class="text-xs text-gray-500 mt-1">El usuario asociado no puede cambiarse. Si necesitas desvincularlo, desactiva este registro y crea uno nuevo.</p>
                 </div>
 
-                <!-- Especialidad -->
-                <div>
-                    <label for="especialidad" class="block text-sm font-medium text-gray-700 mb-1">Especialidad</label>
+                <!-- Especialidad (solo barberos) -->
+                <div id="campo-especialidad">
+                    <label for="especialidad" class="block text-sm font-medium text-gray-700 mb-1">Especialidad <span class="text-xs text-gray-400">(Solo para barberos)</span></label>
                     <input type="text" name="especialidad" id="especialidad" value="{{ old('especialidad', $empleado->especialidad) }}" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 border p-2">
                     @error('especialidad') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                 </div>
@@ -60,4 +60,16 @@
             </div>
         </form>
     </div>
+
+<script>
+    const campoEspecialidad = document.getElementById('campo-especialidad');
+    const inputEspecialidad = document.getElementById('especialidad');
+    // role_id del empleado actual (viene del servidor)
+    const rolActual = '{{ $empleado->user->role_id }}';
+
+    if (rolActual === '1') {
+        campoEspecialidad.style.display = 'none';
+        inputEspecialidad.value = '';
+    }
+</script>
 @endsection

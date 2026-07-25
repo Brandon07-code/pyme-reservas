@@ -1,56 +1,82 @@
 <x-guest-layout>
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <x-auth-session-status class="mb-4 text-sm text-green-400 font-medium" :status="session('status')" />
 
-    <div class="text-center mb-8 border-b border-gray-200 pb-6">
-        <!-- Ícono estilizado -->
-        <div class="mx-auto w-16 h-16 bg-black rounded-full flex items-center justify-center mb-4 shadow-lg border-2 border-[#D4AF37]">
-            <span class="text-2xl">💈</span>
-        </div>
-        <h2 class="text-2xl font-extrabold text-gray-900 uppercase tracking-widest">JyM Barbería</h2>
-        <p class="text-xs text-[#D4AF37] font-bold uppercase tracking-widest mt-1">Acceso al Sistema</p>
+    {{-- Logo + Título --}}
+    <div class="text-center mb-2">
+        <p class="text-5xl font-black mb-1" style="color:#D4AF37; letter-spacing:0.08em;">JyM</p>
+        <h1 class="text-sm font-black text-white uppercase tracking-widest">Barbería & Perfumería</h1>
+        <p class="text-xs mt-2 uppercase tracking-widest" style="color:#444; letter-spacing:0.18em;">Sistema de Acceso</p>
     </div>
 
-    <form method="POST" action="{{ route('login') }}" class="space-y-6">
+    <div class="gold-divider"></div>
+
+    <form method="POST" action="{{ route('login') }}" class="space-y-5">
         @csrf
 
+        {{-- Email --}}
         <div>
-            <label for="email" class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
-            <input id="email" class="block w-full border-gray-300 rounded-md shadow-sm border p-3 focus:ring-[#D4AF37] focus:border-[#D4AF37]" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500 text-xs" />
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input
+                id="email"
+                class="form-input"
+                type="email"
+                name="email"
+                value="{{ old('email') }}"
+                required
+                autofocus
+                autocomplete="username"
+                placeholder="correo@ejemplo.com"
+            />
+            <x-input-error :messages="$errors->get('email')" class="mt-1 text-red-400 text-xs" />
         </div>
 
+        {{-- Contraseña --}}
         <div>
-            <label for="password" class="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
-            <input id="password" class="block w-full border-gray-300 rounded-md shadow-sm border p-3 focus:ring-[#D4AF37] focus:border-[#D4AF37]" type="password" name="password" required autocomplete="current-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500 text-xs" />
+            <label for="password" class="form-label">Contraseña</label>
+            <input
+                id="password"
+                class="form-input"
+                type="password"
+                name="password"
+                required
+                autocomplete="current-password"
+                placeholder="••••••••"
+            />
+            <x-input-error :messages="$errors->get('password')" class="mt-1 text-red-400 text-xs" />
         </div>
 
-        <div class="flex items-center justify-between">
+        {{-- Recordarme + Olvidé --}}
+        <div class="flex items-center justify-between pt-1">
             <label for="remember_me" class="inline-flex items-center cursor-pointer">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-[#D4AF37] shadow-sm focus:ring-[#D4AF37]" name="remember">
-                <span class="ms-2 text-sm text-gray-600 font-semibold">Recordarme</span>
+                <input id="remember_me" type="checkbox" class="text-yellow-500 focus:ring-yellow-400 bg-gray-800" name="remember">
+                <span class="ml-2 text-xs font-medium" style="color:#555">Recordarme</span>
             </label>
 
             @if (Route::has('password.request'))
-                <a class="text-sm text-gray-500 hover:text-black font-bold transition" href="{{ route('password.request') }}">
+                <a class="text-xs font-medium transition-colors" style="color:#444" onmouseover="this.style.color='#D4AF37'" onmouseout="this.style.color='#444'" href="{{ route('password.request') }}">
                     ¿Olvidaste tu contraseña?
                 </a>
             @endif
         </div>
 
-        <div>
-            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-lg text-sm font-bold text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition uppercase tracking-widest">
-                Ingresar
+        {{-- Botón --}}
+        <div class="pt-2">
+            <button type="submit" class="btn-submit">
+                Ingresar al Sistema
             </button>
         </div>
 
-        <div class="text-center mt-6 pt-4 border-t border-gray-100">
-            <p class="text-sm text-gray-600">
-                ¿Eres cliente y aún no tienes cuenta? <br>
-                <a href="{{ route('register') }}" class="font-bold text-[#D4AF37] hover:text-yellow-600 transition block mt-2 uppercase text-xs tracking-wider">
-                    Regístrate gratis aquí
-                </a>
-            </p>
+        {{-- Registro --}}
+        <div class="text-center pt-3">
+            <div class="gold-divider"></div>
+            <p class="text-xs mt-3" style="color:#444">¿Eres cliente y aún no tienes cuenta?</p>
+            <a href="{{ route('register') }}"
+               class="inline-block mt-1 text-xs font-bold uppercase tracking-widest transition-colors"
+               style="color:#D4AF37"
+               onmouseover="this.style.color='#fff'"
+               onmouseout="this.style.color='#D4AF37'">
+                Regístrate gratis aquí
+            </a>
         </div>
     </form>
 </x-guest-layout>

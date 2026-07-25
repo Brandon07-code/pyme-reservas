@@ -114,13 +114,15 @@
 
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none">
         @if(session('success'))
-            <div class="toast-message bg-green-600 text-white px-6 py-4 rounded-lg shadow-xl toast-enter flex items-center border-l-4 border-green-800">
-                <span class="font-bold text-sm tracking-wide">{{ session('success') }}</span>
+            <div class="toast-message bg-green-600 text-white px-6 py-4 shadow-xl toast-enter flex items-center gap-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span class="font-semibold text-sm tracking-wide">{{ session('success') }}</span>
             </div>
         @endif
         @if($errors->any() || session('error'))
-            <div class="toast-message bg-red-600 text-white px-6 py-4 rounded-lg shadow-xl toast-enter flex items-center border-l-4 border-red-800">
-                <span class="font-bold text-sm tracking-wide">{{ session('error') ?? $errors->first() }}</span>
+            <div class="toast-message bg-red-600 text-white px-6 py-4 shadow-xl toast-enter flex items-center gap-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <span class="font-semibold text-sm tracking-wide">{{ session('error') ?? $errors->first() }}</span>
             </div>
         @endif
     </div>
@@ -193,5 +195,61 @@
         setInterval(checkNotifications, 15000);
         @endauth
     </script>
+
+    {{-- Modal de confirmación personalizado (reemplaza el confirm() del navegador) --}}
+    <div id="confirm-modal" class="fixed inset-0 z-[999] flex items-center justify-center hidden" style="background:rgba(0,0,0,0.7)">
+        <div class="bg-[#1a1a1a] w-full max-w-sm mx-4 p-7 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 bg-red-600 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+                </div>
+                <h3 class="text-white font-bold text-base" id="confirm-title">Confirmar acción</h3>
+            </div>
+            <p class="text-gray-400 text-sm mb-7 leading-relaxed" id="confirm-message"></p>
+            <div class="flex gap-3 justify-end">
+                <button id="confirm-cancel" class="px-5 py-2 text-sm font-semibold text-gray-400 hover:text-white transition-colors">
+                    Cancelar
+                </button>
+                <button id="confirm-ok" class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold transition-colors">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal de confirmación — se ejecuta luego de que el DOM está listo
+        document.addEventListener('DOMContentLoaded', function () {
+            const confirmModal   = document.getElementById('confirm-modal');
+            const confirmMessage = document.getElementById('confirm-message');
+            const confirmOk      = document.getElementById('confirm-ok');
+            const confirmCancel  = document.getElementById('confirm-cancel');
+            let pendingForm      = null;
+
+            window.confirmForm = function(form, message) {
+                pendingForm = form;
+                confirmMessage.textContent = message;
+                confirmModal.classList.remove('hidden');
+            };
+
+            confirmOk.addEventListener('click', function () {
+                confirmModal.classList.add('hidden');
+                if (pendingForm) { pendingForm.submit(); pendingForm = null; }
+            });
+
+            confirmCancel.addEventListener('click', function () {
+                confirmModal.classList.add('hidden');
+                pendingForm = null;
+            });
+
+            confirmModal.addEventListener('click', function (e) {
+                if (e.target === confirmModal) {
+                    confirmModal.classList.add('hidden');
+                    pendingForm = null;
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>

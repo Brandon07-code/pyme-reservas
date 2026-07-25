@@ -47,9 +47,9 @@
                     @error('role_id') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Especialidad -->
-                <div>
-                    <label for="especialidad" class="block text-sm font-medium text-gray-700 mb-1">Especialidad</label>
+                <!-- Especialidad (solo para Empleado/Barbero) -->
+                <div id="campo-especialidad">
+                    <label for="especialidad" class="block text-sm font-medium text-gray-700 mb-1">Especialidad <span class="text-xs text-gray-400">(Solo para barberos)</span></label>
                     <input type="text" name="especialidad" id="especialidad" value="{{ old('especialidad') }}" placeholder="Ej: Barbero Senior" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 border p-2">
                     @error('especialidad') <span class="text-red-500 text-xs italic">{{ $message }}</span> @enderror
                 </div>
@@ -86,4 +86,28 @@
             </div>
         </form>
     </div>
+
+<script>
+    const roleSelect     = document.getElementById('role_id');
+    const campoEspecialidad = document.getElementById('campo-especialidad');
+    const inputEspecialidad = document.getElementById('especialidad');
+
+    function toggleEspecialidad() {
+        const esAdmin = roleSelect.value === '1';
+        if (esAdmin) {
+            campoEspecialidad.style.display = 'none';
+            inputEspecialidad.value = '';          // limpia el valor
+            inputEspecialidad.removeAttribute('placeholder');
+        } else {
+            campoEspecialidad.style.display = 'block';
+            inputEspecialidad.setAttribute('placeholder', 'Ej: Barbero Senior');
+        }
+    }
+
+    // Ejecutar al cargar la página (por si hay un old() de admin)
+    toggleEspecialidad();
+
+    // Ejecutar cada vez que cambia el rol
+    roleSelect.addEventListener('change', toggleEspecialidad);
+</script>
 @endsection

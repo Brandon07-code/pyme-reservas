@@ -80,7 +80,7 @@
                                     <span class="text-xl font-extrabold text-black">Total: ${{ number_format($reserva->total, 0, ',', '.') }}</span>
                                     
                                     @if(in_array($reserva->estado, ['pendiente', 'confirmada']) && $esFutura)
-                                        <form action="{{ route('portal.citas.cancelar', $reserva) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar esta cita? Esta acción no se puede deshacer.');">
+                                        <form action="{{ route('portal.citas.cancelar', $reserva) }}" method="POST" onsubmit="event.preventDefault(); confirmForm(this, '¿Estás seguro de que deseas cancelar esta cita? Esta acción no se puede deshacer.');">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" class="text-red-600 hover:text-white border border-red-600 hover:bg-red-600 font-bold py-2 px-4 rounded transition text-sm">
