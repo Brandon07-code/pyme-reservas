@@ -48,8 +48,10 @@ class UserController extends Controller
         // Encriptar la contraseña
         $validated['password'] = Hash::make($validated['password']);
 
-        User::create($validated);
-        return redirect()->route('usuarios.index')->with('success', 'Usuario creado correctamente.');
+        $usuario = User::create($validated);
+        $this->sincronizarPerfiles($usuario, $request);
+
+        return redirect()->route('usuarios.index')->with('success', 'Usuario y perfiles creados correctamente.');
     }
 
     public function edit(User $usuario)
@@ -87,7 +89,9 @@ class UserController extends Controller
         }
 
         $usuario->update($validated);
-        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
+        $this->sincronizarPerfiles($usuario, $request);
+
+        return redirect()->route('usuarios.index')->with('success', 'Usuario y perfiles actualizados correctamente.');
     }
 
     public function destroy(User $usuario)
@@ -131,5 +135,47 @@ class UserController extends Controller
         }
         $usuario->delete();
         return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado definitivamente.');
+    }
+
+    private function sincronizarPerfiles(User $usuario, Request $request)
+    {
+        $role_id = (int) $usuario->role_id;
+        
+        if (in_array($role_id, [1, 2])) {
+            // Es Admin o Empleado -> Garantizar perfil en tabla empleados
+            if (!$usuario->employee) {
+                \App\Models\Employee::create([
+                    'user_id' => $usuario->id,
+                    'nombre' => $usuario->primer_nombre . ' ' . $usuario->primer_apellido,
+                    'email' => $usuario->email,
+                    'telefono' => $request->telefono ?? '0000000000',
+                    'cargo' => $role_id == 1 ? 'Administrador' : 'Barbero',
+                    'estado' => 1
+                ]);
+            } else {
+                $usuario->employee->update([
+                    'cargo' => $role_id == 1 ? 'Administrador' : 'Barbero',
+                    'estado' => 1
+                ]);
+            }
+        } elseif ($role_id == 3) {
+            // Es Cliente -> Garantizar perfil en tabla clientes
+            if (!$usuario->client) {
+                \App\Models\Client::create([
+                    'user_id' => $usuario->id,
+                    'primer_nombre' => $usuario->primer_nombre,
+                    'segundo_nombre' => $usuario->segundo_nombre,
+                    'primer_apellido' => $usuario->primer_apellido,
+                    'segundo_apellido' => $usuario->segundo_apellido,
+                    'email' => $usuario->email,
+                    'telefono' => $request->telefono ?? '0000000000',
+                    'estado' => 1
+                ]);
+            }
+            // Si tenía un perfil de empleado, lo desactivamos (no lo borramos para no perder historial de servicios prestados)
+            if ($usuario->employee) {
+                $usuario->employee->update(['estado' => 0]);
+            }
+        }
     }
 }
