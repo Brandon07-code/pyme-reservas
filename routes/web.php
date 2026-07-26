@@ -132,7 +132,7 @@ Route::get('/cron/marcar-citas-vencidas', function (\Illuminate\Http\Request $re
             'message' => 'Comando ejecutado exitosamente',
             'output' => \Illuminate\Support\Facades\Artisan::output()
         ]);
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         return response()->json([
             'status' => 'error',
             'message' => $e->getMessage(),
