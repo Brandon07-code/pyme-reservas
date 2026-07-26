@@ -1,9 +1,9 @@
-@props(['editRoute', 'destroyRoute', 'estado' => 1, 'scheduleRoute' => null, 'deletable' => false])
+@props(['editRoute', 'destroyRoute', 'estado' => 1, 'scheduleRoute' => null, 'deletable' => false, 'showSchedule' => false])
 
 <div class="flex justify-end items-center space-x-2">
 
-    {{-- Botón de Horarios (Opcional) --}}
-    @if($scheduleRoute && in_array(Auth::user()->role_id, [1]))
+    {{-- Botón de Horarios: solo si la ruta existe Y el empleado es barbero (role_id=2) --}}
+    @if($scheduleRoute && $showSchedule && in_array(Auth::user()->role_id, [1]))
         <a href="{{ $scheduleRoute }}" title="Gestionar Horarios" class="text-amber-600 hover:text-amber-900 bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded transition shadow-sm font-semibold">
             ⏱ Turnos
         </a>

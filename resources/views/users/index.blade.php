@@ -5,21 +5,24 @@
 @section('content')
     <x-page-header title="Gestión de Usuarios" createRoute="" buttonText="" />
 
-    {{-- Tarjetas KPI JyM Style --}}
-    <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-widest">Resumen de Cuentas</p>
+    {{-- Tarjetas KPI clickeables --}}
+    <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-widest">Resumen de Cuentas (Clic para filtrar)</p>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5 ">
+        <a href="{{ route('usuarios.index', array_merge(request()->except('estado'), [])) }}"
+           class="rounded-lg shadow-lg p-5 hover:bg-gray-800 transition cursor-pointer {{ !request('estado') ? 'bg-gray-800' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Usuarios</h3>
             <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $totalUsers }}</p>
-        </div>
-        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5 ">
+        </a>
+        <a href="{{ route('usuarios.index', array_merge(request()->except('estado'), ['estado' => '1'])) }}"
+           class="rounded-lg shadow-lg p-5 hover:bg-gray-800 transition cursor-pointer {{ request('estado') === '1' ? 'bg-gray-800' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Usuarios Activos</h3>
             <p class="text-3xl font-extrabold text-green-500">{{ $activeUsers }}</p>
-        </div>
-        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5 ">
+        </a>
+        <a href="{{ route('usuarios.index', array_merge(request()->except('estado'), ['estado' => '0'])) }}"
+           class="rounded-lg shadow-lg p-5 hover:bg-gray-800 transition cursor-pointer {{ request('estado') === '0' ? 'bg-gray-800' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Usuarios Inactivos</h3>
             <p class="text-3xl font-extrabold text-red-500">{{ $inactiveUsers }}</p>
-        </div>
+        </a>
     </div>
 
     @if(session('success'))
@@ -34,14 +37,22 @@
         </div>
     @endif
 
-    {{-- Filtro de Búsqueda JyM Style --}}
-    <form method="GET" action="{{ route('usuarios.index') }}" class="mb-6 flex gap-2">
-        <input type="text" name="search" value="{{ $search }}" placeholder="Buscar por nombre o email..." class="w-full md:w-1/3 border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
-        <button type="submit" class="bg-[#0f172a] hover:bg-black text-[#D4AF37] font-bold py-2 px-6 rounded shadow uppercase tracking-wider text-xs transition">Buscar</button>
-        @if($search)
-            <a href="{{ route('usuarios.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded shadow text-xs uppercase tracking-wider transition">Limpiar</a>
-        @endif
-    </form>
+    {{-- Barra de búsqueda + botón PDF --}}
+    <div class="flex flex-col md:flex-row gap-2 mb-6 items-start md:items-center justify-between">
+        <form method="GET" action="{{ route('usuarios.index') }}" class="flex gap-2 flex-1">
+            <input type="hidden" name="estado" value="{{ $estadoFilter }}">
+            <input type="text" name="search" value="{{ $search }}" placeholder="Buscar por nombre o email..." class="w-full md:w-1/3 border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
+            <button type="submit" class="bg-[#0f172a] hover:bg-black text-[#D4AF37] font-bold py-2 px-6 rounded shadow uppercase tracking-wider text-xs transition">Buscar</button>
+            @if($search || $estadoFilter !== null && $estadoFilter !== '')
+                <a href="{{ route('usuarios.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded shadow text-xs uppercase tracking-wider transition">Limpiar</a>
+            @endif
+        </form>
+        <a href="{{ route('usuarios.export-pdf', request()->query()) }}" target="_blank"
+           class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-5 rounded shadow text-xs uppercase tracking-wider transition flex items-center gap-1 whitespace-nowrap">
+            📄 Exportar PDF
+        </a>
+    </div>
+
 
     <div class="bg-white shadow-md rounded-lg overflow-x-auto border border-gray-100">
         <table class="min-w-full divide-y divide-gray-200">

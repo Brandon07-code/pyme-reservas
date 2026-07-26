@@ -97,18 +97,26 @@ Route::middleware(['auth'])->group(function () {
     // RUTAS ADMINISTRATIVAS (Solo Admin(1))
     // ==============================================================
     Route::middleware(['admin:1'])->group(function () {
+        Route::get('/usuarios/export-pdf', [UserController::class, 'exportPdf'])->name('usuarios.export-pdf');
         Route::resource('usuarios', UserController::class);
-        
+
         Route::get('/integracion/posts', [ExternalPostController::class, 'index'])->name('posts.index');
-        
+
         Route::get('empleados/{empleado}/horarios', [\App\Http\Controllers\ScheduleController::class, 'edit'])->name('empleados.horarios.edit');
         Route::put('empleados/{empleado}/horarios', [\App\Http\Controllers\ScheduleController::class, 'update'])->name('empleados.horarios.update');
+        Route::get('/empleados/export-pdf', [EmployeeController::class, 'exportPdf'])->name('empleados.export-pdf');
         Route::resource('empleados', EmployeeController::class);
-        
+
+        Route::get('/clientes/export-pdf', [ClientController::class, 'exportPdf'])->name('clientes.export-pdf');
         Route::resource('clientes', ClientController::class);
+
+        Route::get('/servicios/export-pdf', [ServiceController::class, 'exportPdf'])->name('servicios.export-pdf');
         Route::resource('servicios', ServiceController::class);
+
+        Route::get('/productos/export-pdf', [ProductController::class, 'exportPdf'])->name('productos.export-pdf');
         Route::resource('productos', ProductController::class);
 
+        Route::get('/pedidos/export-pdf', [OrderController::class, 'exportPdf'])->name('orders.export-pdf');
         Route::resource('pedidos', OrderController::class)->only(['index', 'update'])->names('orders');
     });
 

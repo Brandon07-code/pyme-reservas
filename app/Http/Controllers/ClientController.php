@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ClientController extends Controller
 {
@@ -102,5 +103,21 @@ class ClientController extends Controller
 
         $mensaje = $nuevoEstado ? 'Cliente activado correctamente.' : 'Cliente desactivado correctamente.';
         return redirect()->route('clientes.index')->with('success', $mensaje);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        ini_set('max_execution_time', 120);
+        $search = $request->get('search');
+        $estadoFilter = $request->get('estado');
+
+        $query = Client::search($search)->latest();
+        if ($estadoFilter !== null && $estadoFilter !== '') {
+            $query->where('estado', (int) $estadoFilter);
+        }
+        $clients = $query->get();
+
+        $pdf = Pdf::loadView('pdf.clientes', compact('clients'))->setPaper('a4', 'landscape');
+        return $pdf->download('reporte-clientes-jym-' . date('Y-m-d') . '.pdf');
     }
 }

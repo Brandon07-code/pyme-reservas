@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage; // IMPORTACIÓN CORREGIDA
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str; // IMPORTACIÓN CORREGIDA
 
 class ProductController extends Controller
@@ -94,5 +95,13 @@ class ProductController extends Controller
         $producto->update(['estado' => $nuevoEstado]);
         $mensaje = $nuevoEstado ? 'Producto activado correctamente.' : 'Producto desactivado correctamente.';
         return redirect()->route('productos.index')->with('success', $mensaje);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        ini_set('max_execution_time', 120);
+        $productos = Product::with('category')->latest()->get();
+        $pdf = Pdf::loadView('pdf.productos', compact('productos'))->setPaper('a4', 'landscape');
+        return $pdf->download('reporte-productos-jym-' . date('Y-m-d') . '.pdf');
     }
 }

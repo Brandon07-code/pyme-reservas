@@ -33,7 +33,12 @@ class PortalController extends Controller
     public function agendar()
     {
         $services = Service::where('estado', 1)->get();
-        $employees = Employee::with('user')->where('estado', 1)->get();
+        // Solo mostrar empleados activos con rol de Empleado/Barbero (role_id = 2)
+        // Los admins NO deben aparecer como barberos seleccionables
+        $employees = Employee::with('user')
+            ->where('estado', 1)
+            ->whereHas('user', fn($q) => $q->where('role_id', 2))
+            ->get();
         
         return view('portal.agendar', compact('services', 'employees'));
     }

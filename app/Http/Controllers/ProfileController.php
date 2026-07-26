@@ -55,6 +55,9 @@ class ProfileController extends Controller
 
         $user->save();
 
+        // Sincronizar perfil de empleado/cliente si aplica (ej: admin sin registro en tabla employees)
+        \App\Http\Controllers\UserController::sincronizarPerfiles($user, $request->telefono);
+
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 

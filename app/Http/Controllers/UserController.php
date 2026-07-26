@@ -8,22 +8,44 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class UserController extends Controller
 {
     public function index(Request $request)
     {
         $search = $request->get('search');
-        
-        // Eager Loading (with) y Scope (search)
-        $users = User::with('role')->search($search)->latest()->paginate(10);
+        $estadoFilter = $request->get('estado'); // null = todos, '1' = activos, '0' = inactivos
 
-        // Tarjetas de Estadísticas
-        $totalUsers = User::count();
-        $activeUsers = User::where('estado', 1)->count();
+        $query = User::with('role')->search($search)->latest();
+
+        if ($estadoFilter !== null && $estadoFilter !== '') {
+            $query->where('estado', (int) $estadoFilter);
+        }
+
+        $users = $query->paginate(10)->appends(request()->query());
+
+        $totalUsers   = User::count();
+        $activeUsers  = User::where('estado', 1)->count();
         $inactiveUsers = User::where('estado', 0)->count();
 
-        return view('users.index', compact('users', 'search', 'totalUsers', 'activeUsers', 'inactiveUsers'));
+        return view('users.index', compact('users', 'search', 'estadoFilter', 'totalUsers', 'activeUsers', 'inactiveUsers'));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        ini_set('max_execution_time', 120);
+        $search = $request->get('search');
+        $estadoFilter = $request->get('estado');
+
+        $query = User::with('role')->search($search)->latest();
+        if ($estadoFilter !== null && $estadoFilter !== '') {
+            $query->where('estado', (int) $estadoFilter);
+        }
+        $users = $query->get();
+
+        $pdf = Pdf::loadView('pdf.usuarios', compact('users'))->setPaper('a4', 'landscape');
+        return $pdf->download('reporte-usuarios-jym-' . date('Y-m-d') . '.pdf');
     }
 
     public function create()
@@ -49,7 +71,7 @@ class UserController extends Controller
         $validated['password'] = Hash::make($validated['password']);
 
         $usuario = User::create($validated);
-        $this->sincronizarPerfiles($usuario, $request);
+        self::sincronizarPerfiles($usuario, $request->telefono);
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario y perfiles creados correctamente.');
     }
@@ -89,7 +111,7 @@ class UserController extends Controller
         }
 
         $usuario->update($validated);
-        $this->sincronizarPerfiles($usuario, $request);
+        self::sincronizarPerfiles($usuario, $request->telefono);
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario y perfiles actualizados correctamente.');
     }
@@ -137,39 +159,62 @@ class UserController extends Controller
         return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado definitivamente.');
     }
 
-    private function sincronizarPerfiles(User $usuario, Request $request)
+    /**
+     * Sincroniza los perfiles de Cliente/Empleado según el rol del usuario.
+     * Se llama tras crear o actualizar un usuario desde cualquier controlador.
+     */
+    public static function sincronizarPerfiles(User $usuario, $telefonoExterno = null)
     {
         $role_id = (int) $usuario->role_id;
-        
+
+        // Refrescar relaciones para evitar datos de caché
+        $usuario->load(['employee', 'client']);
+
         if (in_array($role_id, [1, 2])) {
-            // Es Admin o Empleado -> Garantizar perfil en tabla empleados
-            $telefono = $request->telefono ?? ($usuario->client ? $usuario->client->telefono : '0000000000');
-            
+            // Admin o Empleado -> garantizar registro en tabla employees
+            // El teléfono se toma del parámetro externo, del perfil de cliente previo, o del propio user
+            $telefono = $telefonoExterno
+                ?? ($usuario->client ? $usuario->client->telefono : null)
+                ?? $usuario->telefono
+                ?? '0000000000';
+
+            // 'especialidad' es el campo real que existe en la tabla employees
+            $especialidad = $role_id == 1 ? 'Administrador' : 'Barbero';
+
             if (!$usuario->employee) {
                 \App\Models\Employee::create([
-                    'user_id' => $usuario->id,
-                    'nombre' => $usuario->primer_nombre . ' ' . $usuario->primer_apellido,
-                    'email' => $usuario->email,
-                    'telefono' => $telefono,
-                    'cargo' => $role_id == 1 ? 'Administrador' : 'Barbero',
-                    'estado' => 1
+                    'user_id'      => $usuario->id,
+                    'telefono'     => $telefono,
+                    'especialidad' => $especialidad,
+                    'estado'       => 1,
                 ]);
             } else {
-                $usuario->employee->update([
-                    'cargo' => $role_id == 1 ? 'Administrador' : 'Barbero',
-                    'estado' => 1,
-                    'telefono' => $telefono !== '0000000000' ? $telefono : $usuario->employee->telefono
-                ]);
+                // Solo sobreescribir especialidad si actualmente dice 'Administrador' o 'Barbero'
+                // (para no pisar una especialidad real como 'Barbero Senior')
+                $espActual = $usuario->employee->especialidad;
+                $debeCambiar = in_array($espActual, [null, '', 'Administrador', 'Barbero', 'No definida']);
+
+                $datos = [
+                    'estado'   => 1,
+                    'telefono' => ($telefono !== '0000000000') ? $telefono : $usuario->employee->telefono,
+                ];
+                if ($debeCambiar) {
+                    $datos['especialidad'] = $especialidad;
+                }
+                $usuario->employee->update($datos);
             }
-            
-            // Si tenía un perfil de cliente, lo desactivamos (no lo borramos para no perder historial)
+
+            // Desactivar perfil de cliente si existe (conservar datos históricos)
             if ($usuario->client) {
                 $usuario->client->update(['estado' => 0]);
             }
-            
+
         } elseif ($role_id == 3) {
-            // Es Cliente -> Garantizar perfil en tabla clientes
-            $telefono = $request->telefono ?? ($usuario->employee ? $usuario->employee->telefono : '0000000000');
+            // Cliente -> garantizar registro en tabla clients
+            $telefono = $telefonoExterno
+                ?? ($usuario->employee ? $usuario->employee->telefono : null)
+                ?? $usuario->telefono
+                ?? '0000000000';
             
             if (!$usuario->client) {
                 \App\Models\Client::create([

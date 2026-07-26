@@ -8,25 +8,38 @@
     {{-- Tarjetas KPI JyM Style (Ahora son 4 columnas) --}}
     <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-widest">Resumen de Tienda (Filtros)</p>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <a href="{{ route('orders.index') }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ !$estadoFilter ? 'ring-2 ring-[#D4AF37]' : '' }}">
+        <a href="{{ route('orders.index') }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ !$estadoFilter ? 'bg-black' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Pedidos</h3>
             <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $total }}</p>
         </a>
-        <a href="{{ route('orders.index', ['estado' => 'pendiente']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'pendiente' ? 'ring-2 ring-[#D4AF37]' : '' }}">
+        <a href="{{ route('orders.index', ['estado' => 'pendiente']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'pendiente' ? 'bg-black' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Nuevos (Empacar)</h3>
             <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $nuevos }}</p>
         </a>
-        <a href="{{ route('orders.index', ['estado' => 'pendiente_recogida']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'pendiente_recogida' ? 'ring-2 ring-[#D4AF37]' : '' }}">
+        <a href="{{ route('orders.index', ['estado' => 'pendiente_recogida']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'pendiente_recogida' ? 'bg-black' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Por Recoger (Caja)</h3>
             <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $pendientes }}</p>
         </a>
-        <a href="{{ route('orders.index', ['estado' => 'entregado']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'entregado' ? 'ring-2 ring-[#D4AF37]' : '' }}">
+        <a href="{{ route('orders.index', ['estado' => 'entregado']) }}" class="bg-[#0f172a] rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ $estadoFilter == 'entregado' ? 'bg-black' : '' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Entregados</h3>
             <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $entregados }}</p>
         </a>
     </div>
 
     @if(session('success')) <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm"><p class="font-bold">{{ session('success') }}</p></div> @endif
+
+    <div class="flex flex-col md:flex-row gap-2 mb-6 items-start md:items-center justify-between">
+        <form method="GET" action="{{ route('orders.index') }}" class="flex gap-2 flex-1">
+            <input type="hidden" name="estado" value="{{ $estadoFilter }}">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por ID de pedido..." class="w-full md:w-1/3 border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
+            <button type="submit" class="bg-[#0f172a] hover:bg-black text-[#D4AF37] font-bold py-2 px-6 rounded shadow uppercase tracking-wider text-xs transition">Buscar</button>
+            @if(request('search') || $estadoFilter) <a href="{{ route('orders.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded shadow text-xs uppercase tracking-wider transition">Limpiar Filtros</a> @endif
+        </form>
+        <a href="{{ route('orders.export-pdf', request()->query()) }}" target="_blank"
+           class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-5 rounded shadow text-xs uppercase tracking-wider transition flex items-center gap-1 whitespace-nowrap">
+            📄 Exportar PDF
+        </a>
+    </div>
 
     {{-- LISTADO ESTILO E-COMMERCE --}}
     @if($orders->isEmpty())

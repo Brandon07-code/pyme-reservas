@@ -23,11 +23,17 @@
 
     @if(session('success')) <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm"><p>{{ session('success') }}</p></div> @endif
 
-    <form method="GET" action="{{ route('servicios.index') }}" class="mb-6 flex gap-2">
-        <input type="text" name="search" value="{{ $search }}" placeholder="Buscar servicio o categoría..." class="w-full md:w-1/3 border-gray-300 rounded-md shadow-sm border p-2 focus:ring-blue-500 focus:border-blue-500">
-        <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded shadow">Buscar</button>
-        @if($search) <a href="{{ route('servicios.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded shadow">Limpiar</a> @endif
-    </form>
+    <div class="flex flex-col md:flex-row gap-2 mb-6 items-start md:items-center justify-between">
+        <form method="GET" action="{{ route('servicios.index') }}" class="flex gap-2 flex-1">
+            <input type="text" name="search" value="{{ $search }}" placeholder="Buscar servicio o categoría..." class="w-full md:w-1/3 border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
+            <button type="submit" class="bg-[#0f172a] hover:bg-black text-[#D4AF37] font-bold py-2 px-6 rounded shadow uppercase tracking-wider text-xs transition">Buscar</button>
+            @if($search) <a href="{{ route('servicios.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded shadow text-xs uppercase tracking-wider transition">Limpiar</a> @endif
+        </form>
+        <a href="{{ route('servicios.export-pdf', request()->query()) }}" target="_blank"
+           class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-5 rounded shadow text-xs uppercase tracking-wider transition flex items-center gap-1 whitespace-nowrap">
+            📄 Exportar PDF
+        </a>
+    </div>
 
     @if($services->isEmpty())
         <div class="bg-white shadow-md rounded-lg p-8 text-center text-gray-500">No se encontraron servicios en el catálogo.</div>

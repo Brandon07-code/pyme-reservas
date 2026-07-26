@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateReservationRequest;
 use Illuminate\Support\Facades\Gate; // <-- NUEVO: Importamos Gate para Laravel 11
 use App\Events\ReservationCreated;
 use App\Events\ReservationUpdated;
+use App\Notifications\ReservaConfirmadaNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReservationController extends Controller
@@ -24,6 +25,7 @@ class ReservationController extends Controller
         $fechaInicio = $request->get('fecha_inicio');
         $fechaFin = $request->get('fecha_fin');
         $reservaIdFilter = $request->get('reserva_id');
+        $mesActualFilter = $request->boolean('mes_actual'); // viene del clic en el KPI
 
         $usuario = auth()->user();
         $mesActual = Carbon::now()->month;
@@ -31,10 +33,15 @@ class ReservationController extends Controller
         
         $query = Reservation::with(['client', 'employee.user']);
 
-        // Aplicar filtros de la Guía 2
+        // Aplicar filtros
         $query->buscar($search)
               ->filtrarEstado($estadoFilter)
               ->fechas($fechaInicio, $fechaFin);
+
+        // Si el usuario tocó un KPI (mes_actual=1), la tabla también se limita al mes
+        if ($mesActualFilter) {
+            $query->whereMonth('fecha', $mesActual)->whereYear('fecha', $anioActual);
+        }
 
         // Lógica de acceso para el empleado
         if ($usuario->role_id == 2 && $usuario->employee) {
@@ -47,6 +54,7 @@ class ReservationController extends Controller
 
         $reservations = $query->latest('fecha')->latest('hora_inicio')->paginate(10)->appends(request()->query());
 
+        // Los KPIs siempre muestran solo el mes actual (eso no cambia)
         $statQuery = Reservation::delMes($mesActual, $anioActual);
         if ($usuario->role_id == 2 && $usuario->employee) {
             $statQuery->where('employee_id', $usuario->employee->id);
@@ -98,6 +106,11 @@ class ReservationController extends Controller
 
         $reserva->update(['estado' => 'confirmada']);
         event(new ReservationUpdated($reserva));
+
+        // Notificar al cliente vía campanita (sin correo)
+        if ($reserva->client && $reserva->client->user) {
+            $reserva->client->user->notify(new ReservaConfirmadaNotification($reserva));
+        }
         
         return redirect()->back()->with('success', '¡Cita confirmada exitosamente!');
     }
@@ -198,8 +211,16 @@ class ReservationController extends Controller
             return redirect()->back()->withErrors('Una reserva confirmada no puede volver a estar pendiente.');
         }
 
+        $estadoAnterior = $reserva->estado;
         $reserva->update(['estado' => $request->estado]);
         event(new ReservationUpdated($reserva));
+
+        // Si el nuevo estado es 'confirmada', notificar al cliente via campanita
+        if ($request->estado === 'confirmada' && $estadoAnterior !== 'confirmada') {
+            if ($reserva->client && $reserva->client->user) {
+                $reserva->client->user->notify(new ReservaConfirmadaNotification($reserva));
+            }
+        }
         
         return redirect()->route('reservas.index')->with('success', 'Estado de la reserva actualizado.');
     }

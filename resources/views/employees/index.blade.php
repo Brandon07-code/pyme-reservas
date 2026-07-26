@@ -22,11 +22,17 @@
 
     @if(session('success')) <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm"><p class="font-bold">{{ session('success') }}</p></div> @endif
 
-    <form method="GET" action="{{ route('empleados.index') }}" class="mb-6 flex gap-2">
-        <input type="text" name="search" value="{{ $search }}" placeholder="Buscar por nombre o especialidad..." class="w-full md:w-1/3 border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
-        <button type="submit" class="bg-[#0f172a] hover:bg-black text-[#D4AF37] font-bold py-2 px-6 rounded shadow uppercase tracking-wider text-xs transition">Buscar</button>
-        @if($search) <a href="{{ route('empleados.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded shadow text-xs uppercase tracking-wider transition">Limpiar</a> @endif
-    </form>
+    <div class="flex flex-col md:flex-row gap-2 mb-6 items-start md:items-center justify-between">
+        <form method="GET" action="{{ route('empleados.index') }}" class="flex gap-2 flex-1">
+            <input type="text" name="search" value="{{ $search }}" placeholder="Buscar por nombre o especialidad..." class="w-full md:w-1/3 border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
+            <button type="submit" class="bg-[#0f172a] hover:bg-black text-[#D4AF37] font-bold py-2 px-6 rounded shadow uppercase tracking-wider text-xs transition">Buscar</button>
+            @if($search) <a href="{{ route('empleados.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded shadow text-xs uppercase tracking-wider transition">Limpiar</a> @endif
+        </form>
+        <a href="{{ route('empleados.export-pdf', request()->query()) }}" target="_blank"
+           class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-5 rounded shadow text-xs uppercase tracking-wider transition flex items-center gap-1 whitespace-nowrap">
+            📄 Exportar PDF
+        </a>
+    </div>
 
     <div class="bg-white shadow-md rounded-lg overflow-x-auto border border-gray-100">
         <table class="min-w-full divide-y divide-gray-200">
@@ -47,7 +53,13 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $empleado->telefono ?? 'N/A' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm"><x-status-badge :estado="$empleado->estado" /></td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <x-action-buttons editRoute="{{ route('empleados.edit', $empleado) }}" destroyRoute="{{ route('empleados.destroy', $empleado) }}" :estado="$empleado->estado" scheduleRoute="{{ route('empleados.horarios.edit', $empleado) }}" />
+                            <x-action-buttons
+                                editRoute="{{ route('empleados.edit', $empleado) }}"
+                                destroyRoute="{{ route('empleados.destroy', $empleado) }}"
+                                :estado="$empleado->estado"
+                                scheduleRoute="{{ route('empleados.horarios.edit', $empleado) }}"
+                                :showSchedule="$empleado->user && $empleado->user->role_id == 2"
+                            />
                         </td>
                     </tr>
                 @empty

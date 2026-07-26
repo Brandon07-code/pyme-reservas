@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -69,5 +70,18 @@ class OrderController extends Controller
         }
 
         return redirect()->route('orders.index')->with('success', $mensaje);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        ini_set('max_execution_time', 120);
+        $estadoFilter = $request->get('estado');
+        $query = Order::with(['client', 'products'])->latest();
+        if ($estadoFilter) {
+            $query->where('estado', $estadoFilter);
+        }
+        $orders = $query->get();
+        $pdf = Pdf::loadView('pdf.pedidos', compact('orders'))->setPaper('a4', 'landscape');
+        return $pdf->download('reporte-pedidos-jym-' . date('Y-m-d') . '.pdf');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EmployeeController extends Controller
 {
@@ -92,5 +93,13 @@ class EmployeeController extends Controller
         $empleado->update(['estado' => $nuevoEstado]);
         $mensaje = $nuevoEstado ? 'Empleado activado correctamente.' : 'Empleado desactivado correctamente.';
         return redirect()->route('empleados.index')->with('success', $mensaje);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        ini_set('max_execution_time', 120);
+        $employees = Employee::with('user')->search($request->get('search'))->latest()->get();
+        $pdf = Pdf::loadView('pdf.empleados', compact('employees'))->setPaper('a4', 'landscape');
+        return $pdf->download('reporte-empleados-jym-' . date('Y-m-d') . '.pdf');
     }
 }

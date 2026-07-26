@@ -6,6 +6,7 @@ use App\Models\Service;
 use App\Models\ServiceCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 
 class ServiceController extends Controller
@@ -99,5 +100,13 @@ class ServiceController extends Controller
         }
         $servicio->delete();
         return redirect()->route('servicios.index')->with('success', 'Servicio eliminado definitivamente.');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        ini_set('max_execution_time', 120);
+        $servicios = Service::with('category')->latest()->get();
+        $pdf = Pdf::loadView('pdf.servicios', compact('servicios'))->setPaper('a4', 'landscape');
+        return $pdf->download('reporte-servicios-jym-' . date('Y-m-d') . '.pdf');
     }
 }
