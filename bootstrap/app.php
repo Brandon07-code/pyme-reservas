@@ -29,7 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
         
         // Manejo global de excepciones JSON para la API (Regla Módulo IV)
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*')
+            fn (Request $request) => $request->is('api/*') || $request->is('cron/*')
         );
 
         // Captura de errores 404 (ModelNotFound) para devolver JSON limpio en la API
