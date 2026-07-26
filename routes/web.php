@@ -126,11 +126,19 @@ Route::get('/cron/marcar-citas-vencidas', function (\Illuminate\Http\Request $re
     }
 
     try {
-        \Illuminate\Support\Facades\Artisan::call('reservas:marcar-vencidas');
+        $exitCode = \Illuminate\Support\Facades\Artisan::call('reservas:marcar-vencidas');
+        $output = \Illuminate\Support\Facades\Artisan::output();
+        
+        // Log the full output for debugging
+        if ($exitCode !== 0) {
+            \Illuminate\Support\Facades\Log::error('Cron job failed', ['output' => $output]);
+        }
+
         return response()->json([
-            'status' => 'success',
-            'message' => 'Comando ejecutado exitosamente',
-            'output' => \Illuminate\Support\Facades\Artisan::output()
+            'status' => $exitCode === 0 ? 'success' : 'error',
+            'message' => 'Comando ejecutado con código ' . $exitCode,
+            // Truncate output so cron-job.org doesn't complain about "Response data too big" on fatal errors
+            'output' => substr($output, 0, 200) . (strlen($output) > 200 ? '... [Truncated]' : '')
         ]);
     } catch (\Throwable $e) {
         return response()->json([
