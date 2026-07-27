@@ -24,6 +24,26 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// RUTINA TEMPORAL PARA ELIMINAR USUARIO BUGEADO EN PRODUCCIÓN (RENDER)
+Route::get('/fix-clean-user', function () {
+    $user = \App\Models\User::where('email', 'brandongiraldo8@gmail.com')->first();
+    if ($user) {
+        // Eliminar historial para evitar error de llaves foráneas
+        if ($user->employee) {
+            $user->employee->reservations()->delete();
+            $user->employee->delete();
+        }
+        if ($user->client) {
+            $user->client->reservations()->delete();
+            $user->client->orders()->delete();
+            $user->client->delete();
+        }
+        $user->delete();
+        return "Usuario brandongiraldo8@gmail.com y todo su historial eliminado correctamente. Ya puedes volver atrás.";
+    }
+    return "Usuario no encontrado.";
+});
+
 // ============================================================== 
 // RUTAS DE VERIFICACIÓN OTP (Fuera del middleware auth)
 // ==============================================================

@@ -33,9 +33,10 @@
                 
                 <div>
                     <label class="block text-sm font-medium mb-1">Rol *</label>
-                    <select name="role_id" required class="w-full border p-2 rounded">
+                    <select class="w-full border p-2 rounded bg-gray-100 cursor-not-allowed text-gray-600" disabled>
                         @foreach($roles as $rol) <option value="{{ $rol->id }}" {{ $usuario->role_id == $rol->id ? 'selected' : '' }}>{{ $rol->nombre }}</option> @endforeach
                     </select>
+                    <p class="text-[10px] text-red-500 mt-1 font-bold">Por seguridad y consistencia, el rol no puede modificarse tras la creación. Desactive este usuario y cree uno nuevo si necesita cambiar su rol.</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Estado *</label>
