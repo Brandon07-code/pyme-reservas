@@ -10,31 +10,31 @@
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
         {{-- Total mes --}}
         <a href="{{ route('reservas.index', ['mes_actual' => '1']) }}"
-           class="rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ request('mes_actual') && !request('estado') ? 'bg-gray-900' : 'bg-black' }}">
+           class="rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ request('mes_actual') && !request('estado') ? 'bg-black' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total (Mes)</h3>
             <p class="text-2xl font-extrabold text-[#D4AF37]">{{ $total }}</p>
         </a>
         {{-- Pendientes del mes --}}
         <a href="{{ route('reservas.index', ['estado' => 'pendiente', 'mes_actual' => '1']) }}"
-           class="rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ request('estado') == 'pendiente' && request('mes_actual') ? 'bg-gray-900' : 'bg-black' }}">
+           class="rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ request('estado') == 'pendiente' && request('mes_actual') ? 'bg-black' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Pendientes</h3>
             <p class="text-2xl font-extrabold text-yellow-500">{{ $pendientes }}</p>
         </a>
         {{-- Confirmadas del mes --}}
         <a href="{{ route('reservas.index', ['estado' => 'confirmada', 'mes_actual' => '1']) }}"
-           class="rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ request('estado') == 'confirmada' && request('mes_actual') ? 'bg-gray-900' : 'bg-black' }}">
+           class="rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ request('estado') == 'confirmada' && request('mes_actual') ? 'bg-black' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Confirmadas</h3>
             <p class="text-2xl font-extrabold text-blue-500">{{ $confirmadas }}</p>
         </a>
         {{-- Completadas del mes --}}
         <a href="{{ route('reservas.index', ['estado' => 'completada', 'mes_actual' => '1']) }}"
-           class="rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ request('estado') == 'completada' && request('mes_actual') ? 'bg-gray-900' : 'bg-black' }}">
+           class="rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ request('estado') == 'completada' && request('mes_actual') ? 'bg-black' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Completadas</h3>
             <p class="text-2xl font-extrabold text-green-500">{{ $completadas }}</p>
         </a>
         {{-- Canceladas del mes --}}
         <a href="{{ route('reservas.index', ['estado' => 'cancelada', 'mes_actual' => '1']) }}"
-           class="rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer {{ request('estado') == 'cancelada' && request('mes_actual') ? 'bg-gray-900' : 'bg-black' }}">
+           class="rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ request('estado') == 'cancelada' && request('mes_actual') ? 'bg-black' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Canceladas</h3>
             <p class="text-2xl font-extrabold text-red-500">{{ $canceladas }}</p>
         </a>

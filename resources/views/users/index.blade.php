@@ -9,17 +9,17 @@
     <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-widest">Resumen de Cuentas (Clic para filtrar)</p>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <a href="{{ route('usuarios.index', array_merge(request()->except('estado'), [])) }}"
-           class="rounded-lg shadow-lg p-5 hover:bg-gray-800 transition cursor-pointer {{ !request('estado') ? 'bg-gray-800' : 'bg-[#0f172a]' }}">
+           class="rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ !request('estado') ? 'bg-black' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Usuarios</h3>
             <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $totalUsers }}</p>
         </a>
         <a href="{{ route('usuarios.index', array_merge(request()->except('estado'), ['estado' => '1'])) }}"
-           class="rounded-lg shadow-lg p-5 hover:bg-gray-800 transition cursor-pointer {{ request('estado') === '1' ? 'bg-gray-800' : 'bg-[#0f172a]' }}">
+           class="rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ request('estado') === '1' ? 'bg-black' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Usuarios Activos</h3>
             <p class="text-3xl font-extrabold text-green-500">{{ $activeUsers }}</p>
         </a>
         <a href="{{ route('usuarios.index', array_merge(request()->except('estado'), ['estado' => '0'])) }}"
-           class="rounded-lg shadow-lg p-5 hover:bg-gray-800 transition cursor-pointer {{ request('estado') === '0' ? 'bg-gray-800' : 'bg-[#0f172a]' }}">
+           class="rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ request('estado') === '0' ? 'bg-black' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Usuarios Inactivos</h3>
             <p class="text-3xl font-extrabold text-red-500">{{ $inactiveUsers }}</p>
         </a>
