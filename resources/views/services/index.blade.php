@@ -5,29 +5,35 @@
 @section('content')
     <x-page-header title="Gestión de Servicios" createRoute="{{ route('servicios.create') }}" buttonText="+ Nuevo Servicio" />
 
-    <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-widest">Catálogo de Servicios</p>
+    <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-widest">Catálogo de Servicios (Clic para filtrar)</p>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5">
+        <a href="{{ route('servicios.index', array_merge(request()->except('estado'), [])) }}"
+           class="rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ !request('estado') ? 'bg-black' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Servicios</h3>
             <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $total }}</p>
-        </div>
-        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5">
+        </a>
+        <a href="{{ route('servicios.index', array_merge(request()->except('estado'), ['estado' => '1'])) }}"
+           class="rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ request('estado') === '1' ? 'bg-black' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Ofertados (Activos)</h3>
             <p class="text-3xl font-extrabold text-green-500">{{ $activos }}</p>
-        </div>
-        <div class="bg-[#0f172a] rounded-lg shadow-lg p-5">
+        </a>
+        <a href="{{ route('servicios.index', array_merge(request()->except('estado'), ['estado' => '0'])) }}"
+           class="rounded-lg shadow-lg p-5 hover:bg-black transition cursor-pointer {{ request('estado') === '0' ? 'bg-black' : 'bg-[#0f172a]' }}">
             <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Ocultos (Inactivos)</h3>
             <p class="text-3xl font-extrabold text-red-500">{{ $inactivos }}</p>
-        </div>
+        </a>
     </div>
 
     @if(session('success')) <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm"><p>{{ session('success') }}</p></div> @endif
 
     <div class="flex flex-col md:flex-row gap-2 mb-6 items-start md:items-center justify-between">
         <form method="GET" action="{{ route('servicios.index') }}" class="flex gap-2 flex-1">
+            <input type="hidden" name="estado" value="{{ $estadoFilter }}">
             <input type="text" name="search" value="{{ $search }}" placeholder="Buscar servicio o categoría..." class="w-full md:w-1/3 border-gray-300 rounded-md shadow-sm border p-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]">
             <button type="submit" class="bg-[#0f172a] hover:bg-black text-[#D4AF37] font-bold py-2 px-6 rounded shadow uppercase tracking-wider text-xs transition">Buscar</button>
-            @if($search) <a href="{{ route('servicios.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded shadow text-xs uppercase tracking-wider transition">Limpiar</a> @endif
+            @if($search || $estadoFilter !== null && $estadoFilter !== '') 
+                <a href="{{ route('servicios.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded shadow text-xs uppercase tracking-wider transition">Limpiar</a> 
+            @endif
         </form>
         <a href="{{ route('servicios.export-pdf', request()->query()) }}" target="_blank"
            class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-5 rounded shadow text-xs uppercase tracking-wider transition flex items-center gap-1 whitespace-nowrap">

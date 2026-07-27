@@ -12,6 +12,7 @@ class ClientController extends Controller
     {
         $search = $request->get('search');
         $nuevosMes = $request->boolean('nuevos_mes');
+        $estadoFilter = $request->get('estado');
 
         $query = Client::search($search)->latest();
 
@@ -20,13 +21,17 @@ class ClientController extends Controller
                   ->whereYear('created_at', now()->year);
         }
 
+        if ($estadoFilter !== null && $estadoFilter !== '') {
+            $query->where('estado', (int) $estadoFilter);
+        }
+
         $clients = $query->paginate(10);
 
         $totalClients = Client::count();
         $activeClients = Client::where('estado', 1)->count();
         $inactiveClients = Client::where('estado', 0)->count();
 
-        return view('clients.index', compact('clients', 'search', 'nuevosMes', 'totalClients', 'activeClients', 'inactiveClients'));
+        return view('clients.index', compact('clients', 'search', 'nuevosMes', 'totalClients', 'activeClients', 'inactiveClients', 'estadoFilter'));
     }
 
     public function create()

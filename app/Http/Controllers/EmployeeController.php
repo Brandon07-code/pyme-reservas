@@ -12,13 +12,21 @@ class EmployeeController extends Controller
   public function index(Request $request)
     {
         $search = $request->get('search');
-        $employees = Employee::with('user')->search($search)->latest()->paginate(10);
+        $estadoFilter = $request->get('estado');
+        
+        $query = Employee::with('user')->search($search)->latest();
+        
+        if ($estadoFilter !== null && $estadoFilter !== '') {
+            $query->where('estado', (int) $estadoFilter);
+        }
+        
+        $employees = $query->paginate(10);
 
         $total = Employee::count();
         $activos = Employee::where('estado', 1)->count();
         $inactivos = Employee::where('estado', 0)->count();
 
-        return view('employees.index', compact('employees', 'search', 'total', 'activos', 'inactivos'));
+        return view('employees.index', compact('employees', 'search', 'total', 'activos', 'inactivos', 'estadoFilter'));
     }
 
     public function create()
@@ -98,7 +106,15 @@ class EmployeeController extends Controller
     public function exportPdf(Request $request)
     {
         ini_set('max_execution_time', 120);
-        $employees = Employee::with('user')->search($request->get('search'))->latest()->get();
+        $search = $request->get('search');
+        $estadoFilter = $request->get('estado');
+
+        $query = Employee::with('user')->search($search)->latest();
+        if ($estadoFilter !== null && $estadoFilter !== '') {
+            $query->where('estado', (int) $estadoFilter);
+        }
+        $employees = $query->get();
+        
         $pdf = Pdf::loadView('pdf.empleados', compact('employees'))->setPaper('a4', 'landscape');
         return $pdf->download('reporte-empleados-jym-' . date('Y-m-d') . '.pdf');
     }

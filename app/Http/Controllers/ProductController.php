@@ -14,13 +14,21 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
-        $products = Product::with('category')->search($search)->latest()->paginate(12); // Paginación ajustada a 12 para la cuadrícula
+        $estadoFilter = $request->get('estado');
+        
+        $query = Product::with('category')->search($search)->latest();
+        
+        if ($estadoFilter !== null && $estadoFilter !== '') {
+            $query->where('estado', (int) $estadoFilter);
+        }
+        
+        $products = $query->paginate(12); // Paginación ajustada a 12 para la cuadrícula
 
         $total = Product::count();
         $activos = Product::where('estado', 1)->count();
         $inactivos = Product::where('estado', 0)->count();
 
-        return view('products.index', compact('products', 'search', 'total', 'activos', 'inactivos'));
+        return view('products.index', compact('products', 'search', 'total', 'activos', 'inactivos', 'estadoFilter'));
     }
 
     public function create()
@@ -100,7 +108,15 @@ class ProductController extends Controller
     public function exportPdf(Request $request)
     {
         ini_set('max_execution_time', 120);
-        $productos = Product::with('category')->latest()->get();
+        $search = $request->get('search');
+        $estadoFilter = $request->get('estado');
+
+        $query = Product::with('category')->search($search)->latest();
+        if ($estadoFilter !== null && $estadoFilter !== '') {
+            $query->where('estado', (int) $estadoFilter);
+        }
+        $productos = $query->get();
+
         $pdf = Pdf::loadView('pdf.productos', compact('productos'))->setPaper('a4', 'landscape');
         return $pdf->download('reporte-productos-jym-' . date('Y-m-d') . '.pdf');
     }

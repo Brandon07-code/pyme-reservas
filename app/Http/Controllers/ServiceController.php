@@ -14,13 +14,21 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
-        $services = Service::with('category')->search($search)->latest()->paginate(12);
+        $estadoFilter = $request->get('estado');
+        
+        $query = Service::with('category')->search($search)->latest();
+        
+        if ($estadoFilter !== null && $estadoFilter !== '') {
+            $query->where('estado', (int) $estadoFilter);
+        }
+        
+        $services = $query->paginate(12);
 
         $total = Service::count();
         $activos = Service::where('estado', 1)->count();
         $inactivos = Service::where('estado', 0)->count();
 
-        return view('services.index', compact('services', 'search', 'total', 'activos', 'inactivos'));
+        return view('services.index', compact('services', 'search', 'total', 'activos', 'inactivos', 'estadoFilter'));
     }
 
     public function create()
@@ -105,7 +113,15 @@ class ServiceController extends Controller
     public function exportPdf(Request $request)
     {
         ini_set('max_execution_time', 120);
-        $servicios = Service::with('category')->latest()->get();
+        $search = $request->get('search');
+        $estadoFilter = $request->get('estado');
+
+        $query = Service::with('category')->search($search)->latest();
+        if ($estadoFilter !== null && $estadoFilter !== '') {
+            $query->where('estado', (int) $estadoFilter);
+        }
+        $servicios = $query->get();
+
         $pdf = Pdf::loadView('pdf.servicios', compact('servicios'))->setPaper('a4', 'landscape');
         return $pdf->download('reporte-servicios-jym-' . date('Y-m-d') . '.pdf');
     }
