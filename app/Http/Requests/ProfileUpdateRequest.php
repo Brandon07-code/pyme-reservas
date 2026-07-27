@@ -27,6 +27,17 @@ class ProfileUpdateRequest extends FormRequest
                 'email',
                 'max:150',
                 Rule::unique(User::class)->ignore($this->user()->id),
+                function ($attribute, $value, $fail) {
+                    $roleId = (int) $this->user()->role_id;
+                    $isCorporate = str_ends_with(strtolower($value), '@pymereservas.com');
+                    
+                    if (in_array($roleId, [1, 2]) && !$isCorporate) {
+                        $fail('Tu cuenta de administrador/empleado debe usar el correo corporativo exclusivo (@pymereservas.com).');
+                    }
+                    if ($roleId === 3 && $isCorporate) {
+                        $fail('Tu cuenta de cliente no puede usar el dominio reservado de la empresa.');
+                    }
+                }
             ],
             'telefono' => ['nullable', 'string', 'max:20'],
             'direccion' => ['nullable', 'string', 'max:255'],

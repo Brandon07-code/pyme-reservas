@@ -26,7 +26,14 @@ class RegisteredUserController extends Controller
             'primer_nombre' => ['required', 'string', 'max:100'],
             'primer_apellido' => ['required', 'string', 'max:100'],
             'telefono' => ['required', 'string', 'regex:/^3[\d]{9}$/'], 
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:150', 'unique:'.User::class],
+            'email' => [
+                'required', 'string', 'lowercase', 'email', 'max:150', 'unique:'.User::class,
+                function ($attribute, $value, $fail) {
+                    if (str_ends_with(strtolower($value), '@pymereservas.com')) {
+                        $fail('Por políticas de seguridad, no puedes usar el dominio reservado de la empresa para cuentas de cliente.');
+                    }
+                }
+            ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
             'telefono.regex' => 'El teléfono debe ser un celular colombiano válido (Ej: 3001234567).'

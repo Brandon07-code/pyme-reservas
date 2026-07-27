@@ -24,11 +24,13 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// RUTINA TEMPORAL PARA ELIMINAR USUARIO BUGEADO EN PRODUCCIÓN (RENDER)
+// RUTINA TEMPORAL PARA ARREGLOS EN PRODUCCIÓN (RENDER)
 Route::get('/fix-clean-user', function () {
+    $msg = "";
+    
+    // 1. Borrar usuario bugeado
     $user = \App\Models\User::where('email', 'brandongiraldo8@gmail.com')->first();
     if ($user) {
-        // Eliminar historial para evitar error de llaves foráneas
         if ($user->employee) {
             $user->employee->reservations()->delete();
             $user->employee->delete();
@@ -39,9 +41,21 @@ Route::get('/fix-clean-user', function () {
             $user->client->delete();
         }
         $user->delete();
-        return "Usuario brandongiraldo8@gmail.com y todo su historial eliminado correctamente. Ya puedes volver atrás.";
+        $msg .= "Usuario brandongiraldo8@gmail.com y su historial eliminado. <br>";
     }
-    return "Usuario no encontrado.";
+
+    // 2. Migrar admin actual al dominio corporativo
+    $admin = \App\Models\User::where('email', 'admin@brandon.local')->first();
+    if ($admin) {
+        $admin->update(['email' => 'admin@pymereservas.com']);
+        // También actualizar el email en la tabla employees si existe
+        if ($admin->employee) {
+            $admin->employee->update(['email' => 'admin@pymereservas.com']);
+        }
+        $msg .= "Admin actualizado a admin@pymereservas.com (Tendrás que iniciar sesión con este nuevo correo).<br>";
+    }
+    
+    return $msg ?: "Todo está limpio. No se requirieron cambios.";
 });
 
 // ============================================================== 

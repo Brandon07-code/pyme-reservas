@@ -32,6 +32,17 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*') || $request->is('cron/*')
         );
 
+        // Captura global para evitar respuestas JSON gigantes (Whoops debug) en el cron job
+        $exceptions->render(function (\Throwable $e, Request $request) {
+            if ($request->is('cron/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => substr($e->getMessage(), 0, 500),
+                    'note' => 'Posible timeout de base de datos o spin-up de Render'
+                ], 500);
+            }
+        });
+
         // Captura de errores 404 (ModelNotFound) para devolver JSON limpio en la API
         $exceptions->render(function (ModelNotFoundException $e, Request $request) {
             if ($request->is('api/*')) {

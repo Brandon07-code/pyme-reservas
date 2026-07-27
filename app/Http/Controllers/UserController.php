@@ -62,7 +62,20 @@ class UserController extends Controller
             'segundo_nombre' => 'nullable|string|max:100',
             'primer_apellido' => 'required|string|max:100',
             'segundo_apellido' => 'nullable|string|max:100',
-            'email' => 'required|email|unique:users,email',
+            'email' => [
+                'required', 'email', 'unique:users,email',
+                function ($attribute, $value, $fail) use ($request) {
+                    $roleId = (int) $request->input('role_id');
+                    $isCorporate = str_ends_with(strtolower($value), '@pymereservas.com');
+                    
+                    if (in_array($roleId, [1, 2]) && !$isCorporate) {
+                        $fail('Los empleados y administradores deben usar el correo corporativo exclusivo (@pymereservas.com).');
+                    }
+                    if ($roleId === 3 && $isCorporate) {
+                        $fail('Los clientes no pueden registrarse con el dominio reservado de la empresa.');
+                    }
+                },
+            ],
             'password' => 'required|string|min:6',
             'estado' => 'boolean'
         ]);
@@ -89,7 +102,20 @@ class UserController extends Controller
             'segundo_nombre' => 'nullable|string|max:100',
             'primer_apellido' => 'required|string|max:100',
             'segundo_apellido' => 'nullable|string|max:100',
-            'email' => ['required', 'email', Rule::unique('users')->ignore($usuario->id)],
+            'email' => [
+                'required', 'email', Rule::unique('users')->ignore($usuario->id),
+                function ($attribute, $value, $fail) use ($usuario) {
+                    $roleId = (int) $usuario->role_id;
+                    $isCorporate = str_ends_with(strtolower($value), '@pymereservas.com');
+                    
+                    if (in_array($roleId, [1, 2]) && !$isCorporate) {
+                        $fail('Los empleados y administradores deben usar el correo corporativo exclusivo (@pymereservas.com).');
+                    }
+                    if ($roleId === 3 && $isCorporate) {
+                        $fail('Los clientes no pueden usar el dominio reservado de la empresa.');
+                    }
+                },
+            ],
             'estado' => 'boolean',
             'telefono' => 'nullable|string|max:20',
             'direccion' => 'nullable|string|max:255',
