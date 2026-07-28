@@ -29,18 +29,21 @@ class ScheduleController extends Controller
         $hoy = Carbon::today()->format('Y-m-d');
         $nombresDias = [1=>'Lunes', 2=>'Martes', 3=>'Miércoles', 4=>'Jueves', 5=>'Viernes', 6=>'Sábado', 7=>'Domingo'];
 
+        // Obtener todas las citas futuras del empleado (1 sola consulta a la BD)
+        $todasCitasFuturas = Reservation::where('employee_id', $empleado->id)
+            ->where('fecha', '>=', $hoy)
+            ->whereIn('estado', ['pendiente', 'confirmada'])
+            ->get();
+
         foreach ($request->horarios as $dia => $datos) {
             $disponible = isset($datos['disponible']) ? true : false;
             $horaInicio = Carbon::parse($datos['hora_inicio'])->format('H:i:s');
             $horaFin = Carbon::parse($datos['hora_fin'])->format('H:i:s');
 
-            $mysqlWeekday = $dia - 1; 
-
-            $citasFuturas = Reservation::where('employee_id', $empleado->id)
-                ->where('fecha', '>=', $hoy)
-                ->whereIn('estado', ['pendiente', 'confirmada'])
-                ->whereRaw('WEEKDAY(fecha) = ?', [$mysqlWeekday])
-                ->get();
+            // Filtrar usando Carbon para ser agnósticos de la BD (evita el error 500 en PostgreSQL de Render)
+            $citasFuturas = $todasCitasFuturas->filter(function ($cita) use ($dia) {
+                return Carbon::parse($cita->fecha)->dayOfWeekIso == $dia;
+            });
 
             if ($citasFuturas->isNotEmpty()) {
                 if (!$disponible) {
