@@ -34,12 +34,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Captura global para evitar respuestas JSON gigantes (Whoops debug) en el cron job
         $exceptions->render(function (\Throwable $e, Request $request) {
-            if ($request->is('cron/*')) {
+            if ($request->is('api/cron/*') || $request->is('cron/*')) {
                 return response()->json([
                     'status' => 'error',
                     'message' => substr($e->getMessage(), 0, 500),
                     'note' => 'Posible timeout de base de datos o spin-up de Render'
-                ], 500);
+                ], 200); // Retornamos 200 para que cron-job.org no lo marque como fallo y lo deshabilite
             }
         });
 

@@ -50,6 +50,6 @@ Route::get('/cron/marcar-citas-vencidas', function (\Illuminate\Http\Request $re
         return response()->json([
             'status' => 'error',
             'message' => substr($e->getMessage(), 0, 300)
-        ], 500);
+        ], 200); // Retornamos 200 para no deshabilitar cron-job.org en timeouts
     }
 });
