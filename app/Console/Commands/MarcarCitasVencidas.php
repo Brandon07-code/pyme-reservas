@@ -25,10 +25,22 @@ class MarcarCitasVencidas extends Command
     {
         $ahora = Carbon::now();
 
-        // Busca citas pendientes o confirmadas cuya hora de fin ya pasó
-        $citasVencidas = Reservation::whereIn('estado', ['pendiente', 'confirmada'])
-            ->whereRaw("CONCAT(fecha, ' ', hora_fin) < ?", [$ahora->format('Y-m-d H:i:s')])
+        // Buscamos todas las citas pendientes o confirmadas de fechas <= hoy
+        $citasCandidatas = Reservation::whereIn('estado', ['pendiente', 'confirmada'])
+            ->where('fecha', '<=', $ahora->toDateString())
             ->get();
+
+        // Filtramos con Carbon para ser 100% agnósticos a la base de datos (evita errores en PostgreSQL)
+        $citasVencidas = $citasCandidatas->filter(function ($cita) use ($ahora) {
+            $fechaCita = Carbon::parse($cita->fecha)->toDateString();
+            $hoy = $ahora->toDateString();
+            
+            // Si es de un día anterior, ya venció
+            if ($fechaCita < $hoy) return true;
+            
+            // Si es de hoy, verificamos si la hora de fin ya pasó
+            return $fechaCita === $hoy && $cita->hora_fin < $ahora->toTimeString();
+        });
 
         $total = $citasVencidas->count();
 
