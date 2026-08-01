@@ -36,10 +36,10 @@
                 <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $clientesNuevos }}</p>
             </a>
         @else
-            <div class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition">
-                <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2">Mis Servicios (Mes)</h3>
+            <a href="{{ route('reservas.index', ['mes_actual' => 1]) }}" class="bg-black rounded-lg shadow-lg p-5 hover:bg-gray-900 transition cursor-pointer group">
+                <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2 group-hover:text-white transition">Mis Servicios (Mes) &rarr;</h3>
                 <p class="text-3xl font-extrabold text-[#D4AF37]">{{ $misCortesMes }}</p>
-            </div>
+            </a>
         @endif
     </div>
 
