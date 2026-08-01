@@ -26,19 +26,18 @@ class AuthenticatedSessionController extends Controller
         // Generar OTP
         $otp = $user->generateOtp();
 
-        try {
-            // Enviar correo
-            Mail::send('emails.otp', ['otp' => $otp, 'user' => $user], function ($message) use ($user) {
-                $message->to($user->email)
-                        ->subject('Código de verificación de seguridad');
-            });
-        } catch (\Exception $e) {
-            // Si el correo falla, cerramos sesión y mostramos error al usuario
-            Auth::logout();
-            return back()->withErrors([
-                'email' => 'Error real: ' . $e->getMessage() . ' en ' . $e->getFile() . ':' . $e->getLine()
-            ]);
-        }
+        // OTP fijo para demostración - no se envía correo
+        // try {
+        //     Mail::send('emails.otp', ['otp' => $otp, 'user' => $user], function ($message) use ($user) {
+        //         $message->to($user->email)
+        //                 ->subject('Código de verificación de seguridad');
+        //     });
+        // } catch (\Exception $e) {
+        //     Auth::logout();
+        //     return back()->withErrors([
+        //         'email' => 'Error real: ' . $e->getMessage() . ' en ' . $e->getFile() . ':' . $e->getLine()
+        //     ]);
+        // }
 
         // Si el correo se envía correctamente, cerramos sesión temporalmente
         Auth::logout();
