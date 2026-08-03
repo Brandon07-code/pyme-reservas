@@ -273,7 +273,7 @@ y rapida, incluso cuando el servidor acaba de despertar.
 Configuracion en cron-job.org:
 1. Crear una cuenta gratuita en https://cron-job.org.
 2. Agregar un nuevo cronjob.
-3. Colocar la URL: https://pyme-reservas.onrender.com/cron.php?token=jym-seguro-2026
+3. Colocar la URL: https://pyme-reservas.onrender.com/cron.php?token=(token de seguridad)
 4. Establecer la ejecucion cada 15 minutos.
 5. Guardar y activar.
 
@@ -281,17 +281,17 @@ Configuracion en cron-job.org:
 
 ## Credenciales de Prueba
 
-Todos los usuarios creados por los seeders comparten la misma contrasena: `password`
+Para efectos de evaluacion y demostracion del aplicativo por parte de los jurados,
+se proporcionan las siguientes cuentas de prueba.
 
-Al iniciar sesion, el sistema solicita un codigo de verificacion OTP de 6 digitos.
-Para efectos de evaluacion y demostracion, el codigo es fijo: `123456`
+**Nota:** El codigo de verificacion (OTP) al iniciar sesion es fijo para todas las cuentas: `123456`
 
-| Rol | Correo | Descripcion |
+| Rol | Correo | Contrasena |
 |---|---|---|
-| Administrador | admin@pymereservas.com | Acceso total a todos los modulos |
-| Empleado | jefferson@pymereservas.com | Agenda personal y perfil |
-| Empleado | andres@pymereservas.com | Agenda personal y perfil |
-| Cliente | juandavid.osorio@correo.com | Portal de autoservicio con historial |
+| Administrador | admin@pymereservas.com | password |
+| Empleado | jefferson@pymereservas.com | password |
+| Empleado | andres@pymereservas.com | password |
+| Cliente | juandavid.osorio@correo.com | password |
 
 ---
 
