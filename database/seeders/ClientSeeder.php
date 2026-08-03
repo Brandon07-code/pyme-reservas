@@ -11,8 +11,29 @@ class ClientSeeder extends Seeder
 {
     public function run()
     {
+        // Creamos un cliente fijo para garantizar que las credenciales de prueba del README siempre funcionen
+        $userFijo = User::create([
+            'role_id' => 3,
+            'primer_nombre' => 'Juan David',
+            'primer_apellido' => 'Osorio',
+            'email' => 'juandavid.osorio@correo.com',
+            'password' => bcrypt('password'),
+            'estado' => true,
+        ]);
+
+        $clientesCreados = [
+            Client::create([
+                'user_id' => $userFijo->id,
+                'primer_nombre' => 'Juan David',
+                'primer_apellido' => 'Osorio',
+                'telefono' => '3101234567',
+                'email' => 'juandavid.osorio@correo.com',
+                'estado' => true,
+            ])
+        ];
+
         $nombresColombianos = [
-            ['Juan David', 'Osorio'], ['Carlos Andrés', 'Jaramillo'], ['Sebastián', 'Londoño'],
+            ['Carlos Andrés', 'Jaramillo'], ['Sebastián', 'Londoño'],
             ['Jhon Jairo', 'Castaño'], ['Andrés Felipe', 'Alzate'], ['Mateo', 'Quintero'],
             ['Daniel', 'Echeverri'], ['Santiago', 'Restrepo'], ['Camilo', 'Cardona'],
             ['Alejandro', 'Mejía'], ['Felipe', 'Toro'], ['Julián', 'Marín'],
