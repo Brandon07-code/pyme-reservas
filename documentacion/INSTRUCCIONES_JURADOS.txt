@@ -1,0 +1,33 @@
+Cordial Saludo, Estimados jurados y profesor:
+
+Para facilitar la revision del proyecto "PYME Reservas", toda la documentacion tecnica, manual de instalacion y credenciales de acceso se han unificado en un solo documento llamado "README.md".
+
+¿COMO ABRIR EL ARCHIVO README.md?
+---------------------------------
+El archivo README.md se encuentra en la carpeta principal del proyecto o en esta misma (documentación)
+- Si tienen visual Studio Code instalado, pueden abrirlo alli.
+- Si no, pueden abrirlo haciendo clic derecho > "Abrir con" > "Bloc de notas" (Notepad).
+- Tambien pueden leerlo directamente con su formato original y amigable visitando el repositorio del proyecto en GitHub.
+
+¿QUE ENCONTRARAN EN EL README.md?
+---------------------------------
+Por favor, dirijanse a las siguientes secciones dentro de ese documento:
+
+1. "Enlace en Produccion": Alli encontraran el link para entrar directamente al sistema ya funcionando en internet (Render), sin necesidad de instalar nada.
+
+2. "Credenciales de Prueba" (Al final del documento): Alli estan los correos y las contraseñas para entrar como Administrador, Empleado o Cliente.
+   * NOTA IMPORTANTE: Al iniciar sesion, el sistema les pedira un codigo de seguridad de 6 digitos (OTP). El codigo para pruebas siempre es 123456.
+
+3. "Instrucciones de Instalacion Local": Si desean probar el codigo fuente en sus propios equipos, alli esta el paso a paso detallado desde cero.
+
+4. "Despliegue en Produccion": Explica como esta configurada la nube, como funciona el plan gratuito y la automatizacion de tareas (Cron Job).
+
+¿QUE CONTIENE EL DOCUMENTO DE WORD?
+----------------------------------
+Junto a este archivo de instrucciones y el codigo comprimido, se adjunta el archivo de Word ( "Brandon Cortes_V5.docx").
+Este es el Informe Final oficial del proyecto. Aqui encontraran:
+- El marco teorico, objetivos y analisis del proyecto.
+- Los Anexos solicitados por la universidad (especialmente los Anexos H e I), donde se documenta a profundidad todo lo relacionado con el proyecto, incluyendo los detalles del despliegue en produccion.
+
+Atentamente,
+Brandon Cortes.
