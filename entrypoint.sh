@@ -15,7 +15,7 @@ php artisan storage:link --force || true
 
 # Ejecutar migraciones automáticamente de forma segura (SIN borrar)
 echo "Ejecutando migraciones (seguro)..."
-php artisan migrate:fresh --seed --force
+php artisan migrate --force
 
 # Iniciar PHP-FPM en segundo plano
 php-fpm -D

@@ -15,21 +15,6 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ExternalPostController;
 use App\Http\Controllers\OtpVerificationController;
 
-use Illuminate\Support\Facades\Artisan;
-
-// RUTA TEMPORAL PARA INSTALAR BASE DE DATOS EN RENDER FREE
-Route::get('/instalar-bd', function () {
-    try {
-        Artisan::call('migrate:fresh', [
-            '--seed' => true,
-            '--force' => true
-        ]);
-        return 'Base de datos instalada y poblada con éxito. Ya puedes iniciar sesión.';
-    } catch (\Exception $e) {
-        return 'Error: ' . $e->getMessage();
-    }
-});
-
 Route::get('/', function () {
     if (auth()->check()) {
         return auth()->user()->role_id == 3
